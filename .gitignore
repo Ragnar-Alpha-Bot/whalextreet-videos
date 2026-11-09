@@ -22,3 +22,4 @@ voz_cache/
 proyectos/post-*/
 post.json
 proyectos/_vista/
+proyectos/*/pipeline*.log

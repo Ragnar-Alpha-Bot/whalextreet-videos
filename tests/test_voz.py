@@ -111,5 +111,39 @@ if _sh.which("ffmpeg"):
 else:
     print("AVISO: no hay ffmpeg; se omiten las pruebas de volumen")
 
+# --- 5. Control de calidad de la voz (fallo real: una frase del rubio salió sin la mitad del texto) -------------------------------------------
+from types import SimpleNamespace as NS
+import palabras as _pal
+
+FRASE7 = "Donde tu idea deje de tener sentido,"
+habla = lambda seg: (0.3 * np.sin(2 * np.pi * 170 * np.arange(int(24000 * seg)) / 24000) * (0.5 + 0.5 * np.sin(2 * np.pi * 3.3 * np.arange(int(24000 * seg)) / 24000))).astype("float32")
+comprobar("una frase de 7 palabras dicha en 2,2 s es plausible", frases.plausible(habla(2.2), 24000, FRASE7))
+comprobar("la misma frase en 1,0 s (truncada) NO es plausible: se le ha comido palabras", not frases.plausible(habla(1.0), 24000, FRASE7))
+comprobar("un audio vacío o casi mudo NO es plausible", not frases.plausible(np.zeros(0, dtype="float32"), 24000, FRASE7) and not frases.plausible(np.zeros(24000 * 3, dtype="float32"), 24000, FRASE7))
+comprobar("una frase de una sola palabra no exige más de medio segundo", frases.plausible(habla(0.6), 24000, "Hola."))
+intentos = []
+
+
+def mala_mala_buena():
+    intentos.append(1)
+    return (habla(0.8), 24000) if len(intentos) < 3 else (habla(2.4), 24000)
+
+
+a, sr_ = frases.con_reintentos(mala_mala_buena, FRASE7)
+comprobar("si el modelo falla dos veces y acierta a la tercera, se queda con la buena (3 intentos)", len(intentos) == 3 and len(a) / sr_ > 2)
+intentos.clear()
+try:
+    frases.con_reintentos(lambda: (intentos.append(1), (habla(0.5), 24000))[1], FRASE7, intentos=3)
+    comprobar("si nunca sale bien, error claro (no se publica una frase a medias)", False)
+except RuntimeError as e:
+    comprobar("si nunca sale bien, error claro (no se publica una frase a medias)", len(intentos) == 3 and "no logra decir" in str(e))
+ww = lambda t: [NS(word=x, start=0, end=0) for x in t.split()]
+TEXTO = "Donde tu idea deje de tener sentido, no donde te duela menos. Y antes de entrar, decide cuánto estás dispuesto a perder."
+comprobar("Whisper oye todo el texto: cobertura 100 %", _pal.cobertura(TEXTO, ww("donde tu idea deje de tener sentido no donde te duela menos y antes de entrar decide cuánto estás dispuesto a perder")) == 1.0)
+cob = _pal.cobertura(TEXTO, ww("decide cuánto estás dispuesto a perder"))
+comprobar(f"el caso real (solo se oye el final) da cobertura baja ({cob:.0%}) y por debajo del umbral", cob < _pal.COBERTURA_MIN)
+comprobar("palabras de más que oye Whisper no restan cobertura, y mayúsculas, tildes y signos no cuentan", _pal.cobertura("Hola, ¿qué tal?", ww("pues HOLA que tal amigo")) == 1.0)
+comprobar("un texto vacío no rompe la cobertura", _pal.cobertura("", ww("hola")) == 1.0)
+
 print("\nTODO CORRECTO" if not fallos else f"\nFALLOS ({len(fallos)}): {fallos}")
 sys.exit(1 if fallos else 0)

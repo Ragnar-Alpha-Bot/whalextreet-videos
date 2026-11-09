@@ -69,10 +69,16 @@ if __name__ == "__main__":
         pid = vozcache.id_perfil(perfil_ruta)
         for frase, pausa in frases.trocear(texto, cfg):
             c = vozcache.ruta(cache, vozcache.clave(frase, pid))
+            audio = None
             if c.exists():
                 audio, sr_c = sf.read(c, dtype="float32")
-                print(f"  [{k}] «{frase[:40]}» de la caché", flush=True)
-            else:
+                if frases.plausible(audio, sr_c, frase):
+                    print(f"  [{k}] «{frase[:40]}» de la caché", flush=True)
+                else:                                  # una frase mala guardada antes no debe reutilizarse
+                    print(f"  Aviso: la caché tenía «{frase[:40]}» truncada; se regenera", flush=True)
+                    c.unlink()
+                    audio = None
+            if audio is None:
                 if modelo is None:
                     import torch
                     from qwen_tts import Qwen3TTSModel
@@ -82,9 +88,13 @@ if __name__ == "__main__":
                 if quien not in prompts:
                     prompts[quien] = torch.load(perfil_ruta, weights_only=False)
                 t1 = time.time()
-                wavs, sr_c = modelo.generate_voice_clone(text=frase, language="Spanish", voice_clone_prompt=prompts[quien])
-                audio = np.asarray(wavs[0], dtype=np.float32)
-                sf.write(c, audio, sr_c)
+
+                def generar(frase=frase, quien=quien):
+                    w, s_ = modelo.generate_voice_clone(text=frase, language="Spanish", voice_clone_prompt=prompts[quien])
+                    return np.asarray(w[0], dtype=np.float32), s_
+
+                audio, sr_c = frases.con_reintentos(generar, frase)
+                sf.write(c, audio, sr_c)               # solo se guarda en la caché lo que ha pasado el control
                 print(f"  [{k}] «{frase[:40]}» {len(audio) / sr_c:.1f} s en {time.time() - t1:.0f} s", flush=True)
             sr = sr or sr_c
             assert sr_c == sr, "las frases deben tener la misma frecuencia de muestreo"

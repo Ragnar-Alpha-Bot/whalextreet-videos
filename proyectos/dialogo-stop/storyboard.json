@@ -24,7 +24,7 @@
      "voz": "Entonces, ¿dónde lo pongo?",
      "texto": "¿Y dónde lo pongo?"},
     {"tipo": "dialogo", "habla": "rubio", "rol": "respuesta",
-     "voz": "Donde tu idea deje de tener sentido, no donde te duela menos. Y antes de entrar, decide cuánto estás dispuesto a perder.",
+     "voz": "Ponlo donde tu idea deje de tener sentido, no donde te duela menos. Y antes de entrar, decide cuánto estás dispuesto a perder.",
      "texto": "Donde tu idea deje de tener sentido, no donde duela menos."},
     {"tipo": "pregunta", "habla": "profesor",
      "voz": "Y tú, ¿pones siempre un stop o confías en tu intuición?",

@@ -54,3 +54,32 @@ def trocear(texto, cfg=None):
     res = [(x, _pausa(x, cfg["pausas_s"])) for x in out]
     res[-1] = (res[-1][0], 0.0)
     return res
+
+
+# ---- Control de calidad: una voz sintética a veces se «come» media frase o devuelve casi silencio ----
+SEG_MIN_POR_PALABRA = 0.2   # nadie dice más de 5 palabras por segundo
+ACTIVO_MIN = 0.12           # al menos el 12 % de las muestras debe tener voz
+
+
+def duracion_minima(frase):
+    return max(0.5, SEG_MIN_POR_PALABRA * len(frase.split()))
+
+
+def plausible(audio, sr, frase):
+    """False si el audio es más corto de lo que da la frase, está vacío o casi mudo (señal de que el modelo se saltó palabras)."""
+    import numpy as np
+    a = np.asarray(audio, dtype="float32")
+    if len(a) == 0 or len(a) / sr < duracion_minima(frase):
+        return False
+    return float(np.mean(np.abs(a) > 0.01)) >= ACTIVO_MIN
+
+
+def con_reintentos(generar, frase, intentos=30):
+    """Llama a generar() -> (audio, sr) hasta obtener un audio plausible. El fallo es aleatorio y depende de la frase (medido: con la voz C, «Donde tu idea deje de tener sentido,» solo sale bien 1 de cada 4 veces)
+    y los intentos fallidos cuestan ~8 s, así que 30 reintentos dejan la probabilidad de fallar todos por debajo del 0,1 % incluso en ese caso. Si aun así no sale, error claro (mejor parar que publicar una frase a medias)."""
+    for n in range(1, intentos + 1):
+        audio, sr = generar()
+        if plausible(audio, sr, frase):
+            return audio, sr
+        print(f"  Aviso: «{frase[:40]}» salió truncada ({len(audio) / sr:.1f} s para {len(frase.split())} palabras); intento {n} de {intentos}", flush=True)
+    raise RuntimeError(f"La voz no logra decir «{frase[:50]}» tras {intentos} intentos")

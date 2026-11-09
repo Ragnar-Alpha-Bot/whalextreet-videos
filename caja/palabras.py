@@ -63,13 +63,25 @@ def alinear(texto, ww, dur):
     return out
 
 
+COBERTURA_MIN = 0.7   # fracción del texto del guion que Whisper debe reconocer en la voz
+
+
+def cobertura(texto, ww):
+    """Qué fracción de las palabras del guion aparece (en orden) en lo que Whisper oyó. 1.0 = la voz dice todo el texto."""
+    ns = [norm(t) for t in texto.split()]
+    nw = [norm(w.word) for w in ww]
+    if not ns:
+        return 1.0
+    return sum(b.size for b in difflib.SequenceMatcher(None, ns, nw, autojunk=False).get_matching_blocks()) / len(ns)
+
+
 def procesar(proyecto):
     """Escribe <proyecto>/assets/voz/palabras.json con el tiempo de cada palabra de cada frase."""
     proyecto = Path(proyecto).resolve()
     voz = proyecto / "assets" / "voz"
     dur = json.loads((voz / "duraciones.json").read_text(encoding="utf-8"))
     modelo = WhisperModel("small", device="cpu", compute_type="int8")
-    res = {}
+    res, bajas = {}, []
     for k, info in dur.items():
         x, sr = sf.read(voz / f"{k}.wav", dtype="float32")
         if x.ndim > 1:
@@ -78,9 +90,14 @@ def procesar(proyecto):
         segs, _ = modelo.transcribe(x16, language="es", word_timestamps=True, beam_size=5)
         ww = [w for s in segs for w in (s.words or [])]
         res[k] = alinear(info["texto"], ww, info["segundos"])
-        print(f"[{k}] whisper oyó: " + " ".join(w.word.strip() for w in ww))
+        cob = cobertura(info["texto"], ww)
+        print(f"[{k}] whisper oyó ({cob:.0%} del texto): " + " ".join(w.word.strip() for w in ww))
+        if cob < COBERTURA_MIN:
+            bajas.append(f"{k} ({cob:.0%}): «{info['texto'][:50]}»")
     (voz / "palabras.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     print("LISTO palabras.json")
+    if bajas:
+        raise RuntimeError("La voz no dice lo que debería en: " + "; ".join(bajas) + ". Se rehace con --forzar.")
 
 
 if __name__ == "__main__":
