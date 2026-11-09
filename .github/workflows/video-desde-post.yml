@@ -1,0 +1,78 @@
+name: Vídeo de un post aprobado
+
+# Lo lanza la agencia (repositorio privado) cuando apruebas un post. Hace el guion de escenas con Gemini, la voz D, los subtítulos,
+# el montaje y el render, y manda el MP4 a tu Telegram. No guarda el vídeo como artefacto: este repositorio es público.
+on:
+  workflow_dispatch:
+    inputs:
+      post_json:
+        description: "Post aprobado en JSON: {id, format, parts, platforms, chart?}"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar FFmpeg (lo necesita HyperFrames)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Instalar dependencias
+        run: |
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Caché de los modelos (voz y Whisper)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-qwen3-tts-whisper-small-v1
+
+      - name: Caché de frases de voz (el cierre se repite en todos los vídeos)
+        uses: actions/cache@v4
+        with:
+          path: voz_cache
+          key: voz-cache-v1-${{ github.run_id }}
+          restore-keys: voz-cache-v1-
+
+      - name: Pruebas
+        run: |
+          python test_formatos.py
+          python tests/test_caja.py
+          python tests/test_post.py
+
+      - name: Guardar el post recibido
+        env:
+          POST_JSON: ${{ inputs.post_json }}
+        run: printf '%s' "$POST_JSON" > post.json
+
+      - name: Crear el vídeo y mandarlo a Telegram
+        id: video
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python caja/desde_post.py post.json
+
+      - name: Avisar si falló antes de empezar el vídeo
+        if: failure() && steps.video.outcome != 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python -c "import sys; sys.path.insert(0, 'caja'); import telegram_envio as t; t.aviso('⚠️ Falló la preparación del vídeo de un post aprobado (instalación o pruebas). Revisa Actions en whalextreet-videos.')"

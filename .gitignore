@@ -19,3 +19,5 @@ proyectos/*/pipeline.log
 .hyperframes/
 caja/muestras/
 voz_cache/
+proyectos/post-*/
+post.json
