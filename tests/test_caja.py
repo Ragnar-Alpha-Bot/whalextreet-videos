@@ -249,5 +249,28 @@ comprobar("un cambio de +240 % se escribe sin decimales y uno pequeño con uno",
 hg2, _ = E.e_grafico(cg, {"tipo": "grafico", "voz": "x", "titulo": "t", "puntos": [100, 101.5, 103.2]})
 comprobar("un cambio de +3,2 % conserva el decimal", "+3,2 %" in hg2)
 
+# --- 9. Dos avatares: el profesor (aprobado, sin tocar) y el rubio ------------------------------------------------------------------------
+m = copy.deepcopy(BUENO); m["avatar"] = "payaso"; rechaza("un avatar desconocido se rechaza", m)
+for av in ("profesor", "rubio"):
+    m = copy.deepcopy(BUENO); m["avatar"] = av
+    comprobar(f"el avatar «{av}» es válido", guion.validar(m) is not None)
+    svg = (RAIZ / "marca" / motor.AVATARES[av]).read_text(encoding="utf-8")
+    comprobar(f"el avatar «{av}» trae todo lo que el motor anima (boca, párpados, brazo) y el marcador de la boca intermedia",
+              all(x in svg for x in ('id="boca_cerrada"', 'id="boca_abierta"', 'id="parpados"', 'id="brazo_d"', 'M193 322 Q201 328 209 322 Q201 318 193 322Z')))
+for av, esta, ausente in (("profesor", "#22252D", "#7A818E"), ("rubio", "#7A818E", "#22252D")):
+    with tempfile.TemporaryDirectory() as tmp:
+        d = proyecto_falso(tmp, "leccion")
+        sbj = json.loads((d / "storyboard.json").read_text(encoding="utf-8"))
+        sbj["avatar"] = av
+        (d / "storyboard.json").write_text(json.dumps(sbj), encoding="utf-8")
+        motor.construir(d)
+        h = (d / "index.html").read_text(encoding="utf-8")
+        comprobar(f"con avatar «{av}» el vídeo usa su traje ({esta}) y no el del otro", esta in h and ausente not in h and 'id="boca_media"' in h)
+with tempfile.TemporaryDirectory() as tmp:
+    d = proyecto_falso(tmp, "leccion")
+    motor.construir(d)
+    comprobar("sin indicar avatar se usa el profesor, como antes", "#22252D" in (d / "index.html").read_text(encoding="utf-8"))
+comprobar("el profesor aprobado no se ha tocado: sigue siendo traje negro, ojos verdes y barba castaña", all(x in (RAIZ / "marca" / "profesor_TAL_CUAL.svg").read_text(encoding="utf-8") for x in ("#22252D", "#3FB06A", "#8F6256")))
+
 print("\nTODO CORRECTO" if not fallos else f"\nFALLOS ({len(fallos)}): {fallos}")
 sys.exit(1 if fallos else 0)

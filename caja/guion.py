@@ -49,6 +49,8 @@ def validar(sb):
         errores.append(f"«tema» debe ser uno de {sorted(TEMAS)}")
     if not isinstance(sb.get("tipo_post", "datos"), str):
         errores.append("«tipo_post» debe ser texto")
+    if sb.get("avatar", "profesor") not in ("profesor", "rubio"):
+        errores.append("«avatar» debe ser «profesor» o «rubio»")
     v = sb.get("etiqueta")
     if v is not None and (not isinstance(v, str) or not v or len(v) > 24):
         errores.append("«etiqueta» debe ser un texto de hasta 24 caracteres")

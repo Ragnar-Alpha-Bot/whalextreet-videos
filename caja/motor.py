@@ -87,8 +87,11 @@ def _estados_boca(wav):
     return st
 
 
-def _profesor_svg():
-    svg = (RAIZ / "marca" / "profesor_TAL_CUAL.svg").read_text(encoding="utf-8").strip()
+AVATARES = {"profesor": "profesor_TAL_CUAL.svg", "rubio": "avatar_rubio.svg"}   # los dos avatares de la marca
+
+
+def _profesor_svg(avatar="profesor"):
+    svg = (RAIZ / "marca" / AVATARES[avatar]).read_text(encoding="utf-8").strip()
     marca = '<path d="M193 322 Q201 328 209 322 Q201 318 193 322Z" fill="#E36F78"/></g>'
     assert marca in svg, "el SVG del profesor no es el aprobado"
     return svg.replace(marca, marca + '<g id="boca_media" opacity="0"><path d="M184 309 Q201 328 218 309 Q201 316 184 309Z" fill="#6E1F27"/>'
@@ -245,7 +248,7 @@ def construir(proyecto):
     body = (f'<div id="root" data-composition-id="main" data-start="0" data-duration="{TOTAL}" data-width="1080" data-height="1920">\n'
             f'<div id="grid"></div>\n<div id="top"><img src="assets/isotipo.png" alt="WhaleXtreet" /><div id="pill">{etiqueta}</div></div>\n'
             + ("\n".join(sub_html)) + "\n" + ("\n".join(html_esc)) + "\n"
-            + (f'<div id="prof">{_profesor_svg()}</div>\n' if any(visible) else "")
+            + (f'<div id="prof">{_profesor_svg(sb.get("avatar", "profesor"))}</div>\n' if any(visible) else "")
             + f'<div id="foot">{pie}</div>\n'
             f'<div id="flash"></div>\n{audio}\n</div>')
 
