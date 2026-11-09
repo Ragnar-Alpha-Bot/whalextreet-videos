@@ -1,0 +1,10 @@
+node_modules/
+renders/
+**/assets/voz/
+**/index.html
+__pycache__/
+*.log
+# Nunca subir claves
+clave_api.txt
+telegram.txt
+*.env

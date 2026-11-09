@@ -1,0 +1,67 @@
+name: Generar vídeo
+
+on:
+  workflow_dispatch:
+    inputs:
+      plantilla:
+        description: "Carpeta dentro de plantillas/ (con guion.json y construir.py)"
+        default: "senales-cripto"
+
+jobs:
+  video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias de voz
+        run: |
+          pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Caché del modelo de voz
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-qwen3-tts-base-v1
+
+      - name: Pruebas de la regla de formatos
+        run: python test_formatos.py
+
+      - name: Generar la voz (voz D)
+        run: |
+          t0=$(date +%s)
+          python voz/generar_voz.py plantillas/${{ inputs.plantilla }}
+          echo "VOZ_SEG=$(( $(date +%s) - t0 ))" >> "$GITHUB_ENV"
+
+      - name: Montar el vídeo
+        run: python plantillas/${{ inputs.plantilla }}/construir.py
+
+      - name: Renderizar con HyperFrames
+        working-directory: plantillas/${{ inputs.plantilla }}
+        run: |
+          t0=$(date +%s)
+          npx --yes hyperframes@0.9.25 check || true
+          npx --yes hyperframes@0.9.25 render
+          echo "RENDER_SEG=$(( $(date +%s) - t0 ))" >> "$GITHUB_ENV"
+          ls -la renders
+
+      - name: Resumen de tiempos
+        run: |
+          echo "Voz: ${VOZ_SEG} s · Render: ${RENDER_SEG} s" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: video-${{ inputs.plantilla }}
+          path: plantillas/${{ inputs.plantilla }}/renders/*.mp4
+          retention-days: 7

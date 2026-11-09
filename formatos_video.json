@@ -1,0 +1,47 @@
+{
+  "_comentario": "Regla de cuándo sale el profesor de WhaleXtreet. Cada tipo de post de la agencia se asigna a un formato. Si un tipo nuevo no está aquí, se usa 'por_defecto'. Aprobado por el usuario el 9-nov-2026.",
+  "formatos": {
+    "presentador": {
+      "descripcion": "El profesor sale en todo el vídeo: explica, gesticula y señala los gráficos. Para vídeos que explican o enseñan algo.",
+      "profesor": "todo"
+    },
+    "cameo": {
+      "descripcion": "El profesor sale solo en el gancho y en el cierre. El resto es pantalla completa para datos y gráficos.",
+      "profesor": ["gancho", "cierre"]
+    },
+    "solo_datos": {
+      "descripcion": "El profesor no sale. Solo datos, voz y subtítulos. Para noticias y avisos rápidos.",
+      "profesor": "nunca"
+    }
+  },
+  "por_formato_de_post": {
+    "leccion": "presentador",
+    "mito": "presentador",
+    "hilo_mito": "presentador",
+    "comparativa": "presentador",
+    "checklist": "presentador",
+    "error_principiante": "presentador",
+    "hilo_error": "presentador",
+    "hilo_ideas": "presentador",
+    "hilo_ahorro": "presentador",
+    "hilo_diversificar": "presentador",
+    "hilo_historia": "presentador",
+    "que_hubiera_pasado": "presentador",
+    "hilo_macro": "presentador",
+    "hilo": "presentador",
+
+    "hilo_top": "cameo",
+    "hilo_numeros": "cameo",
+    "post_numeros": "cameo",
+    "datos": "cameo",
+    "macro": "cameo",
+    "pregunta": "cameo",
+    "construyendo": "cameo",
+    "cta": "cameo",
+    "fuente_web": "cameo",
+
+    "noticia": "solo_datos",
+    "hilo_noticia": "solo_datos"
+  },
+  "por_defecto": "cameo"
+}

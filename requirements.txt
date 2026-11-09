@@ -1,0 +1,6 @@
+# torch y torchaudio se instalan aparte, desde el índice de CPU de PyTorch (ver .github/workflows/video.yml)
+numpy
+soundfile
+qwen-tts==0.1.1
+transformers==4.57.3
+accelerate==1.12.0
