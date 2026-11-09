@@ -1,0 +1,25 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "etiqueta": "BOLSA · ACCIONES",
+  "escenas": [
+    {"tipo": "titulo",
+     "voz": "¿Cuánto pagas realmente por una empresa? El PER te lo dice en un solo número.",
+     "titulo": "El PER en 20 segundos", "subtitulo": "Cuánto pagas por cada euro que gana", "etiqueta": "BOLSA"},
+    {"tipo": "numero",
+     "voz": "El PER divide el precio de la acción entre lo que gana la empresa por acción. Si gana un euro por acción y cotiza a quince, su PER es quince.",
+     "valor": 15, "etiqueta": "PRECIO ÷ BENEFICIO POR ACCIÓN", "detalle": "15 € ÷ 1 € = 15", "cuando": "quince"},
+    {"tipo": "barras",
+     "voz": "Un PER bajo puede indicar una empresa barata, y uno alto, expectativas de crecimiento. Pero solo tiene sentido compararlo dentro del mismo sector.",
+     "titulo": "PER por sector (ilustrativo)", "destacar": 1,
+     "items": [{"n": "Sector A", "v": 8, "cuando": "bajo"}, {"n": "Sector B", "v": 30, "cuando": "alto"}, {"n": "Sector C", "v": 15, "cuando": "mismo"}]},
+    {"tipo": "lista",
+     "voz": "Antes de fiarte, revisa tres cosas: la deuda de la empresa, si sus beneficios son estables, y a qué sector pertenece.",
+     "titulo": "REVISA SIEMPRE",
+     "items": [{"t": "Deuda de la empresa", "cuando": "deuda"}, {"t": "Beneficios estables", "cuando": "estables"}, {"t": "Su sector", "cuando": "sector"}]},
+    {"tipo": "pregunta",
+     "voz": "¿Y tú, qué miras primero al analizar una acción: el PER, A, o la deuda, B?",
+     "pregunta": "¿Qué miras primero?",
+     "opciones": [{"t": "El PER", "cuando": "per"}, {"t": "La deuda", "cuando": "deuda"}]}
+  ]
+}

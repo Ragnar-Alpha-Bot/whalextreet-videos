@@ -1,0 +1,472 @@
+"""Escenas de la caja de herramientas de WhaleXtreet.
+
+Cada escena es una función  e_<tipo>(ctx, d) -> (html, js, eventos_de_sonido)  más un validador  v_<tipo>(d, err).
+El motor (motor.py) las coloca según el guion de escenas (storyboard) y la voz. Las apariciones se enganchan a palabras de la
+locución con el campo "cuando" (una palabra de la voz); si no existe, se reparten a lo largo de la frase.
+
+Escenas: titulo, numero, grafico, barras, donut, lista, tarjetas, pregunta
+"""
+import html as _html
+import json
+import math
+import re
+import unicodedata
+
+J = lambda d: json.dumps(d, separators=(",", ":"), ensure_ascii=False)
+r2 = lambda x: round(float(x), 2)
+esc = lambda s: _html.escape(str(s), quote=False)
+
+
+def es(n, dec=0):
+    s = f"{abs(n):,.{dec}f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return ("-" if n < 0 else "") + s
+
+
+def norm(s):
+    s = unicodedata.normalize("NFD", str(s).lower())
+    return re.sub(r"[^a-z0-9]", "", "".join(c for c in s if unicodedata.category(c) != "Mn"))
+
+
+class Ctx:
+    """Datos de una escena: tiempos, tamaño disponible, paleta y palabras de su locución."""
+
+    def __init__(self, i, t0, t1, l0, l1, words, W, H, p):
+        self.i, self.t0, self.t1, self.l0, self.l1, self.words, self.W, self.H, self.p = i, t0, t1, l0, l1, words, W, H, p
+        self.pf = f"s{i}_"
+        self.u = W / 984
+        self.dur = l1 - l0
+        self.ev, self.avisos = [], []
+
+    def px(self, n):
+        return f"{round(n * self.u)}px"
+
+    def n(self, v):
+        return round(v * self.u)
+
+    def T(self, x, frac=0.5):
+        """Segundo absoluto: una palabra de la voz (str), una fracción 0-1 de la frase (número) o la fracción por defecto."""
+        if isinstance(x, str) and x.strip():
+            for w in self.words:
+                if norm(w["t"]) == norm(x):
+                    return r2(self.l0 + w["ini"])
+            self.avisos.append(f"escena {self.i}: la palabra «{x}» no está en la voz; se reparte a lo largo de la frase")
+        elif isinstance(x, (int, float)) and not isinstance(x, bool):
+            frac = min(max(float(x), 0.0), 1.0)
+        return r2(self.l0 + frac * self.dur)
+
+    def snd(self, t, clave, vol=0.4):
+        self.ev.append((r2(t), clave, vol))
+
+
+def fromTo(sel, a, b, t):
+    return f'tl.fromTo("{sel}",{J(a)},{J(b)},{r2(t)});'
+
+
+def to(sel, b, t):
+    return f'tl.to("{sel}",{J(b)},{r2(t)});'
+
+
+def chip(c, texto, idn, tamano=30, tono="acc"):
+    return (f'<span class="chip h" id="{idn}" style="font-size:{c.px(tamano)};--c:var(--{tono})">{esc(texto)}</span>')
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Validación (ayudantes)
+# ---------------------------------------------------------------------------------------------------------------------
+def _txt(d, k, err, max_=60, req=True):
+    v = d.get(k)
+    if v is None or v == "":
+        if req:
+            err(f"falta «{k}»")
+        return
+    if not isinstance(v, str):
+        err(f"«{k}» debe ser texto")
+    elif len(v) > max_:
+        err(f"«{k}» es demasiado largo ({len(v)} > {max_} caracteres)")
+
+
+def _num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def _items(d, k, err, lo, hi):
+    it = d.get(k)
+    if not isinstance(it, list) or not (lo <= len(it) <= hi):
+        err(f"«{k}» debe ser una lista de {lo} a {hi} elementos")
+        return []
+    return it
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 1 · TÍTULO
+# ---------------------------------------------------------------------------------------------------------------------
+def v_titulo(d, err):
+    _txt(d, "titulo", err, 48)
+    _txt(d, "subtitulo", err, 70, req=False)
+    _txt(d, "etiqueta", err, 24, req=False)
+
+
+def e_titulo(c, d):
+    t = d["titulo"]
+    n = len(t)
+    fs = 150 if n <= 14 else 122 if n <= 24 else 100 if n <= 36 else 84
+    ws = t.split()
+    spans = "".join(f'<span class="tw" id="{c.pf}w{j}" style="display:inline-block;margin:0 .14em;opacity:0">{esc(w)}</span>' for j, w in enumerate(ws))
+    sub = d.get("subtitulo")
+    html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(36)}">'
+            + (chip(c, d["etiqueta"], c.pf + "chip") if d.get("etiqueta") else "")
+            + f'<div class="big" style="font-size:{c.px(fs)}">{spans}</div>'
+            + f'<div id="{c.pf}ln" class="linea" style="width:{c.px(280)}"></div>'
+            + (f'<div class="nota h" id="{c.pf}sub" style="font-size:{c.px(46)}">{esc(sub)}</div>' if sub else "") + '</div>')
+    js, t0 = [], c.t0
+    if d.get("etiqueta"):
+        js.append(fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, t0 + .2))
+        c.snd(t0 + .2, "pop:0", .45)
+    for j in range(len(ws)):
+        js.append(fromTo(f"#{c.pf}w{j}", {"opacity": 0, "y": 70}, {"opacity": 1, "y": 0, "duration": .5, "ease": "back.out(1.7)"}, t0 + .35 + .13 * j))
+    c.snd(t0 + .35, "impact", .5)
+    js.append(fromTo(f"#{c.pf}ln", {"scaleX": 0}, {"scaleX": 1, "duration": .5, "ease": "power3.out", "transformOrigin": "center"}, t0 + .5 + .13 * len(ws)))
+    c.snd(t0 + .5 + .13 * len(ws), "swipe", .3)
+    if sub:
+        js.append(fromTo(f"#{c.pf}sub", {"opacity": 0, "y": 24}, {"opacity": 1, "y": 0, "duration": .5, "ease": "power3.out"}, t0 + 1.0 + .13 * len(ws)))
+        c.snd(t0 + 1.0 + .13 * len(ws), "pop:2", .3)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 2 · NÚMERO GIGANTE
+# ---------------------------------------------------------------------------------------------------------------------
+def v_numero(d, err):
+    if not _num(d.get("valor")):
+        err("«valor» debe ser un número")
+    for k in ("decimales",):
+        if k in d and (not isinstance(d[k], int) or not 0 <= d[k] <= 3):
+            err("«decimales» debe ser un entero de 0 a 3")
+    if "desde" in d and not _num(d["desde"]):
+        err("«desde» debe ser un número")
+    if "delta" in d and not _num(d["delta"]):
+        err("«delta» debe ser un número")
+    for k in ("prefijo", "sufijo"):
+        _txt(d, k, err, 6, req=False)
+    _txt(d, "etiqueta", err, 44, req=False)
+    _txt(d, "detalle", err, 50, req=False)
+
+
+def e_numero(c, d):
+    dec = d.get("decimales", 0)
+    pre, suf = d.get("prefijo", ""), d.get("sufijo", "")
+    v, v0 = d["valor"], d.get("desde", 0)
+    final = pre + es(v, dec) + suf
+    fs = min(300, 1480 / max(len(final), 1))
+    ide = f"{c.pf}num"
+    html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(24)}">'
+            + (f'<div class="lab h" id="{c.pf}lab" style="font-size:{c.px(34)}">{esc(d["etiqueta"])}</div>' if d.get("etiqueta") else "")
+            + f'<div class="big" id="{ide}" style="font-size:{c.px(fs)};color:var(--acc);line-height:1">{esc(pre + es(v0, dec) + suf)}</div>'
+            + (f'<div class="pildora h" id="{c.pf}det" style="font-size:{c.px(40)}">{esc(d["detalle"])}</div>' if d.get("detalle") else "")
+            + (f'<div class="chip h" id="{c.pf}dl" style="font-size:{c.px(44)};--c:var(--{"up" if d["delta"] >= 0 else "down"})">'
+               f'{"▲ +" if d["delta"] >= 0 else "▼ −"}{es(abs(d["delta"]), 1)} {esc(d.get("delta_unidad", "%"))}</div>' if "delta" in d else "") + '</div>')
+    t = c.T(d.get("cuando"), 0.18)
+    dur = 1.5
+    js = []
+    if d.get("etiqueta"):
+        js.append(fromTo(f"#{c.pf}lab", {"opacity": 0, "y": -20}, {"opacity": 1, "y": 0, "duration": .4, "ease": "power3.out"}, c.t0 + .2))
+        c.snd(c.t0 + .2, "pop:2", .35)
+    js.append(f'const {c.pf}o={{v:{v0}}};tl.to({c.pf}o,{{v:{v},duration:{dur},ease:"power2.out",onUpdate(){{document.getElementById("{ide}").textContent={J(pre)}+fm({c.pf}o.v,{dec})+{J(suf)}}}}},{t});')
+    js.append(fromTo(f"#{ide}", {"opacity": 0, "scale": .92}, {"opacity": 1, "scale": 1, "duration": .5, "ease": "back.out(2)"}, max(t - .15, c.t0 + .3)))
+    js.append(fromTo(f"#{ide}", {"scale": 1}, {"scale": 1.06, "duration": .14, "yoyo": True, "repeat": 1, "ease": "power2.out", "immediateRender": False}, t + dur))
+    for k in range(int(dur / .1)):
+        c.snd(t + .1 * k, "tick", .16 + .12 * k / (dur / .1))
+    c.snd(t + dur, "ding:1", .4)
+    if d.get("detalle"):
+        js.append(fromTo(f"#{c.pf}det", {"opacity": 0, "y": 24}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, t + dur + .15))
+        c.snd(t + dur + .15, "card", .4)
+    if "delta" in d:
+        js.append(fromTo(f"#{c.pf}dl", {"opacity": 0, "scale": .5}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(3)"}, t + dur + .45))
+        c.snd(t + dur + .45, "pop:1" if d["delta"] >= 0 else "error", .45)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 3 · GRÁFICO DE LÍNEAS
+# ---------------------------------------------------------------------------------------------------------------------
+def v_grafico(d, err):
+    _txt(d, "titulo", err, 44)
+    p = d.get("puntos")
+    if not isinstance(p, list) or not (2 <= len(p) <= 40) or not all(_num(x) for x in p):
+        err("«puntos» debe ser una lista de 2 a 40 números")
+    _txt(d, "unidad", err, 6, req=False)
+    et = d.get("etiquetas")
+    if et is not None and not (isinstance(et, list) and len(et) == 2 and all(isinstance(x, str) and len(x) <= 14 for x in et)):
+        err("«etiquetas» debe ser una lista de 2 textos cortos (inicio y fin)")
+    an = d.get("anotaciones", [])
+    if not isinstance(an, list) or len(an) > 3:
+        err("«anotaciones» admite hasta 3")
+    else:
+        n = len(p) if isinstance(p, list) else 0
+        for a in an:
+            if not isinstance(a, dict) or not isinstance(a.get("i"), int) or not 0 <= a["i"] < n or not isinstance(a.get("texto"), str) or len(a["texto"]) > 28:
+                err("cada anotación necesita «i» (posición del punto) y «texto» de hasta 28 caracteres")
+
+
+def e_grafico(c, d):
+    pts = d["puntos"]
+    n = len(pts)
+    VW, VH = c.n(984) if c.W >= 984 else c.W, c.n(560)
+    VW = c.W
+    lo, hi = min(pts), max(pts)
+    rng = (hi - lo) or 1.0
+    top, bot = c.n(50), c.n(40)
+    X = lambda i: i * VW / (n - 1)
+    Y = lambda v: VH - bot - (v - lo) / rng * (VH - top - bot)
+    path = "M" + " L".join(f"{X(i):.1f} {Y(v):.1f}" for i, v in enumerate(pts))
+    area = path + f" L{VW:.0f} {VH:.0f} L0 {VH:.0f}Z"
+    sube = pts[-1] >= pts[0]
+    col = "var(--up)" if sube else "var(--down)"
+    unidad = d.get("unidad", "")
+    cambio = ""
+    if pts[0] != 0:
+        ch = (pts[-1] / pts[0] - 1) * 100
+        cambio = f'{"▲ +" if ch >= 0 else "▼ −"}{es(abs(ch), 1)} %'
+    grid = "".join(f'<path d="M0 {VH * k / 4:.0f} H{VW:.0f}" stroke="var(--border)" stroke-width="2" opacity=".55"/>' for k in range(1, 4))
+    pins, pin_js = "", []
+    for k, a in enumerate(d.get("anotaciones", [])):
+        cx, cy = X(a["i"]), Y(pts[a["i"]])
+        pw = len(a["texto"]) * c.n(19) + c.n(44)
+        left = min(max(cx - pw / 2, 0), VW - pw)
+        above = cy > VH * 0.45
+        ty = cy - c.n(92) if above else cy + c.n(30)
+        pins += (f'<div class="pin h" id="{c.pf}pin{k}" style="left:{cx - c.n(11):.0f}px;top:{cy - c.n(11):.0f}px;width:{c.n(22)}px;height:{c.n(22)}px"></div>'
+                 f'<div class="pildora h" id="{c.pf}an{k}" style="position:absolute;left:{left:.0f}px;top:{ty:.0f}px;font-size:{c.px(32)};padding:{c.px(8)} {c.px(20)}">{esc(a["texto"])}</div>')
+        ta = c.T(a.get("cuando"), 0.55 + 0.12 * k)
+        pin_js += [fromTo(f"#{c.pf}pin{k}", {"opacity": 0, "scale": 0}, {"opacity": 1, "scale": 1, "duration": .35, "ease": "back.out(3)"}, ta),
+                   fromTo(f"#{c.pf}an{k}", {"opacity": 0, "y": 12}, {"opacity": 1, "y": 0, "duration": .35, "ease": "power3.out"}, ta + .12)]
+        c.snd(ta, "pop:" + str(k % 4), .45)
+    et = d.get("etiquetas")
+    html = (f'<div class="col" style="justify-content:center;gap:{c.px(20)}">'
+            f'<div style="display:flex;justify-content:space-between;align-items:baseline">'
+            f'<div class="lab" style="font-size:{c.px(34)}">{esc(d["titulo"])}</div>'
+            f'<div class="h" id="{c.pf}val" style="font-weight:700;font-size:{c.px(64)};color:{col}">{esc(es(pts[-1], 1 if abs(pts[-1]) < 100 and pts[-1] != int(pts[-1]) else 0))}{esc(unidad)}</div></div>'
+            f'<div style="position:relative;width:{VW}px;height:{VH}px">'
+            f'<svg viewBox="0 0 {VW} {VH}" width="{VW}" height="{VH}" style="overflow:visible">{grid}'
+            f'<path id="{c.pf}ar" d="{area}" fill="{col}" opacity="0"/>'
+            f'<path id="{c.pf}ln" d="{path}" fill="none" stroke="{col}" stroke-width="{c.n(10)}" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>'
+            f'<circle id="{c.pf}dot" cx="{X(n - 1):.1f}" cy="{Y(pts[-1]):.1f}" r="{c.n(15)}" fill="{col}" opacity="0"/></svg>{pins}</div>'
+            + (f'<div style="display:flex;justify-content:space-between" class="lab"><span style="font-size:{c.px(28)}">{esc(et[0])}</span><span style="font-size:{c.px(28)}">{esc(et[1])}</span></div>' if et else "")
+            + (f'<div class="chip h" id="{c.pf}chg" style="font-size:{c.px(44)};--c:{col};align-self:center">{cambio}</div>' if cambio else "") + '</div>')
+    t = c.t0 + .55
+    dur = min(2.2, max(1.2, c.dur * .45))
+    js = [fromTo(f"#{c.pf}ln", {"attr": {"stroke-dashoffset": 1}}, {"attr": {"stroke-dashoffset": 0}, "duration": dur, "ease": "power1.inOut"}, t),
+          to(f"#{c.pf}ar", {"opacity": .13, "duration": .6}, t + dur * .6),
+          fromTo(f"#{c.pf}dot", {"opacity": 0, "scale": 0, "transformOrigin": "center"}, {"opacity": 1, "scale": 1, "duration": .35, "ease": "back.out(3)"}, t + dur),
+          fromTo(f"#{c.pf}val", {"opacity": 0, "y": -16}, {"opacity": 1, "y": 0, "duration": .4, "ease": "power3.out"}, t + dur)] + pin_js
+    if cambio:
+        js.append(fromTo(f"#{c.pf}chg", {"opacity": 0, "scale": .5}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(3)"}, t + dur + .25))
+    c.snd(c.t0 + .25, "card", .4)
+    c.snd(t, "riser:1", .32)
+    c.snd(t + dur, "ding:0" if sube else "error", .4)
+    if cambio:
+        c.snd(t + dur + .25, "pop:1", .4)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 4 · BARRAS
+# ---------------------------------------------------------------------------------------------------------------------
+def v_barras(d, err):
+    _txt(d, "titulo", err, 44)
+    _txt(d, "unidad", err, 6, req=False)
+    it = _items(d, "items", err, 2, 6)
+    for x in it:
+        if not isinstance(x, dict) or not isinstance(x.get("n"), str) or len(x["n"]) > 24 or not _num(x.get("v")) or x["v"] < 0:
+            err("cada barra necesita «n» (nombre de hasta 24 caracteres) y «v» (número ≥ 0)")
+            break
+    if "destacar" in d and not (isinstance(d["destacar"], int) and 0 <= d["destacar"] < len(it)):
+        err("«destacar» debe ser la posición de una barra")
+
+
+def e_barras(c, d):
+    it = d["items"]
+    n = len(it)
+    mx = max(x["v"] for x in it) or 1
+    unidad = d.get("unidad", "")
+    dest = d.get("destacar", max(range(n), key=lambda k: it[k]["v"]))
+    rh = min(150, (860 - 120) / n)
+    rows = ""
+    for k, x in enumerate(it):
+        colr = "var(--acc)" if k == dest else "var(--acc2)"
+        rows += (f'<div class="h" id="{c.pf}r{k}" style="height:{c.px(rh)}"><div class="lab" style="font-size:{c.px(32)};color:var(--text);letter-spacing:.02em">{esc(x["n"])}</div>'
+                 f'<div style="display:flex;align-items:center;gap:{c.px(20)};margin-top:{c.px(10)}"><div class="pista" style="flex:1;height:{c.px(46)}">'
+                 f'<div id="{c.pf}b{k}" style="height:100%;width:0;border-radius:{c.px(23)};background:{colr};opacity:{1 if k == dest else .7}"></div></div>'
+                 f'<div class="h" id="{c.pf}v{k}" style="font-weight:700;font-size:{c.px(44)};min-width:{c.px(130)};text-align:right;color:{colr}">{esc(es(x["v"], 1 if x["v"] != int(x["v"]) else 0))}{esc(unidad)}</div></div></div>')
+    html = (f'<div class="col" style="justify-content:center;gap:{c.px(14)}"><div class="lab" style="font-size:{c.px(34)};margin-bottom:{c.px(16)}">{esc(d["titulo"])}</div>{rows}</div>')
+    js = []
+    c.snd(c.t0 + .2, "card", .4)
+    for k, x in enumerate(it):
+        t = c.T(x.get("cuando"), 0.12 + 0.62 * k / max(n - 1, 1))
+        js += [fromTo(f"#{c.pf}r{k}", {"opacity": 0, "x": -40}, {"opacity": 1, "x": 0, "duration": .35, "ease": "power3.out"}, t - .1),
+               to(f"#{c.pf}b{k}", {"width": f"{x['v'] / mx * 100:.1f}%", "duration": .8, "ease": "power3.out"}, t),
+               fromTo(f"#{c.pf}v{k}", {"opacity": 0}, {"opacity": 1, "duration": .3}, t + .6)]
+        c.snd(t - .1, "swipe", .22)
+        c.snd(t + .6, f"blip:{k}", .42)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 5 · GRÁFICO CIRCULAR
+# ---------------------------------------------------------------------------------------------------------------------
+def v_donut(d, err):
+    _txt(d, "titulo", err, 44)
+    it = _items(d, "segmentos", err, 2, 5)
+    for x in it:
+        if not isinstance(x, dict) or not isinstance(x.get("n"), str) or len(x["n"]) > 22 or not _num(x.get("v")) or x["v"] <= 0:
+            err("cada segmento necesita «n» (hasta 22 caracteres) y «v» (número > 0)")
+            break
+
+
+def e_donut(c, d):
+    seg = d["segmentos"]
+    tot = sum(x["v"] for x in seg)
+    cols = ["var(--acc)", "var(--acc2)", "var(--warn)", "var(--down)", "var(--up)"]
+    R = 150.0
+    C = 2 * math.pi * R
+    size = min(c.W * .64, c.n(470))
+    circ, leg, js, ang = "", "", [], 0.0
+    mayor = max(range(len(seg)), key=lambda k: seg[k]["v"])
+    c.snd(c.t0 + .2, "card", .4)
+    for k, x in enumerate(seg):
+        frac = x["v"] / tot
+        ln = max(C * frac - 4, 1)
+        circ += (f'<circle id="{c.pf}c{k}" cx="200" cy="200" r="{R}" fill="none" stroke="{cols[k]}" stroke-width="64" stroke-dasharray="0 {C:.1f}" '
+                 f'transform="rotate({-90 + ang * 360:.2f} 200 200)"/>')
+        leg += (f'<div class="h" id="{c.pf}g{k}" style="display:flex;align-items:center;gap:{c.px(18)};font-weight:700;font-size:{c.px(44)};margin-top:{c.px(12)}">'
+                f'<span style="width:{c.px(30)};height:{c.px(30)};border-radius:50%;background:{cols[k]};flex:none"></span><span style="flex:1">{esc(x["n"])}</span>'
+                f'<span style="color:{cols[k]}">{es(frac * 100, 0)} %</span></div>')
+        t = c.T(x.get("cuando"), 0.1 + 0.6 * k / max(len(seg) - 1, 1))
+        js += [to(f"#{c.pf}c{k}", {"attr": {"stroke-dasharray": f"{ln:.1f} {C - ln:.1f}"}, "duration": .8, "ease": "power2.out"}, t),
+               fromTo(f"#{c.pf}g{k}", {"opacity": 0, "x": 40}, {"opacity": 1, "x": 0, "duration": .35, "ease": "power3.out"}, t + .1)]
+        c.snd(t, f"blip:{k}", .42)
+        ang += frac
+    html = (f'<div class="col" style="align-items:center;justify-content:center;gap:{c.px(18)}"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start">{esc(d["titulo"])}</div>'
+            f'<div style="position:relative;width:{size:.0f}px;height:{size:.0f}px"><svg viewBox="0 0 400 400" width="{size:.0f}" height="{size:.0f}">'
+            f'<circle cx="200" cy="200" r="{R}" fill="none" stroke="var(--raised)" stroke-width="64"/>{circ}</svg>'
+            f'<div class="h" id="{c.pf}ct" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">'
+            f'<div style="font-weight:700;font-size:{c.px(96)};line-height:1;color:{cols[mayor]}">{es(seg[mayor]["v"] / tot * 100, 0)} %</div>'
+            f'<div class="lab" style="font-size:{c.px(26)};margin-top:{c.px(8)}">{esc(seg[mayor]["n"])}</div></div></div>'
+            f'<div style="width:100%">{leg}</div></div>')
+    tf = c.t0 + c.dur * .72
+    js.append(fromTo(f"#{c.pf}ct", {"opacity": 0, "scale": .7}, {"opacity": 1, "scale": 1, "duration": .45, "ease": "back.out(2.4)"}, tf))
+    c.snd(tf, "ding:2", .35)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 6 · LISTA CON CHECKS
+# ---------------------------------------------------------------------------------------------------------------------
+def v_lista(d, err):
+    _txt(d, "titulo", err, 44, req=False)
+    it = _items(d, "items", err, 2, 5)
+    for x in it:
+        t = x.get("t") if isinstance(x, dict) else x
+        if not isinstance(t, str) or not t or len(t) > 36:
+            err("cada punto de la lista debe ser un texto de hasta 36 caracteres")
+            break
+
+
+def e_lista(c, d):
+    it = [x if isinstance(x, dict) else {"t": x} for x in d["items"]]
+    n = len(it)
+    rows = "".join(f'<div class="fila h" id="{c.pf}r{k}" style="font-size:{c.px(54)};height:{c.px(122)};gap:{c.px(24)}">'
+                   f'<div class="ck" id="{c.pf}ck{k}" style="width:{c.px(68)};height:{c.px(68)};font-size:{c.px(44)}">✓</div>{esc(x["t"])}</div>' for k, x in enumerate(it))
+    html = (f'<div class="col" style="justify-content:center;gap:{c.px(18)}">'
+            + (f'<div class="lab" style="font-size:{c.px(34)};margin-bottom:{c.px(10)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + rows + '</div>')
+    js = []
+    c.snd(c.t0 + .2, "card", .35)
+    for k, x in enumerate(it):
+        t = c.T(x.get("cuando"), 0.15 + 0.6 * k / max(n - 1, 1))
+        js += [fromTo(f"#{c.pf}r{k}", {"opacity": 0, "x": 50}, {"opacity": 1, "x": 0, "duration": .35, "ease": "power3.out"}, t),
+               f'tl.set("#{c.pf}ck{k}",{{backgroundColor:"var(--acc)",borderColor:"var(--acc)",color:"#0B1020"}},{r2(t + .35)});',
+               fromTo(f"#{c.pf}ck{k}", {"scale": .5}, {"scale": 1, "duration": .3, "ease": "back.out(3)", "immediateRender": False}, t + .35)]
+        c.snd(t, "pop:" + str(k % 4), .5)
+        c.snd(t + .35, "ding:" + str(k % 3), .32)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 7 · TARJETAS DE DATOS
+# ---------------------------------------------------------------------------------------------------------------------
+def v_tarjetas(d, err):
+    _txt(d, "titulo", err, 44, req=False)
+    it = _items(d, "items", err, 2, 4)
+    for x in it:
+        if (not isinstance(x, dict) or not isinstance(x.get("etiqueta"), str) or len(x["etiqueta"]) > 30 or not isinstance(x.get("valor"), str) or not x["valor"]
+                or len(x["valor"]) > 12 or (x.get("nota") is not None and (not isinstance(x["nota"], str) or len(x["nota"]) > 44))
+                or x.get("tono", "acc") not in ("acc", "up", "down", "warn")):
+            err("cada tarjeta necesita «etiqueta» (hasta 30), «valor» (texto de hasta 12), «nota» opcional (hasta 44) y «tono» opcional (acc, up, down, warn)")
+            break
+
+
+def e_tarjetas(c, d):
+    it = d["items"]
+    n = len(it)
+    ch = min(300, (900 - 90) / n - 20)
+    cards = ""
+    for k, x in enumerate(it):
+        tono = x.get("tono", "acc")
+        cards += (f'<div class="tarjeta h" id="{c.pf}t{k}" style="height:{c.px(ch)};padding:{c.px(24)} {c.px(34)}">'
+                  f'<div class="lab" style="font-size:{c.px(28)}">{esc(x["etiqueta"])}</div>'
+                  f'<div style="font-weight:700;font-size:{c.px(min(120, ch * .46))};letter-spacing:-.03em;line-height:1.05;color:var(--{tono})">{esc(x["valor"])}</div>'
+                  + (f'<div class="nota" style="font-size:{c.px(32)};margin-top:{c.px(4)}">{esc(x["nota"])}</div>' if x.get("nota") else "") + '</div>')
+    html = (f'<div class="col" style="justify-content:center;gap:{c.px(20)}">'
+            + (f'<div class="lab" style="font-size:{c.px(34)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + cards + '</div>')
+    js = []
+    for k, x in enumerate(it):
+        t = c.T(x.get("cuando"), 0.1 + 0.6 * k / max(n - 1, 1))
+        js.append(fromTo(f"#{c.pf}t{k}", {"opacity": 0, "y": 70, "scale": .96}, {"opacity": 1, "y": 0, "scale": 1, "duration": .5, "ease": "power3.out"}, t))
+        c.snd(t, "card", .5)
+        c.snd(t + .25, "pop:" + str((k + 1) % 4), .3)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 8 · PREGUNTA PARA EL ESPECTADOR
+# ---------------------------------------------------------------------------------------------------------------------
+def v_pregunta(d, err):
+    _txt(d, "pregunta", err, 70)
+    op = _items(d, "opciones", err, 2, 3)
+    for x in op:
+        t = x.get("t") if isinstance(x, dict) else x
+        if not isinstance(t, str) or not t or len(t) > 26:
+            err("cada opción debe ser un texto de hasta 26 caracteres")
+            break
+    _txt(d, "pie", err, 40, req=False)
+
+
+def e_pregunta(c, d):
+    op = [x if isinstance(x, dict) else {"t": x} for x in d["opciones"]]
+    n = len(op)
+    letras = "ABC"
+    opts = "".join(f'<div class="opcion h" id="{c.pf}o{k}" style="font-size:{c.px(62)};gap:{c.px(28)};padding:{c.px(26)} {c.px(32)}">'
+                   f'<b style="width:{c.px(110)};height:{c.px(110)};font-size:{c.px(64)};background:var(--{"acc" if k % 2 == 0 else "acc2"})">{letras[k]}</b>{esc(x["t"])}</div>' for k, x in enumerate(op))
+    html = (f'<div class="col" style="justify-content:center;align-items:flex-start;gap:{c.px(26)}">{chip(c, "AHORA TÚ", c.pf + "chip", 32)}'
+            f'<div class="big h" id="{c.pf}q" style="font-size:{c.px(88 if len(d["pregunta"]) < 40 else 74)}">{esc(d["pregunta"])}</div>{opts}'
+            f'<div class="lab h" id="{c.pf}pie" style="font-size:{c.px(34)};color:var(--acc)">{esc(d.get("pie", "RESPONDE EN LOS COMENTARIOS"))}</div></div>')
+    js = [fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, c.t0 + .2),
+          fromTo(f"#{c.pf}q", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .5, "ease": "power3.out"}, c.t0 + .35)]
+    c.snd(c.t0 + .2, "pop:0", .45)
+    c.snd(c.t0 + .35, "swipe", .3)
+    tl_ = 0
+    for k, x in enumerate(op):
+        t = c.T(x.get("cuando"), 0.5 + 0.2 * k)
+        t = max(t - .15, c.t0 + .9 + .25 * k)
+        tl_ = t
+        js.append(fromTo(f"#{c.pf}o{k}", {"opacity": 0, "x": 80}, {"opacity": 1, "x": 0, "duration": .45, "ease": "power3.out"}, t))
+        c.snd(t, "pop:" + str(k + 1), .5)
+    js.append(fromTo(f"#{c.pf}pie", {"opacity": 0}, {"opacity": 1, "duration": .4}, tl_ + .6))
+    c.snd(tl_ + .6, "ding:1", .35)
+    return html, js
+
+
+ESCENAS = {
+    "titulo": (e_titulo, v_titulo), "numero": (e_numero, v_numero), "grafico": (e_grafico, v_grafico), "barras": (e_barras, v_barras),
+    "donut": (e_donut, v_donut), "lista": (e_lista, v_lista), "tarjetas": (e_tarjetas, v_tarjetas), "pregunta": (e_pregunta, v_pregunta),
+}

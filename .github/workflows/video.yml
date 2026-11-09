@@ -3,9 +3,9 @@ name: Generar vídeo
 on:
   workflow_dispatch:
     inputs:
-      plantilla:
-        description: "Carpeta dentro de plantillas/ (con guion.json y construir.py)"
-        default: "senales-cripto"
+      proyecto:
+        description: "Carpeta dentro de proyectos/ con su storyboard.json"
+        default: "bolsa-per"
 
 jobs:
   video:
@@ -27,44 +27,30 @@ jobs:
       - name: Instalar FFmpeg (lo necesita HyperFrames)
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Instalar dependencias de voz
+      - name: Instalar dependencias de voz y subtítulos
         run: |
           pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu
           pip install -r requirements.txt
 
-      - name: Caché del modelo de voz
+      - name: Caché de los modelos (voz y Whisper)
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: hf-qwen3-tts-base-v1
+          key: hf-qwen3-tts-whisper-small-v1
 
-      - name: Pruebas de la regla de formatos
-        run: python test_formatos.py
+      - name: Pruebas
+        run: |
+          python test_formatos.py
+          python tests/test_caja.py
 
-      - name: Generar la voz (voz D)
+      - name: Generar el vídeo (voz D, subtítulos, montaje y render)
         run: |
           t0=$(date +%s)
-          python voz/generar_voz.py plantillas/${{ inputs.plantilla }}
-          echo "VOZ_SEG=$(( $(date +%s) - t0 ))" >> "$GITHUB_ENV"
-
-      - name: Montar el vídeo
-        run: python plantillas/${{ inputs.plantilla }}/construir.py
-
-      - name: Renderizar con HyperFrames
-        working-directory: plantillas/${{ inputs.plantilla }}
-        run: |
-          t0=$(date +%s)
-          npx --yes hyperframes@0.9.25 check || true
-          npx --yes hyperframes@0.9.25 render
-          echo "RENDER_SEG=$(( $(date +%s) - t0 ))" >> "$GITHUB_ENV"
-          ls -la renders
-
-      - name: Resumen de tiempos
-        run: |
-          echo "Voz: ${VOZ_SEG} s · Render: ${RENDER_SEG} s" >> "$GITHUB_STEP_SUMMARY"
+          python caja/pipeline.py proyectos/${{ inputs.proyecto }}
+          echo "Tiempo total del vídeo: $(( $(date +%s) - t0 )) s" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: video-${{ inputs.plantilla }}
-          path: plantillas/${{ inputs.plantilla }}/renders/*.mp4
+          name: video-${{ inputs.proyecto }}
+          path: proyectos/${{ inputs.proyecto }}/renders/*.mp4
           retention-days: 7
