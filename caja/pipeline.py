@@ -30,6 +30,18 @@ def voz_al_dia(proyecto, lin, hab=None):
                                       and (proyecto / "assets" / "voz" / f"{k}.wav").exists() for k in lin)
 
 
+def borrar_cache_de_lineas(lin, hab, claves):
+    """Quita de voz_cache los trozos de esas líneas para que se vuelvan a generar (el modelo no habla igual dos veces)."""
+    import frases
+    import vozcache
+    voces = json.loads((RAIZ / "marca" / "voces.json").read_text(encoding="utf-8"))
+    cfg = frases.config_audio()
+    for k in claves:
+        pid = vozcache.id_perfil(RAIZ / "perfiles" / voces[hab.get(k, "profesor")])
+        for frase, _ in frases.trocear(lin[k], cfg):
+            vozcache.ruta(RAIZ / "voz_cache", vozcache.clave(frase, pid)).unlink(missing_ok=True)
+
+
 def main(proyecto, render=True, forzar=False):
     proyecto = Path(proyecto).resolve()
     sb = validar(json.loads((proyecto / "storyboard.json").read_text(encoding="utf-8")))
@@ -38,19 +50,30 @@ def main(proyecto, render=True, forzar=False):
     (proyecto / "guion.json").write_text(json.dumps(lin, ensure_ascii=False, indent=1), encoding="utf-8")
     hab = {f"l{i}": h for i, h in enumerate(hablantes(sb), 1)}
     (proyecto / "hablantes.json").write_text(json.dumps(hab, ensure_ascii=False, indent=1), encoding="utf-8")
-    if forzar or not voz_al_dia(proyecto, lin, hab):
-        print("2/5 generando la voz D (unos 10 s de cálculo por cada segundo de audio en CPU)…")
-        subprocess.run([sys.executable, "-X", "utf8", str(RAIZ / "voz" / "generar_voz.py"), str(proyecto)], check=True)
-        palabras_listas = False
-    else:
-        print("2/5 la voz ya está al día, se reutiliza")
-        palabras_listas = (proyecto / "assets" / "voz" / "palabras.json").exists()
-    if not palabras_listas:
+    for ronda in range(1, 4):                      # si la voz lee mal una frase, se repite solo esa frase (hasta 3 rondas)
+        if forzar or not voz_al_dia(proyecto, lin, hab):
+            print("2/5 generando la voz D (unos 10 s de cálculo por cada segundo de audio en CPU)…")
+            subprocess.run([sys.executable, "-X", "utf8", str(RAIZ / "voz" / "generar_voz.py"), str(proyecto)], check=True)
+            palabras_listas = False
+        else:
+            print("2/5 la voz ya está al día, se reutiliza")
+            palabras_listas = (proyecto / "assets" / "voz" / "palabras.json").exists()
+        if palabras_listas:
+            print("3/5 tiempos de palabra ya calculados")
+            break
         print("3/5 tiempos exactos de cada palabra (Whisper)…")
         import palabras
-        palabras.procesar(proyecto)
-    else:
-        print("3/5 tiempos de palabra ya calculados")
+        try:
+            palabras.procesar(proyecto)
+            break
+        except palabras.VozMala as e:
+            if ronda == 3:
+                raise
+            print(f"Aviso: {e} Ronda {ronda}/3: se repiten solo esas frases.", flush=True)
+            borrar_cache_de_lineas(lin, hab, e.claves)
+            for f in ("duraciones.json", "palabras.json"):          # sin esto la voz «ya está al día» y no se rehace
+                (proyecto / "assets" / "voz" / f).unlink(missing_ok=True)
+            forzar = False
     print("4/5 montaje")
     from motor import construir
     resumen = construir(proyecto)
