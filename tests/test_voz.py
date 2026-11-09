@@ -93,5 +93,23 @@ with tempfile.TemporaryDirectory() as tmp:
     musica.generar(str(Path(tmp) / "fuerte.wav"), 3.0, "alerta", 0.2, -24.0)
     comprobar("el nivel sigue a la voz: voz más fuerte = fondo proporcionalmente más fuerte", float(np.sqrt(np.mean(sf.read(Path(tmp) / "fuerte.wav")[0] ** 2))) > float(np.sqrt(np.mean(r["alerta"][: 3 * srm] ** 2))) * 2)
 
+# --- 4. Volumen final estándar -----------------------------------------------------------------------------------------
+import shutil as _sh
+import subprocess as _sp
+import volumen  # noqa: E402
+if _sh.which("ffmpeg"):
+    with tempfile.TemporaryDirectory() as tmp:
+        v = Path(tmp) / "bajo.mp4"
+        _sp.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=black:s=160x284:d=6:r=30", "-f", "lavfi", "-i", "sine=f=220:d=6",
+                 "-af", "volume=-24dB", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", "-shortest", str(v)], check=True)
+        antes0 = volumen.medir(v)["lufs"]
+        a, d = volumen.normalizar(v)
+        info = _sp.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_name,codec_type", "-of", "csv=p=0", str(v)], capture_output=True, text=True).stdout
+        comprobar(f"un vídeo muy bajo ({antes0:.1f} LUFS) sale a -14 LUFS (±1): medido {d:.1f}", antes0 < -20 and abs(d + 14) < 1.0)
+        comprobar("la normalización no recodifica la imagen (sigue h264) y deja el audio en aac", "h264" in info and "aac" in info)
+        comprobar("un vídeo que ya está al nivel correcto no se toca", volumen.normalizar(v)[0] == volumen.normalizar(v)[1])
+else:
+    print("AVISO: no hay ffmpeg; se omiten las pruebas de volumen")
+
 print("\nTODO CORRECTO" if not fallos else f"\nFALLOS ({len(fallos)}): {fallos}")
 sys.exit(1 if fallos else 0)

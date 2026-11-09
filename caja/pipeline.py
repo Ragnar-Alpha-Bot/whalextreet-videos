@@ -52,6 +52,9 @@ def main(proyecto, render=True, forzar=False):
         print("5/5 render con HyperFrames…")
         subprocess.run(["npx", "--yes", "hyperframes@0.9.25", "render"], cwd=proyecto, check=True, shell=(sys.platform == "win32"))
         mp4 = sorted((proyecto / "renders").glob("*.mp4"), key=lambda f: f.stat().st_mtime)[-1]
+        import volumen
+        antes, despues = volumen.normalizar(mp4)
+        print(f"Volumen normalizado: {antes:.1f} → {despues:.1f} LUFS")
         print("VÍDEO:", mp4)
     return resumen
 
