@@ -314,6 +314,8 @@ with tempfile.TemporaryDirectory() as tmp:
     html = (d / "index.html").read_text(encoding="utf-8")
     ids = re.findall(r'\bid="([^"]+)"', html.split("<script>")[0])
     comprobar("con los dos avatares ningún identificador se repite en la página", len(ids) == len(set(ids)))
+    comprobar("el HTML de la conversación no tiene unidades de CSS dobles (pxpx), que dejan sin dibujar el globo y su símbolo", "pxpx" not in html and not re.search(r"\dpx px|-px", html))
+    comprobar("el globo muestra su flecha y el símbolo central de «?» y «✓»", html.count("border-top:") >= 2 and ">?<" in html and ">✓<" in html)
     comprobar("todos los selectores del JS existen (con los identificadores de cada avatar)", not selectores_ok(html))
     comprobar("salen los dos avatares: el profesor a la izquierda y el rubio a la derecha", 'id="av_profesor" class="av izq"' in html and 'id="av_rubio" class="av der"' in html)
     comprobar("solo el rubio va en espejo (levanta el brazo contrario)", 'tl.set("#flip_rubio",{scaleX:-1}' in html and "flip_profesor\",{scaleX" not in html)

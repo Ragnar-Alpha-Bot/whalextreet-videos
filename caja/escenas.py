@@ -601,10 +601,10 @@ def e_dialogo(c, d):
             f'border-radius:{c.px(50)};padding:{c.px(30)} {c.px(44)} {c.px(38)}">'
             + (f'<span class="chip" style="font-size:{c.px(30)};--c:{color}">{etiqueta}</span>' if etiqueta else "")
             + f'<div class="big" style="font-size:{c.px(fs)};margin-top:{c.px(14)}">{esc(texto)}</div>'
-            f'<div style="position:absolute;bottom:-{c.px(28)}px;{lado}:{c.px(110)}px;width:0;height:0;border-left:{c.px(28)}px solid transparent;'
-            f'border-right:{c.px(28)}px solid transparent;border-top:{c.px(32)}px solid {color}"></div></div>'
-            + (f'<div id="{c.pf}sym" class="h" style="position:absolute;left:{c.px(342)}px;top:{c.px(540)}px;width:{c.px(300)}px;text-align:center;'
-               f'font-weight:700;font-size:{c.px(230)}px;line-height:1;color:{color}">{simbolo}</div>' if simbolo else "") + '</div>')
+            f'<div style="position:absolute;bottom:-{c.px(28)};{lado}:{c.px(110)};width:0;height:0;border-left:{c.px(28)} solid transparent;'
+            f'border-right:{c.px(28)} solid transparent;border-top:{c.px(32)} solid {color}"></div></div>'
+            + (f'<div id="{c.pf}sym" class="h" style="position:absolute;left:{c.px(342)};top:{c.px(540)};width:{c.px(300)};text-align:center;'
+               f'font-weight:700;font-size:{c.px(230)};line-height:1;color:{color}">{simbolo}</div>' if simbolo else "") + '</div>')
     js = [fromTo(f"#{c.pf}bub", {"opacity": 0, "scale": .86, "y": -24, "transformOrigin": sombra}, {"opacity": 1, "scale": 1, "y": 0, "duration": .45, "ease": "back.out(2)"}, c.t0 + .2)]
     if simbolo:
         js.append(fromTo(f"#{c.pf}sym", {"opacity": 0, "scale": .3}, {"opacity": .9, "scale": 1, "duration": .5, "ease": "back.out(3)"}, c.t0 + .45))
