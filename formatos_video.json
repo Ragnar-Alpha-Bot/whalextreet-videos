@@ -7,7 +7,10 @@
     },
     "cameo": {
       "descripcion": "El profesor sale solo en el gancho y en el cierre. El resto es pantalla completa para datos y gráficos.",
-      "profesor": ["gancho", "cierre"]
+      "profesor": [
+        "gancho",
+        "cierre"
+      ]
     },
     "solo_datos": {
       "descripcion": "El profesor no sale. Solo datos, voz y subtítulos. Para noticias y avisos rápidos.",
@@ -29,7 +32,6 @@
     "que_hubiera_pasado": "presentador",
     "hilo_macro": "presentador",
     "hilo": "presentador",
-
     "hilo_top": "cameo",
     "hilo_numeros": "cameo",
     "post_numeros": "cameo",
@@ -39,9 +41,9 @@
     "construyendo": "cameo",
     "cta": "cameo",
     "fuente_web": "cameo",
-
     "noticia": "solo_datos",
-    "hilo_noticia": "solo_datos"
+    "hilo_noticia": "solo_datos",
+    "hilo_comparativa": "presentador"
   },
   "por_defecto": "cameo"
 }

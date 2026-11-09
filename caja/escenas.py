@@ -488,14 +488,32 @@ ICONOS = {
 }
 
 
+GRAFICOS_GANCHO = ("pulso", "caida", "subida", "cifra", "ninguno")
+
+
 def v_gancho(d, err):
     _txt(d, "texto", err, 42)
     _txt(d, "resalte", err, 20, req=False)
+    _txt(d, "kicker", err, 22, req=False)
+    _txt(d, "subtexto", err, 70, req=False)
     t, r = d.get("texto"), d.get("resalte")
     if isinstance(t, str) and isinstance(r, str) and r and norm(r) not in [norm(w) for w in t.split()]:
         err("«resalte» debe ser una palabra que aparezca en «texto»")
     if d.get("icono", "alerta") not in list(ICONOS) + ["ninguno"]:
         err(f"«icono» debe ser uno de {list(ICONOS) + ['ninguno']}")
+    g = d.get("grafico", "pulso")
+    if g not in GRAFICOS_GANCHO:
+        err(f"«grafico» debe ser uno de {list(GRAFICOS_GANCHO)}")
+    if g == "cifra":
+        cf = d.get("cifra")
+        if not isinstance(cf, dict) or not _num(cf.get("valor")):
+            err("el gráfico «cifra» necesita «cifra»: {\"valor\": número, \"decimales\": 0-2, \"prefijo\": \"\", \"sufijo\": \"%\"}")
+        else:
+            if not isinstance(cf.get("decimales", 0), int) or not 0 <= cf.get("decimales", 0) <= 2:
+                err("«cifra.decimales» debe ser un entero de 0 a 2")
+            for k in ("prefijo", "sufijo"):
+                if not isinstance(cf.get(k, ""), str) or len(cf.get(k, "")) > 4:
+                    err(f"«cifra.{k}» debe ser un texto de hasta 4 caracteres")
 
 
 def e_gancho(c, d):
@@ -505,21 +523,72 @@ def e_gancho(c, d):
     fs = min(fs, int(0.92 * 984 / (0.70 * max(len(w) for w in t.split()))))   # la palabra más larga debe caber en el ancho
     res = norm(d.get("resalte") or "")
     ws = t.split()
-    spans = "".join(f'<span id="{c.pf}w{j}" style="display:inline-block;margin:0 .13em;opacity:0;{"color:var(--acc);" if res and norm(w) == res else ""}">{esc(w)}</span>' for j, w in enumerate(ws))
     icono = d.get("icono", "alerta")
-    html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(46)}">'
-            + (f'<div id="{c.pf}ico" style="width:{c.px(190)};height:{c.px(190)};opacity:0">{ICONOS[icono]}</div>' if icono != "ninguno" else "")
-            + f'<div class="big" style="font-size:{c.px(fs)};line-height:1.0;text-transform:uppercase;text-shadow:0 6px 40px rgba(0,0,0,.6)">{spans}</div></div>')
-    js = [fromTo("#flash", {"opacity": .55}, {"opacity": 0, "duration": .4, "ease": "power2.out"}, 0),
-          fromTo(f"#S{c.i}", {"x": -14}, {"x": 14, "duration": .045, "repeat": 7, "yoyo": True, "ease": "none"}, .02),
-          to(f"#S{c.i}", {"x": 0, "duration": .05}, .4)]
-    if icono != "ninguno":
-        js.append(fromTo(f"#{c.pf}ico", {"opacity": 0, "scale": .3, "rotation": -14}, {"opacity": 1, "scale": 1, "rotation": 0, "duration": .3, "ease": "back.out(3)"}, .0))
-    for j in range(len(ws)):
-        js.append(fromTo(f"#{c.pf}w{j}", {"opacity": 0, "scale": 1.7, "y": -34}, {"opacity": 1, "scale": 1, "y": 0, "duration": .22, "ease": "power4.out"}, .02 + .09 * j))
-        c.snd(.02 + .09 * j, "tick", .35)
-    c.snd(0.0, "impact", .7)
+    graf = d.get("grafico", "pulso")
+    if graf == "pulso" and icono == "ninguno":
+        graf = "ninguno"
+    pf = c.pf
+    spans = "".join(f'<span id="{pf}w{j}" style="display:inline-block;margin:0 .13em;{"color:var(--acc);" if res and norm(w) == res else ""}">{esc(w)}</span>' for j, w in enumerate(ws))
+    # --- gráfico llamativo ---
+    gr_html, gr_js = "", []
+    if graf == "pulso":
+        anillos = "".join(f'<div id="{pf}ring{k}" style="position:absolute;left:50%;top:50%;width:{c.px(190)};height:{c.px(190)};margin:-{c.px(95)} 0 0 -{c.px(95)};'
+                          f'border:{c.px(7)} solid var(--acc);border-radius:50%;opacity:0"></div>' for k in range(3))
+        gr_html = (f'<div style="position:relative;width:{c.px(300)};height:{c.px(260)};display:flex;align-items:center;justify-content:center">{anillos}'
+                   f'<div id="{pf}ico" style="position:relative;width:{c.px(190)};height:{c.px(190)}">{ICONOS[icono]}</div></div>')
+        gr_js = [fromTo(f"#{pf}ico", {"opacity": 1, "scale": 1.8, "rotation": -18}, {"scale": 1, "rotation": 0, "duration": .32, "ease": "back.out(3)"}, 0)]
+        for k in range(3):
+            gr_js.append(fromTo(f"#{pf}ring{k}", {"opacity": .85, "scale": .5}, {"opacity": 0, "scale": 2.6, "duration": .9, "ease": "power2.out", "repeat": 2, "repeatDelay": .05}, .04 + .28 * k))
+    elif graf in ("caida", "subida"):
+        pts = [(10, 30), (120, 62), (205, 48), (300, 118), (385, 96), (520, 196), (605, 172), (740, 270)]
+        if graf == "subida":
+            pts = [(x, 300 - y) for x, y in pts]
+        col = "var(--down)" if graf == "caida" else "var(--up)"
+        ruta = "M" + " L".join(f"{x} {y}" for x, y in pts)
+        gr_html = (f'<svg id="{pf}svg" viewBox="0 0 750 300" width="{c.px(750)[:-2]}" height="{c.px(300)[:-2]}" style="overflow:visible;filter:drop-shadow(0 0 {c.px(18)} {col})">'
+                   f'<path id="{pf}ln" d="{ruta}" fill="none" stroke="{col}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>'
+                   f'<circle id="{pf}dot" cx="{pts[-1][0]}" cy="{pts[-1][1]}" r="22" fill="{col}" opacity="0"/></svg>')
+        gr_js = [fromTo(f"#{pf}ln", {"attr": {"stroke-dashoffset": 1}}, {"attr": {"stroke-dashoffset": 0}, "duration": .55, "ease": "power2.in"}, .02),
+                 fromTo(f"#{pf}dot", {"opacity": 0, "scale": 0, "transformOrigin": "center"}, {"opacity": 1, "scale": 1, "duration": .25, "ease": "back.out(4)"}, .5)]
+        c.snd(.02, "riser:0", .35)
+        c.snd(.55, "error" if graf == "caida" else "ding:2", .4)
+    elif graf == "cifra":
+        cf = d["cifra"]
+        dec, pre, suf = cf.get("decimales", 0), cf.get("prefijo", ""), cf.get("sufijo", "")
+        col = "var(--down)" if cf["valor"] < 0 else "var(--up)"
+        final = pre + es(cf["valor"], dec) + suf
+        fsz = min(240, 1500 / max(len(final), 1))
+        gr_html = f'<div id="{pf}cifra" class="big" style="font-size:{c.px(fsz)};line-height:1;color:{col};text-shadow:0 0 {c.px(40)} {col}">{esc(pre + es(0, dec) + suf)}</div>'
+        gr_js = [f'const {pf}o={{v:0}};tl.to({pf}o,{{v:{cf["valor"]},duration:.7,ease:"power3.out",onUpdate(){{document.getElementById("{pf}cifra").textContent={J(pre)}+fm({pf}o.v,{dec})+{J(suf)}}}}},0.02);',
+                 fromTo(f"#{pf}cifra", {"scale": 1.5}, {"scale": 1, "duration": .35, "ease": "power4.out"}, 0)]
+        for k in range(10):
+            c.snd(.03 + .065 * k, "tick", .3)
+        c.snd(.72, "error" if cf["valor"] < 0 else "ding:2", .45)
+    # --- estructura: kicker, gráfico, texto enorme, subtexto ---
+    kicker = (f'<span class="chip" id="{pf}kick" style="font-size:{c.px(34)};--c:var(--acc)">{esc(d["kicker"])}</span>' if d.get("kicker") else "")
+    sub = (f'<div id="{pf}sub" class="nota" style="font-size:{c.px(50)};max-width:{c.px(860)}">{esc(d["subtexto"])}</div>' if d.get("subtexto") else "")
+    html = (f'<div id="{pf}in" style="height:100%"><div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(30)}">'
+            f'{kicker}{gr_html}<div id="{pf}tt" class="big" style="font-size:{c.px(fs)};line-height:1.0;text-transform:uppercase;text-shadow:0 6px 40px rgba(0,0,0,.6)">{spans}</div>{sub}</div></div>')
+    acc = c.p["acc"]
+    js = [fromTo("#flash", {"opacity": .6, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .1, "ease": "none"}, 0),           # doble destello: blanco…
+          fromTo("#flash", {"opacity": .42, "backgroundColor": acc}, {"opacity": 0, "duration": .3, "ease": "power2.out", "immediateRender": False}, .1),   # …y de color
+          fromTo(f"#{pf}in", {"scale": 1.14}, {"scale": 1, "duration": .4, "ease": "power4.out"}, 0),                                       # golpe de zoom
+          fromTo(f"#S{c.i}", {"x": -20}, {"x": 20, "duration": .04, "repeat": 9, "yoyo": True, "ease": "none"}, .02),                       # sacudida
+          to(f"#S{c.i}", {"x": 0, "duration": .05}, .42),
+          fromTo(f"#{pf}tt", {"textShadow": "12px 0 #FF7A7A, -12px 0 #67D4E8"}, {"textShadow": "0px 0 rgba(0,0,0,0), 0px 0 rgba(0,0,0,0)", "duration": .5, "ease": "power2.out"}, 0)] + gr_js   # glitch RGB
+    for j in range(len(ws)):                    # visibles desde el primer fotograma (miniatura): entran grandes y encajan
+        js.append(fromTo(f"#{pf}w{j}", {"opacity": 1, "scale": 1.9, "y": -34, "rotation": 3 if j % 2 else -3}, {"scale": 1, "y": 0, "rotation": 0, "duration": .24, "ease": "back.out(2.2)"}, .02 + .08 * j))
+        c.snd(.02 + .08 * j, "tick", .35)
+    if d.get("kicker"):
+        js.append(fromTo(f"#{pf}kick", {"opacity": 1, "scale": 1.6, "y": -20}, {"scale": 1, "y": 0, "duration": .25, "ease": "back.out(3)"}, .03))
+        c.snd(.05, "pop:2", .4)
+    if d.get("subtexto"):
+        js.append(fromTo(f"#{pf}sub", {"opacity": 0, "y": 26}, {"opacity": 1, "y": 0, "duration": .4, "ease": "power3.out"}, .55))
+        c.snd(.55, "swipe", .3)
+    c.snd(0.0, "boom", .75)
+    c.snd(0.0, "impact", .45)
     c.snd(0.0, "whoosh:2", .4)
+    c.snd(0.02, "glitch", .3)
     c.snd(0.35, "pop:3", .4)
     return html, js
 

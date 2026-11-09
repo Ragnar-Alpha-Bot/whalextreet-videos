@@ -109,10 +109,27 @@ def blip(i=0):
     return _norm((np.sin(2 * np.pi * f * t) + 0.3 * np.sin(2 * np.pi * 2 * f * t)) * np.exp(-t * 18))
 
 
+def boom():
+    """Golpe grave de cine (para el gancho): caída de 60 a 28 Hz con ruido corto al principio."""
+    t = _t(1.0)
+    cuerpo = np.sin(2 * np.pi * np.cumsum(28 + 70 * np.exp(-t * 9)) / SR) * np.exp(-t * 3.6)
+    choque = _lowpass(_rng.standard_normal(len(t)), np.full(len(t), 900.0)) * np.exp(-t * 28)
+    return _norm(cuerpo + 0.55 * choque)
+
+
+def glitch():
+    """Ráfaga digital corta (para el efecto glitch del texto): ruido troceado y cuantizado."""
+    t = _t(0.28)
+    ruido = _rng.standard_normal(len(t))
+    paso = (np.floor(t * 38) % 2) * 1.0 + 0.25                       # se corta y reanuda varias veces
+    y = np.round(ruido * 4) / 4 * paso * np.exp(-t * 5)
+    return _norm(y + 0.4 * np.sign(np.sin(2 * np.pi * 330 * t)) * np.exp(-t * 14))
+
+
 _WHOOSH = [(0.50, 250, 6000, False), (0.45, 400, 5000, False), (0.55, 200, 7000, True)]
 _POP = [1.0, 1.18, 0.88, 1.35]
 _DING = [1.0, 1.19, 0.89]
-SONIDOS = ["whoosh", "swipe", "pop", "card", "click", "tick", "ding", "impact", "error", "riser", "blip"]
+SONIDOS = ["whoosh", "swipe", "pop", "card", "click", "tick", "ding", "impact", "error", "riser", "blip", "boom", "glitch"]
 _cache = {}
 
 
@@ -127,7 +144,7 @@ def _crear(nombre, var):
         return blip(var)
     if nombre == "riser":
         return riser(0.7 + 0.2 * (var % 3))
-    return {"swipe": swipe, "card": card, "click": click, "tick": tick, "impact": impact, "error": error}[nombre]()
+    return {"swipe": swipe, "card": card, "click": click, "tick": tick, "impact": impact, "error": error, "boom": boom, "glitch": glitch}[nombre]()
 
 
 def sonido(clave):

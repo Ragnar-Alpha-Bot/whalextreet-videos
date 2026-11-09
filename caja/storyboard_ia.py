@@ -36,9 +36,14 @@ ESTRUCTURA
 - Objetivo: 30-45 segundos hablados en total (90-130 palabras entre todas las «voz»).
 - Cada escena lleva «voz»: lo que se locuta, en español de España natural y hablado. Sin emojis, hashtags ni URLs. Escribe en letra los números
   pequeños y las siglas difíciles de leer en voz alta (en pantalla sí van en cifras). Máx. 300 caracteres por «voz».
-- GANCHO: frena el scroll en el primer segundo y es honesto con el contenido (nada de promesas falsas). Fórmulas: pregunta que incomoda,
-  error común, dato llamativo del post, contraste, aviso. {"tipo":"gancho","voz":"frase corta hablada (máx. 110 caracteres)","texto":"TEXTO GRANDE (máx. 42 caracteres)",
-  "resalte":"una palabra del texto","icono":"alerta|subida|bajada|pregunta|ninguno"}
+- GANCHO: lo más importante del vídeo. Los 2 primeros segundos deben frenar el scroll: MUCHA información visual y mucha intensidad, y ser honesto con el contenido
+  (nada de promesas falsas ni cifras inventadas). Fórmulas que funcionan: pregunta que incomoda («¿Compraste porque subía?»), error común («El error que arruina tu cartera»),
+  dato llamativo del post, contraste, aviso («CUIDADO con…»). Usa SIEMPRE kicker + subtexto y elige un gráfico llamativo:
+  {"tipo":"gancho","voz":"frase corta hablada (máx. 110 caracteres)","texto":"TEXTO ENORME (máx. 42 caracteres)","resalte":"una palabra del texto",
+  "kicker":"etiqueta corta sobre el texto, máx. 22, p. ej. ERROR COMÚN, ALERTA, ¿LO SABÍAS?","subtexto":"frase de apoyo, máx. 70, que da más contexto o promete la explicación",
+  "icono":"alerta|subida|bajada|pregunta|ninguno","grafico":"pulso|caida|subida|cifra|ninguno"}
+  Gráficos: «pulso» (anillos que laten, genérico), «caida» / «subida» (línea que se dibuja, solo para ilustrar una dirección, sin cifras),
+  «cifra» (número gigante que cuenta, SOLO si el post da esa cifra): añade "cifra":{"valor":número,"decimales":0-2,"prefijo":"","sufijo":"%"}.
 
 ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la que aparece ese elemento)
 - titulo: {"titulo":"máx. 48","subtitulo":"máx. 70, opcional","etiqueta":"máx. 24, opcional"}

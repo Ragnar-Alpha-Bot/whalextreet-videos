@@ -52,7 +52,7 @@ def _visibles(e):
     """Campos de una escena que se ven en pantalla (los números de la voz se revisan aparte: van en letra)."""
     t = e["tipo"]
     if t == "gancho":
-        return [e.get("texto")]
+        return [e.get("texto"), e.get("subtexto"), e.get("kicker"), (e.get("cifra") or {}).get("valor")]
     if t == "titulo":
         return [e.get("titulo"), e.get("subtitulo"), e.get("etiqueta")]
     if t == "numero":
