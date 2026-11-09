@@ -52,16 +52,21 @@ if __name__ == "__main__":
     salida.mkdir(parents=True, exist_ok=True)
     cache = RAIZ / "voz_cache"
     cache.mkdir(exist_ok=True)
-    perfil_ruta = RAIZ / "perfiles" / "voz_D.pt"
-    pid = vozcache.id_perfil(perfil_ruta)
+    voces = json.loads((RAIZ / "marca" / "voces.json").read_text(encoding="utf-8"))
+    hab_f = proyecto / "hablantes.json"
+    hablantes = json.loads(hab_f.read_text(encoding="utf-8")) if hab_f.exists() else {}
+    prompts = {}
     cfg = frases.config_audio()
     objetivo = cfg["volumen_objetivo_rms"]
 
-    modelo = prompt = None
+    modelo = None
     duraciones = {}
     for k, texto in lineas.items():
         trozos = []
         sr = None
+        quien = hablantes.get(k, "profesor")
+        perfil_ruta = RAIZ / "perfiles" / voces[quien]
+        pid = vozcache.id_perfil(perfil_ruta)
         for frase, pausa in frases.trocear(texto, cfg):
             c = vozcache.ruta(cache, vozcache.clave(frase, pid))
             if c.exists():
@@ -71,12 +76,13 @@ if __name__ == "__main__":
                 if modelo is None:
                     import torch
                     from qwen_tts import Qwen3TTSModel
-                    prompt = torch.load(perfil_ruta, weights_only=False)
                     t0 = time.time()
                     modelo = Qwen3TTSModel.from_pretrained("Qwen/Qwen3-TTS-12Hz-1.7B-Base", device_map="cpu", dtype=torch.float32)
                     print(f"Modelo listo en {time.time() - t0:.0f} s", flush=True)
+                if quien not in prompts:
+                    prompts[quien] = torch.load(perfil_ruta, weights_only=False)
                 t1 = time.time()
-                wavs, sr_c = modelo.generate_voice_clone(text=frase, language="Spanish", voice_clone_prompt=prompt)
+                wavs, sr_c = modelo.generate_voice_clone(text=frase, language="Spanish", voice_clone_prompt=prompts[quien])
                 audio = np.asarray(wavs[0], dtype=np.float32)
                 sf.write(c, audio, sr_c)
                 print(f"  [{k}] «{frase[:40]}» {len(audio) / sr_c:.1f} s en {time.time() - t1:.0f} s", flush=True)
@@ -85,7 +91,7 @@ if __name__ == "__main__":
             trozos.append((audio, pausa))
         final = unir(trozos, sr, objetivo)
         sf.write(salida / f"{k}.wav", final, sr)
-        duraciones[k] = {"texto": texto, "segundos": round(len(final) / sr, 2)}
+        duraciones[k] = {"texto": texto, "segundos": round(len(final) / sr, 2), "voz": quien}
         print(f"[{k}] {duraciones[k]['segundos']} s de audio en {len(trozos)} trozos", flush=True)
     (salida / "duraciones.json").write_text(json.dumps(duraciones, ensure_ascii=False, indent=1), encoding="utf-8")
     print("LISTO", flush=True)

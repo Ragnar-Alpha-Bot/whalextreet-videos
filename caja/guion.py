@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from escenas import ESCENAS, marca_redes, norm  # noqa: E402
 from paletas import TEMAS  # noqa: E402
 
-MIN_ESCENAS, MAX_ESCENAS = 3, 10
+MIN_ESCENAS, MAX_ESCENAS = 3, 12
 PROHIBIDAS = ["garantizado", "garantizada", "garantizados", "garantizadas", "sin riesgo", "dinero facil", "hazte rico", "ganancia segura",
               "ganancias seguras", "100% seguro", "seguro que ganas", "no puedes perder"]
 
@@ -49,8 +49,9 @@ def validar(sb):
         errores.append(f"«tema» debe ser uno de {sorted(TEMAS)}")
     if not isinstance(sb.get("tipo_post", "datos"), str):
         errores.append("«tipo_post» debe ser texto")
-    if sb.get("avatar", "profesor") not in ("profesor", "rubio"):
-        errores.append("«avatar» debe ser «profesor» o «rubio»")
+    modo = sb.get("avatar", "profesor")
+    if modo not in ("profesor", "rubio", "ambos"):
+        errores.append("«avatar» debe ser «profesor», «rubio» o «ambos» (los dos, para conversaciones)")
     v = sb.get("etiqueta")
     if v is not None and (not isinstance(v, str) or not v or len(v) > 24):
         errores.append("«etiqueta» debe ser un texto de hasta 24 caracteres")
@@ -73,6 +74,13 @@ def validar(sb):
         if not isinstance(e, dict) or e.get("tipo") not in ESCENAS:
             errores.append(f"escena {i}: «tipo» debe ser uno de {sorted(ESCENAS)}")
             continue
+        if "habla" in e:
+            if e["habla"] not in ("profesor", "rubio"):
+                err("«habla» debe ser «profesor» o «rubio»")
+            elif modo != "ambos" and e["habla"] != modo:
+                err(f"habla «{e['habla']}» pero el vídeo es de «{modo}»: usa «avatar»: «ambos» para que hablen los dos")
+        if e["tipo"] == "dialogo" and modo != "ambos":
+            err("las escenas «dialogo» solo existen en vídeos con «avatar»: «ambos»")
         voz = e.get("voz")
         if e["tipo"] == "cta" and not voz:
             voz = cfg["cta_voz"]
@@ -103,6 +111,13 @@ def norm_espacios(t):
     s = unicodedata.normalize("NFD", t.lower())
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     return re.sub(r"\s+", " ", s)
+
+
+def hablantes(sb):
+    """Quién habla en cada escena: «profesor» o «rubio». Por defecto, el avatar del vídeo (en «ambos», el profesor)."""
+    modo = sb.get("avatar", "profesor")
+    defecto = modo if modo in ("profesor", "rubio") else "profesor"
+    return [e.get("habla") or defecto for e in sb["escenas"]]
 
 
 def lineas(sb):

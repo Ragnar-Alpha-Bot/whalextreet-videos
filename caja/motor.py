@@ -22,7 +22,7 @@ sys.path.insert(0, str(AQUI))
 sys.path.insert(0, str(RAIZ))
 from escenas import ESCENAS, Ctx, J, fromTo, to  # noqa: E402
 from formatos_video import formato_para, profesor_en  # noqa: E402
-from guion import validar  # noqa: E402
+from guion import hablantes as _hablantes, validar  # noqa: E402
 from paletas import paleta, rgb  # noqa: E402
 from sfx import mezclar  # noqa: E402
 import musica  # noqa: E402
@@ -66,8 +66,9 @@ html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg);
 .tarjeta { display:flex; flex-direction:column; justify-content:center; background:var(--surface); border:2px solid var(--border); border-radius:38px; }
 .opcion { display:flex; align-items:center; background:var(--surface); border:3px solid var(--border); border-radius:42px; font-weight:700; }
 .opcion b { flex:none; border-radius:50%; color:#0B1020; display:flex; align-items:center; justify-content:center; }
-#prof { position:absolute; left:-6px; top:566px; width:366px; height:640px; z-index:15; opacity:0; }
-#prof svg { width:366px; height:640px; display:block; overflow:visible; }
+.av { position:absolute; top:566px; width:366px; height:640px; z-index:15; opacity:0; }
+.av.izq { left:-6px; } .av.der { left:720px; }
+.av svg { width:366px; height:640px; display:block; overflow:visible; }
 #foot { position:absolute; left:40px; right:40px; top:1510px; font-family:"PlexW",monospace; font-size:27px; line-height:1.35; color:rgba(178,190,209,.8); text-align:center; z-index:20; }
 #flash { position:absolute; inset:0; background:#fff; opacity:0; z-index:50; pointer-events:none; }
 """
@@ -88,14 +89,21 @@ def _estados_boca(wav):
 
 
 AVATARES = {"profesor": "profesor_TAL_CUAL.svg", "rubio": "avatar_rubio.svg"}   # los dos avatares de la marca
+LISTA_AVATARES = ("profesor", "rubio")
+LADO = {"profesor": "izq", "rubio": "der"}      # A a la izquierda; B a la derecha (y en espejo: levanta el brazo contrario)
+PREF = {"profesor": "a_", "rubio": "b_"}        # prefijo de los identificadores de cada avatar
+BAJADA_DIALOGO = 274                            # en las escenas de diálogo los avatares bajan para dejar sitio al globo
 
 
-def _profesor_svg(avatar="profesor"):
-    svg = (RAIZ / "marca" / AVATARES[avatar]).read_text(encoding="utf-8").strip()
+def _svg_avatar(av):
+    svg = (RAIZ / "marca" / AVATARES[av]).read_text(encoding="utf-8").strip()
     marca = '<path d="M193 322 Q201 328 209 322 Q201 318 193 322Z" fill="#E36F78"/></g>'
-    assert marca in svg, "el SVG del profesor no es el aprobado"
-    return svg.replace(marca, marca + '<g id="boca_media" opacity="0"><path d="M184 309 Q201 328 218 309 Q201 316 184 309Z" fill="#6E1F27"/>'
-                       '<path d="M188 310 Q201 318 214 310 L214 312 Q201 320 188 312Z" fill="#FFFFFF"/></g>', 1)
+    assert marca in svg, f"el SVG del avatar «{av}» no tiene la boca esperada"
+    svg = svg.replace(marca, marca + '<g id="boca_media" opacity="0"><path d="M184 309 Q201 328 218 309 Q201 316 184 309Z" fill="#6E1F27"/>'
+                      '<path d="M188 310 Q201 318 214 310 L214 312 Q201 320 188 312Z" fill="#FFFFFF"/></g>', 1)
+    pref = PREF[av]
+    svg = re.sub(r'id="([^"]+)"', lambda m: f'id="{pref}{m.group(1)}"', svg)
+    return re.sub(r"url\(#([^)]+)\)", lambda m: f"url(#{pref}{m.group(1)})", svg)
 
 
 def construir(proyecto):
@@ -122,26 +130,31 @@ def construir(proyecto):
     t0s = [0.0 if i == 0 else round(inicio[k] - H, 2) for i, k in enumerate(ks)]
     t1s = [t0s[i + 1] if i + 1 < n else TOTAL for i in range(n)]       # el cta se queda en pantalla hasta el final
 
-    # --- profesor según la regla de formatos -----------------------------------------------------------------------
+    # --- avatares: cuándo salen según la regla de formatos y quién habla en cada escena -------------------------------------
     formato = formato_para(sb["tipo_post"])
-    # escena 0 = gancho a pantalla completa (sin profesor); la 1ª escena de contenido hace de «gancho» de la regla; la última (cta) de «cierre»
+    habla = _hablantes(sb)
+    # escena 0 = gancho a pantalla completa (sin avatar); la 1ª escena de contenido hace de «gancho» de la regla; la última (cta) de «cierre».
+    # Las escenas «dialogo» muestran siempre a los dos; en el resto sale solo el que habla (si la regla de formatos lo permite).
     momento = lambda i: "gancho" if i == 1 else ("cierre" if i == n - 1 else "cuerpo")
-    visible = [False if i == 0 else profesor_en(sb["tipo_post"], momento(i)) for i in range(n)]
-    tramos, cur = [], None
-    for i in range(n):
-        if visible[i]:
-            cur = [i, i] if cur is None else [cur[0], i]
-        elif cur:
-            tramos.append(tuple(cur)); cur = None
-    if cur:
-        tramos.append(tuple(cur))
+    quienes = []
+    for i, e in enumerate(escenas):
+        if e["tipo"] == "dialogo":
+            quienes.append(set(LISTA_AVATARES))
+        elif i > 0 and profesor_en(sb["tipo_post"], momento(i)):
+            quienes.append({habla[i]})
+        else:
+            quienes.append(set())
+    visible = [bool(q) for q in quienes]
 
     # --- escenas -----------------------------------------------------------------------------------------------------
     EV, avisos, html_esc, js_esc = [], [], [], []
     for i, e in enumerate(escenas):
-        W, left = (648, 384) if visible[i] else (984, 48)
+        if e["tipo"] == "dialogo" or len(quienes[i]) != 1:
+            W, left = 984, 48
+        else:
+            W, left = (648, 384) if LADO[next(iter(quienes[i]))] == "izq" else (648, 48)   # el contenido se pone en el lado contrario al avatar
         ctx = Ctx(i, t0s[i], t1s[i], inicio[ks[i]], fin[ks[i]], PAL[ks[i]], W, AREA_H, p)
-        h, js = ESCENAS[e["tipo"]][0](ctx, e)
+        h, js = ESCENAS[e["tipo"]][0](ctx, dict(e, _habla=habla[i], _lado=LADO[habla[i]]))
         sid = f"S{i}"
         html_esc.append(f'<div class="scene clip" id="{sid}" data-start="{t0s[i]}" data-duration="{round(t1s[i] - t0s[i], 2)}" data-track-index="1" style="left:{left}px;width:{W}px">{h}</div>')
         js_esc.append(fromTo(f"#{sid}", {"opacity": 0}, {"opacity": 1, "duration": .05 if i == 0 else .2}, t0s[i]))
@@ -185,40 +198,60 @@ def construir(proyecto):
                               f'tl.set("#w{nch}_{j}",{{color:"{p["text"]}"}},{t1});tl.set("#u{nch}_{j}",{{opacity:0}},{t1});')
             nch += 1
 
-    # --- profesor: entra/sale, boca con la voz, parpadeo, brazo ----------------------------------------------------
+    # --- avatares: entran/salen, boca con la voz de quien habla, parpadeo, brazo ---------------------------------------------
     prof_js = []
-    if any(visible):
-        prof_js.append('tl.set("#prof",{opacity:0,x:-430},0);')
+    for av in LISTA_AVATARES:
+        vis = [av in q for q in quienes]
+        if not any(vis):
+            continue
+        tramos, cur = [], None
+        for i in range(n):
+            if vis[i]:
+                cur = [i, i] if cur is None else [cur[0], i]
+            elif cur:
+                tramos.append(tuple(cur)); cur = None
+        if cur:
+            tramos.append(tuple(cur))
+        pref, sel = PREF[av], f"#av_{av}"
+        signo = -1 if LADO[av] == "izq" else 1
+        prof_js.append(f'tl.set("{sel}",{{opacity:0,x:{signo * 430}}},0);')
+        if LADO[av] == "der":
+            prof_js.append(f'tl.set("#flip_{av}",{{scaleX:-1}},0);')            # espejo: levanta el brazo contrario
         parp = []
         for a, b in tramos:
             ta = 0.05 if a == 0 else round(t0s[a], 2)
             tf = TOTAL if b == n - 1 else round(t1s[b], 2)
-            prof_js.append(f'tl.to("#prof",{{opacity:1,x:0,duration:.55,ease:"power3.out"}},{ta});')
+            baja = lambda i: BAJADA_DIALOGO if escenas[i]["tipo"] == "dialogo" else 0
+            prof_js.append(f'tl.set("{sel}",{{y:{baja(a)}}},{round(max(ta - .01, 0), 2)});')
+            prof_js.append(f'tl.to("{sel}",{{opacity:1,x:0,duration:.55,ease:"power3.out"}},{ta});')
             EV.append((ta, "swipe", .4))
+            for i in range(a + 1, b + 1):
+                if baja(i) != baja(i - 1):
+                    prof_js.append(f'tl.to("{sel}",{{y:{baja(i)},duration:.5,ease:"power2.inOut"}},{round(t0s[i], 2)});')
             if b != n - 1:
-                prof_js.append(f'tl.to("#prof",{{opacity:0,x:-430,duration:.45,ease:"power2.in"}},{round(tf - .45, 2)});')
+                prof_js.append(f'tl.to("{sel}",{{opacity:0,x:{signo * 430},duration:.45,ease:"power2.in"}},{round(tf - .45, 2)});')
                 EV.append((round(tf - .45, 2), "swipe", .3))
-            tb = max(ta + 1.0, 1.6)
+            tb = max(ta + 1.0, 1.6) + (0.9 if av == "rubio" else 0)       # parpadean a destiempo
             while tb < tf - 0.4:
-                parp.append(f'tl.set("#parpados",{{opacity:1}},{round(tb, 2)});tl.set("#parpados",{{opacity:0}},{round(tb + 0.13, 2)});')
+                parp.append(f'tl.set("#{pref}parpados",{{opacity:1}},{round(tb, 2)});tl.set("#{pref}parpados",{{opacity:0}},{round(tb + 0.13, 2)});')
                 tb += 3.3
-        prof_js.append(f'tl.fromTo("#prof",{{y:0}},{{y:-5,duration:.9,ease:"sine.inOut",yoyo:true,repeat:{int(TOTAL / 0.9)}}},0);')
+        prof_js.append(f'tl.fromTo("#flip_{av}",{{y:0}},{{y:-5,duration:.9,ease:"sine.inOut",yoyo:true,repeat:{int(TOTAL / 0.9)}}},0);')
         actual = 0
         for i, k in enumerate(ks):
-            if not visible[i]:
+            if not vis[i] or habla[i] != av:                                   # solo mueve la boca y gesticula el que habla
                 continue
             for fr, e_ in enumerate(_estados_boca(voz / f"{k}.wav")):
                 if e_ != actual:
                     tt = round(inicio[k] + fr / 30, 3)
-                    prof_js.append(f'tl.set("#boca_cerrada",{{opacity:{1 if e_ == 0 else 0}}},{tt});tl.set("#boca_media",{{opacity:{1 if e_ == 1 else 0}}},{tt});tl.set("#boca_abierta",{{opacity:{1 if e_ == 2 else 0}}},{tt});')
+                    prof_js.append(f'tl.set("#{pref}boca_cerrada",{{opacity:{1 if e_ == 0 else 0}}},{tt});tl.set("#{pref}boca_media",{{opacity:{1 if e_ == 1 else 0}}},{tt});tl.set("#{pref}boca_abierta",{{opacity:{1 if e_ == 2 else 0}}},{tt});')
                     actual = e_
             if actual != 0:
                 cc = round(fin[k] + 0.02, 3)
-                prof_js.append(f'tl.set("#boca_cerrada",{{opacity:1}},{cc});tl.set("#boca_media",{{opacity:0}},{cc});tl.set("#boca_abierta",{{opacity:0}},{cc});')
+                prof_js.append(f'tl.set("#{pref}boca_cerrada",{{opacity:1}},{cc});tl.set("#{pref}boca_media",{{opacity:0}},{cc});tl.set("#{pref}boca_abierta",{{opacity:0}},{cc});')
                 actual = 0
             ang = ANGULO[i % len(ANGULO)]
-            prof_js.append(f'tl.to("#brazo_d",{{rotation:{ang},svgOrigin:"274 286",duration:.55,ease:"power2.inOut"}},{round(inicio[k] - 0.05, 2)});'
-                           f'tl.to("#brazo_d",{{rotation:{ang + 5},svgOrigin:"274 286",duration:.45,ease:"sine.inOut",yoyo:true,repeat:{max(1, int(DUR[k]["segundos"] / 0.9))}}},{round(inicio[k] + 0.6, 2)});')
+            prof_js.append(f'tl.to("#{pref}brazo_d",{{rotation:{ang},svgOrigin:"274 286",duration:.55,ease:"power2.inOut"}},{round(inicio[k] - 0.05, 2)});'
+                           f'tl.to("#{pref}brazo_d",{{rotation:{ang + 5},svgOrigin:"274 286",duration:.45,ease:"sine.inOut",yoyo:true,repeat:{max(1, int(DUR[k]["segundos"] / 0.9))}}},{round(inicio[k] + 0.6, 2)});')
         prof_js += parp
 
     # --- cierre y sonidos -------------------------------------------------------------------------------------------
@@ -248,7 +281,7 @@ def construir(proyecto):
     body = (f'<div id="root" data-composition-id="main" data-start="0" data-duration="{TOTAL}" data-width="1080" data-height="1920">\n'
             f'<div id="grid"></div>\n<div id="top"><img src="assets/isotipo.png" alt="WhaleXtreet" /><div id="pill">{etiqueta}</div></div>\n'
             + ("\n".join(sub_html)) + "\n" + ("\n".join(html_esc)) + "\n"
-            + (f'<div id="prof">{_profesor_svg(sb.get("avatar", "profesor"))}</div>\n' if any(visible) else "")
+            + "".join(f'<div id="av_{av}" class="av {LADO[av]}"><div id="flip_{av}">{_svg_avatar(av)}</div></div>\n' for av in LISTA_AVATARES if any(av in q for q in quienes))
             + f'<div id="foot">{pie}</div>\n'
             f'<div id="flash"></div>\n{audio}\n</div>')
 

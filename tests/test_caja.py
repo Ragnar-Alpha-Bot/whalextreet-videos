@@ -153,15 +153,15 @@ for ancho in (984, 648):
             print("   ids que faltan:", ids_js - ids_html)
 
 # --- 6. Motor completo con voz sintética ----------------------------------------------------------------------------
-def proyecto_falso(tmp, tipo_post, tema="bolsa", duplicados=False):
+def proyecto_falso(tmp, tipo_post, tema="bolsa", duplicados=False, sb_custom=None):
     _n[0] += 1
     d = Path(tmp) / f"p{_n[0]}_{tipo_post}"
     voz = d / "assets" / "voz"
     voz.mkdir(parents=True)
-    sb = copy.deepcopy(BUENO); sb["tipo_post"] = tipo_post; sb["tema"] = tema
+    sb = copy.deepcopy(sb_custom or BUENO); sb["tipo_post"] = tipo_post; sb["tema"] = tema
     (d / "storyboard.json").write_text(json.dumps(sb), encoding="utf-8")
     dur, pal = {}, {}
-    for i in range(1, 11):
+    for i in range(1, len(sb["escenas"]) + 1):
         seg = 3.0 + 0.2 * i
         t = np.arange(int(24000 * seg)) / 24000
         sf.write(voz / f"l{i}.wav", (0.3 * np.sin(2 * np.pi * 180 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * 3 * t))).astype("float32"), 24000)
@@ -185,7 +185,7 @@ with tempfile.TemporaryDirectory() as tmp:
         r = motor.construir(d)
         html = (d / "index.html").read_text(encoding="utf-8")
         falta = selectores_ok(html)
-        comprobar(f"motor «{tipo_post}»: profesor en escenas {esperado or 'ninguna'}", r["profesor_en"] == esperado and (('id="prof"' in html) == bool(esperado)))
+        comprobar(f"motor «{tipo_post}»: profesor en escenas {esperado or 'ninguna'}", r["profesor_en"] == esperado and (('id="av_profesor"' in html) == bool(esperado)))
         comprobar(f"motor «{tipo_post}»: todos los selectores del JS existen en el HTML (faltan: {sorted(falta) or 'ninguno'})", not falta)
         comprobar(f"motor «{tipo_post}»: las 10 escenas y el flash del gancho están, con sonido mezclado", all(f'id="S{i}"' in html for i in range(10)) and 'id="flash"' in html and (d / "assets" / "sfx_mix.wav").exists() and r["pico_sfx"] <= 0.95)
         comprobar(f"motor «{tipo_post}»: la duración total cuadra con la voz", r["total"] > sum(3.0 + 0.2 * i for i in range(1, 11)))
@@ -265,12 +265,88 @@ for av, esta, ausente in (("profesor", "#22252D", "#7A818E"), ("rubio", "#7A818E
         (d / "storyboard.json").write_text(json.dumps(sbj), encoding="utf-8")
         motor.construir(d)
         h = (d / "index.html").read_text(encoding="utf-8")
-        comprobar(f"con avatar «{av}» el vídeo usa su traje ({esta}) y no el del otro", esta in h and ausente not in h and 'id="boca_media"' in h)
+        comprobar(f"con avatar «{av}» el vídeo usa su traje ({esta}) y no el del otro", esta in h and ausente not in h and f'id="{"a_" if av == "profesor" else "b_"}boca_media"' in h)
 with tempfile.TemporaryDirectory() as tmp:
     d = proyecto_falso(tmp, "leccion")
     motor.construir(d)
     comprobar("sin indicar avatar se usa el profesor, como antes", "#22252D" in (d / "index.html").read_text(encoding="utf-8"))
 comprobar("el profesor aprobado no se ha tocado: sigue siendo traje negro, ojos verdes y barba castaña", all(x in (RAIZ / "marca" / "profesor_TAL_CUAL.svg").read_text(encoding="utf-8") for x in ("#22252D", "#3FB06A", "#8F6256")))
+
+# --- 10. Dos avatares: lados, espejo, voz de cada uno y conversación ---------------------------------------------------------------------
+import pipeline as _pipeline  # noqa: E402
+
+
+def conversacion():
+    sb = copy.deepcopy(BUENO)
+    sb["avatar"] = "ambos"
+    esc = sb["escenas"]
+    esc.insert(1, {"tipo": "dialogo", "habla": "profesor", "rol": "pregunta", "texto": "¿Qué es un stop loss?", "voz": VOZ})
+    esc.insert(2, {"tipo": "dialogo", "habla": "rubio", "rol": "respuesta", "texto": "Una orden que te saca si el precio cae hasta tu límite.", "voz": VOZ})
+    for e in esc:
+        if e["tipo"] == "lista":
+            e["habla"] = "rubio"
+        if e["tipo"] == "numero":
+            e["habla"] = "profesor"
+    return sb
+
+
+m = conversacion(); guion.validar(m)
+comprobar("una conversación con los dos avatares es válida", True)
+m = copy.deepcopy(BUENO); m["escenas"].insert(1, {"tipo": "dialogo", "texto": "Hola", "voz": VOZ}); rechaza("una escena «dialogo» en un vídeo de un solo avatar se rechaza", m)
+m = copy.deepcopy(BUENO); m["escenas"][2]["habla"] = "rubio"; rechaza("hablar con el otro avatar sin avatar «ambos» se rechaza", m)
+m = conversacion(); m["escenas"][1]["habla"] = "robot"; rechaza("un hablante desconocido se rechaza", m)
+m = conversacion(); m["escenas"][1]["rol"] = "grito"; rechaza("un rol de diálogo desconocido se rechaza", m)
+m = conversacion(); m["escenas"][1]["texto"] = "x" * 91; rechaza("el texto del globo no puede pasar de 90 caracteres", m)
+comprobar("quién habla: por defecto el avatar del vídeo; en «ambos», el profesor salvo que se indique",
+          guion.hablantes({"avatar": "rubio", "escenas": [{}, {}]}) == ["rubio", "rubio"] and guion.hablantes({"avatar": "ambos", "escenas": [{}, {"habla": "rubio"}]}) == ["profesor", "rubio"])
+voces = json.loads((RAIZ / "marca" / "voces.json").read_text(encoding="utf-8"))
+comprobar("cada avatar tiene su voz y su perfil existe (profesor = D, rubio = C)", voces["profesor"] == "voz_D.pt" and voces["rubio"] == "voz_C.pt" and all((RAIZ / "perfiles" / voces[a]).exists() for a in ("profesor", "rubio")))
+with tempfile.TemporaryDirectory() as tmp:
+    d = Path(tmp) / "v"
+    (d / "assets" / "voz").mkdir(parents=True)
+    (d / "assets" / "voz" / "l1.wav").write_bytes(b"x")
+    (d / "assets" / "voz" / "duraciones.json").write_text(json.dumps({"l1": {"texto": "hola", "segundos": 1, "voz": "profesor"}}), encoding="utf-8")
+    comprobar("la voz se regenera si cambia quién habla (misma frase, otro avatar)", _pipeline.voz_al_dia(d, {"l1": "hola"}, {"l1": "profesor"}) and not _pipeline.voz_al_dia(d, {"l1": "hola"}, {"l1": "rubio"}))
+
+with tempfile.TemporaryDirectory() as tmp:
+    d = proyecto_falso(tmp, "leccion", sb_custom=conversacion())
+    r = motor.construir(d)
+    html = (d / "index.html").read_text(encoding="utf-8")
+    ids = re.findall(r'\bid="([^"]+)"', html.split("<script>")[0])
+    comprobar("con los dos avatares ningún identificador se repite en la página", len(ids) == len(set(ids)))
+    comprobar("todos los selectores del JS existen (con los identificadores de cada avatar)", not selectores_ok(html))
+    comprobar("salen los dos avatares: el profesor a la izquierda y el rubio a la derecha", 'id="av_profesor" class="av izq"' in html and 'id="av_rubio" class="av der"' in html)
+    comprobar("solo el rubio va en espejo (levanta el brazo contrario)", 'tl.set("#flip_rubio",{scaleX:-1}' in html and "flip_profesor\",{scaleX" not in html)
+    comprobar("en las escenas de diálogo los avatares bajan para dejar sitio al globo", html.count("y:274") >= 2)
+    s1 = re.search(r'id="S1" [^>]*style="left:(\d+)px;width:(\d+)px"', html)
+    comprobar("la escena de diálogo ocupa todo el ancho", s1.groups() == ("48", "984"))
+    lista = [i for i, e in enumerate(conversacion()["escenas"]) if e["tipo"] == "lista"][0]
+    num = [i for i, e in enumerate(conversacion()["escenas"]) if e["tipo"] == "numero"][0]
+    sl = re.search(rf'id="S{lista}" [^>]*style="left:(\d+)px;width:(\d+)px"', html)
+    sn = re.search(rf'id="S{num}" [^>]*style="left:(\d+)px;width:(\d+)px"', html)
+    comprobar("el contenido va al lado contrario del que habla: con el rubio (derecha) a la izquierda, con el profesor a la derecha", sl.groups() == ("48", "648") and sn.groups() == ("384", "648"))
+    # la boca solo se mueve en las frases de quien habla
+    audio = {k: (float(a), float(b)) for k, a, b in re.findall(r'<audio id="a(l\d+)" src="[^"]+" data-start="([\d.]+)" data-duration="([\d.]+)"', html)}
+    hab = guion.hablantes(guion.validar(conversacion()))
+    rangos = {av: [(audio[f"l{i + 1}"][0] - 0.01, audio[f"l{i + 1}"][0] + audio[f"l{i + 1}"][1] + 0.06) for i, h in enumerate(hab) if h == av] for av in ("profesor", "rubio")}
+    for av, pref in (("profesor", "a_"), ("rubio", "b_")):
+        tiempos = [float(t) for t in re.findall(rf'tl\.set\("#{pref}boca_abierta",\{{opacity:\d\}},([\d.]+)\)', html)]
+        comprobar(f"la boca del {av} se mueve (hay {len(tiempos)} cambios) y solo mientras habla él", len(tiempos) > 0 and all(any(a <= t <= b for a, b in rangos[av]) for t in tiempos))
+    comprobar("el profesor y el rubio parpadean a destiempo", "#a_parpados" in html and "#b_parpados" in html)
+
+with tempfile.TemporaryDirectory() as tmp:
+    sbr = copy.deepcopy(BUENO); sbr["avatar"] = "rubio"
+    d = proyecto_falso(tmp, "leccion", sb_custom=sbr)
+    motor.construir(d)
+    html = (d / "index.html").read_text(encoding="utf-8")
+    comprobar("un vídeo solo con el rubio: sale solo él, a la derecha y en espejo, con el contenido a la izquierda",
+              'id="av_rubio"' in html and 'id="av_profesor"' not in html and 'tl.set("#flip_rubio",{scaleX:-1}' in html and 'style="left:48px;width:648px"' in html and 'style="left:384px' not in html)
+    sbp = copy.deepcopy(BUENO)
+    d2 = proyecto_falso(tmp, "leccion", sb_custom=sbp)
+    motor.construir(d2)
+    h2 = (d2 / "index.html").read_text(encoding="utf-8")
+    comprobar("un vídeo solo con el profesor sigue igual que siempre: a la izquierda, sin espejo y con el contenido a la derecha",
+              'id="av_profesor"' in h2 and 'id="av_rubio"' not in h2 and "scaleX:-1" not in h2 and 'style="left:384px;width:648px"' in h2)
 
 print("\nTODO CORRECTO" if not fallos else f"\nFALLOS ({len(fallos)}): {fallos}")
 sys.exit(1 if fallos else 0)

@@ -15,15 +15,16 @@ from pathlib import Path
 AQUI = Path(__file__).resolve().parent
 RAIZ = AQUI.parent
 sys.path.insert(0, str(AQUI))
-from guion import lineas, validar  # noqa: E402
+from guion import hablantes, lineas, validar  # noqa: E402
 
 
-def voz_al_dia(proyecto, lin):
+def voz_al_dia(proyecto, lin, hab=None):
     f = proyecto / "assets" / "voz" / "duraciones.json"
     if not f.exists():
         return False
     d = json.loads(f.read_text(encoding="utf-8"))
-    return set(d) == set(lin) and all(d[k]["texto"] == lin[k] and (proyecto / "assets" / "voz" / f"{k}.wav").exists() for k in lin)
+    hab = hab or {}
+    return set(d) == set(lin) and all(d[k]["texto"] == lin[k] and d[k].get("voz", "profesor") == hab.get(k, "profesor") and (proyecto / "assets" / "voz" / f"{k}.wav").exists() for k in lin)
 
 
 def main(proyecto, render=True, forzar=False):
@@ -32,7 +33,9 @@ def main(proyecto, render=True, forzar=False):
     lin = lineas(sb)
     print(f"1/5 guion válido: {len(lin)} escenas, tema {sb['tema']}")
     (proyecto / "guion.json").write_text(json.dumps(lin, ensure_ascii=False, indent=1), encoding="utf-8")
-    if forzar or not voz_al_dia(proyecto, lin):
+    hab = {f"l{i}": h for i, h in enumerate(hablantes(sb), 1)}
+    (proyecto / "hablantes.json").write_text(json.dumps(hab, ensure_ascii=False, indent=1), encoding="utf-8")
+    if forzar or not voz_al_dia(proyecto, lin, hab):
         print("2/5 generando la voz D (unos 10 s de cálculo por cada segundo de audio en CPU)…")
         subprocess.run([sys.executable, "-X", "utf8", str(RAIZ / "voz" / "generar_voz.py"), str(proyecto)], check=True)
         palabras_listas = False

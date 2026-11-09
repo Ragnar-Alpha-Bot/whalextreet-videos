@@ -576,4 +576,45 @@ def e_cta(c, d):
     return html, js
 
 
-ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta)})
+# ---------------------------------------------------------------------------------------------------------------------
+# 11 · DIÁLOGO (solo en vídeos con avatar «ambos»): los dos avatares abajo y un globo sobre el que habla
+# ---------------------------------------------------------------------------------------------------------------------
+def v_dialogo(d, err):
+    _txt(d, "texto", err, 90)
+    if d.get("rol") not in (None, "", "pregunta", "respuesta"):
+        err("«rol» debe ser «pregunta» o «respuesta»")
+
+
+def e_dialogo(c, d):
+    quien = d.get("_habla", "profesor")
+    der = (d.get("_lado") or ("der" if quien == "rubio" else "izq")) == "der"
+    color = "var(--acc2)" if quien == "rubio" else "var(--acc)"
+    rol = d.get("rol") or ""
+    etiqueta = {"pregunta": "PREGUNTA", "respuesta": "RESPUESTA"}.get(rol)
+    simbolo = {"pregunta": "?", "respuesta": "✓"}.get(rol)
+    texto = d["texto"]
+    fs = 68 if len(texto) <= 40 else 58 if len(texto) <= 65 else 50
+    lado = "right" if der else "left"
+    sombra = "bottom right" if der else "bottom left"
+    html = (f'<div style="position:relative;height:100%">'
+            f'<div id="{c.pf}bub" class="h" style="position:absolute;top:0;{lado}:0;width:{c.px(840)};background:var(--surface);border:{c.px(5)} solid {color};'
+            f'border-radius:{c.px(50)};padding:{c.px(30)} {c.px(44)} {c.px(38)}">'
+            + (f'<span class="chip" style="font-size:{c.px(30)};--c:{color}">{etiqueta}</span>' if etiqueta else "")
+            + f'<div class="big" style="font-size:{c.px(fs)};margin-top:{c.px(14)}">{esc(texto)}</div>'
+            f'<div style="position:absolute;bottom:-{c.px(28)}px;{lado}:{c.px(110)}px;width:0;height:0;border-left:{c.px(28)}px solid transparent;'
+            f'border-right:{c.px(28)}px solid transparent;border-top:{c.px(32)}px solid {color}"></div></div>'
+            + (f'<div id="{c.pf}sym" class="h" style="position:absolute;left:{c.px(342)}px;top:{c.px(540)}px;width:{c.px(300)}px;text-align:center;'
+               f'font-weight:700;font-size:{c.px(230)}px;line-height:1;color:{color}">{simbolo}</div>' if simbolo else "") + '</div>')
+    js = [fromTo(f"#{c.pf}bub", {"opacity": 0, "scale": .86, "y": -24, "transformOrigin": sombra}, {"opacity": 1, "scale": 1, "y": 0, "duration": .45, "ease": "back.out(2)"}, c.t0 + .2)]
+    if simbolo:
+        js.append(fromTo(f"#{c.pf}sym", {"opacity": 0, "scale": .3}, {"opacity": .9, "scale": 1, "duration": .5, "ease": "back.out(3)"}, c.t0 + .45))
+    if rol == "pregunta":
+        c.snd(c.t0 + .2, "pop:1", .5)
+        c.snd(c.t0 + .45, "riser:0", .25)
+    else:
+        c.snd(c.t0 + .2, "card", .5)
+        c.snd(c.t0 + .45, "ding:1", .4)
+    return html, js
+
+
+ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta), "dialogo": (e_dialogo, v_dialogo)})
