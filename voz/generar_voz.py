@@ -98,10 +98,10 @@ if __name__ == "__main__":
                 print(f"  [{k}] «{frase[:40]}» {len(audio) / sr_c:.1f} s en {time.time() - t1:.0f} s", flush=True)
             sr = sr or sr_c
             assert sr_c == sr, "las frases deben tener la misma frecuencia de muestreo"
-            trozos.append((audio, pausa))
+            trozos.append((frases.acelerar(audio, sr_c, cfg["velocidad"]), pausa))
         final = unir(trozos, sr, objetivo)
         sf.write(salida / f"{k}.wav", final, sr)
-        duraciones[k] = {"texto": texto, "segundos": round(len(final) / sr, 2), "voz": quien}
+        duraciones[k] = {"texto": texto, "segundos": round(len(final) / sr, 2), "voz": quien, "huella": frases.huella_audio(cfg)}
         print(f"[{k}] {duraciones[k]['segundos']} s de audio en {len(trozos)} trozos", flush=True)
     (salida / "duraciones.json").write_text(json.dumps(duraciones, ensure_ascii=False, indent=1), encoding="utf-8")
     print("LISTO", flush=True)

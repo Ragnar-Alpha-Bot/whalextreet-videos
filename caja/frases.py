@@ -8,7 +8,8 @@ import re
 from pathlib import Path
 
 CONFIG = Path(__file__).resolve().parent.parent / "marca" / "audio.json"
-DEFECTO = {"pausas_s": {"coma": 0.2, "medio": 0.3, "fin": 0.42}, "min_palabras_trozo": 4, "volumen_objetivo_rms": 0.07, "musica": {"activa": True, "nivel_db": -24}}
+DEFECTO = {"velocidad": 1.06, "pausas_s": {"coma": 0.14, "medio": 0.22, "fin": 0.30}, "min_palabras_trozo": 4, "volumen_objetivo_rms": 0.07,
+           "gap_escenas_s": 0.2, "zoom_escena": 0.035, "pulso_avatar": 0.035, "musica": {"activa": True, "nivel_db": -24}}
 
 
 def config_audio():
@@ -83,3 +84,31 @@ def con_reintentos(generar, frase, intentos=30):
             return audio, sr
         print(f"  Aviso: «{frase[:40]}» salió truncada ({len(audio) / sr:.1f} s para {len(frase.split())} palabras); intento {n} de {intentos}", flush=True)
     raise RuntimeError(f"La voz no logra decir «{frase[:50]}» tras {intentos} intentos")
+
+
+def huella_audio(cfg=None):
+    """Resumen de los ajustes que cambian el audio de una frase (velocidad, pausas, trozos). Si cambian, la voz ya generada deja de valer."""
+    cfg = cfg or config_audio()
+    return json.dumps([cfg["velocidad"], cfg["pausas_s"], cfg["min_palabras_trozo"]], sort_keys=True)
+
+
+def acelerar(audio, sr, velocidad):
+    """Acelera la voz sin cambiar el tono (filtro atempo de FFmpeg). velocidad 1.0 = sin cambios."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    import numpy as np
+    import soundfile as sf
+    if abs(velocidad - 1.0) < 1e-3:
+        return np.asarray(audio, dtype="float32")
+    ff = shutil.which("ffmpeg")
+    if not ff:
+        raise RuntimeError("no encuentro ffmpeg para acelerar la voz")
+    with tempfile.TemporaryDirectory() as tmp:
+        a, b = f"{tmp}/in.wav", f"{tmp}/out.wav"
+        sf.write(a, np.asarray(audio, dtype="float32"), sr)
+        subprocess.run([ff, "-y", "-loglevel", "error", "-i", a, "-filter:a", f"atempo={velocidad}", b], check=True)
+        y, sr2 = sf.read(b, dtype="float32")
+    assert sr2 == sr
+    return y

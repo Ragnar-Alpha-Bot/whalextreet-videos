@@ -305,7 +305,7 @@ with tempfile.TemporaryDirectory() as tmp:
     d = Path(tmp) / "v"
     (d / "assets" / "voz").mkdir(parents=True)
     (d / "assets" / "voz" / "l1.wav").write_bytes(b"x")
-    (d / "assets" / "voz" / "duraciones.json").write_text(json.dumps({"l1": {"texto": "hola", "segundos": 1, "voz": "profesor"}}), encoding="utf-8")
+    (d / "assets" / "voz" / "duraciones.json").write_text(json.dumps({"l1": {"texto": "hola", "segundos": 1, "voz": "profesor", "huella": __import__("frases").huella_audio()}}), encoding="utf-8")
     comprobar("la voz se regenera si cambia quién habla (misma frase, otro avatar)", _pipeline.voz_al_dia(d, {"l1": "hola"}, {"l1": "profesor"}) and not _pipeline.voz_al_dia(d, {"l1": "hola"}, {"l1": "rubio"}))
 
 with tempfile.TemporaryDirectory() as tmp:
@@ -318,7 +318,7 @@ with tempfile.TemporaryDirectory() as tmp:
     comprobar("el globo muestra su flecha y el símbolo central de «?» y «✓»", html.count("border-top:") >= 2 and ">?<" in html and ">✓<" in html)
     comprobar("todos los selectores del JS existen (con los identificadores de cada avatar)", not selectores_ok(html))
     comprobar("salen los dos avatares: el profesor a la izquierda y el rubio a la derecha", 'id="av_profesor" class="av izq"' in html and 'id="av_rubio" class="av der"' in html)
-    comprobar("solo el rubio va en espejo (levanta el brazo contrario)", 'tl.set("#flip_rubio",{scaleX:-1}' in html and "flip_profesor\",{scaleX" not in html)
+    comprobar("solo el rubio va en espejo (levanta el brazo contrario)", 'tl.set("#flip_rubio",{scaleX:-1}' in html and 'tl.set("#flip_profesor",{scaleX:-1}' not in html)
     comprobar("en las escenas de diálogo los avatares bajan para dejar sitio al globo", html.count("y:274") >= 2)
     s1 = re.search(r'id="S1" [^>]*style="left:(\d+)px;width:(\d+)px"', html)
     comprobar("la escena de diálogo ocupa todo el ancho", s1.groups() == ("48", "984"))
@@ -349,6 +349,17 @@ with tempfile.TemporaryDirectory() as tmp:
     h2 = (d2 / "index.html").read_text(encoding="utf-8")
     comprobar("un vídeo solo con el profesor sigue igual que siempre: a la izquierda, sin espejo y con el contenido a la derecha",
               'id="av_profesor"' in h2 and 'id="av_rubio"' not in h2 and "scaleX:-1" not in h2 and 'style="left:384px;width:648px"' in h2)
+
+# --- 11. Ritmo y dinamismo del montaje ----------------------------------------------------------------------------------------------------
+with tempfile.TemporaryDirectory() as tmp:
+    d = proyecto_falso(tmp, "leccion", sb_custom=conversacion())
+    r = motor.construir(d)
+    html = (d / "index.html").read_text(encoding="utf-8")
+    segs = sum(3.0 + 0.2 * i for i in range(1, len(conversacion()["escenas"]) + 1))
+    comprobar(f"el hueco entre escenas es el de la marca (0,2 s): duración {r['total']} s frente a {segs + 0.35 * 12 + 0.05 + 2.8:.1f} s con el hueco antiguo", r["total"] < segs + 0.35 * 12 + 0.05 + 2.8)
+    comprobar("cada escena lleva su empuje de cámara lento (zoom 3,5 %)", html.count('"scale":1.035,"duration"') >= len(conversacion()["escenas"]))
+    comprobar("las transiciones son rápidas (entrada 0,12 s, salida 0,15 s)", '"opacity":1,"duration":0.12' in html and '"opacity":0,"duration":0.15' in html)
+    comprobar("el avatar que empieza a hablar da un pulso (el rubio, en espejo, conserva su signo)", 'tl.to("#flip_rubio",{scaleX:-1.035,scaleY:1.035' in html and 'tl.to("#flip_profesor",{scaleX:1.035,scaleY:1.035' in html)
 
 print("\nTODO CORRECTO" if not fallos else f"\nFALLOS ({len(fallos)}): {fallos}")
 sys.exit(1 if fallos else 0)

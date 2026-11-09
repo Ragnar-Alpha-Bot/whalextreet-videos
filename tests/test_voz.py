@@ -47,13 +47,13 @@ azar = [" ".join(random.choice(palabras) for _ in range(random.randint(1, 40))) 
 comprobar("propiedad con 300 textos al azar: unidos = original, sin trozos vacíos", all(
     " ".join(t for t, _ in frases.trocear(x, CFG)) == " ".join(x.split()) and all(t.strip() for t, _ in frases.trocear(x, CFG)) for x in azar if x.strip()))
 t1 = frases.trocear(FRASES[0], CFG)
-comprobar("la frase larga se parte en 3 ideas con pausa de coma entre ellas y ninguna al final", len(t1) == 3 and [p for _, p in t1] == [0.2, 0.2, 0.0])
-comprobar("la pausa depende de la puntuación: dos puntos 0,3 s, punto 0,42 s, coma 0,2 s", [p for _, p in frases.trocear(FRASES[3], CFG)] == [0.3, 0.2, 0.2, 0.0])
+comprobar("la frase larga se parte en 3 ideas con pausa de coma entre ellas y ninguna al final", len(t1) == 3 and [p for _, p in t1] == [CFG["pausas_s"]["coma"], CFG["pausas_s"]["coma"], 0.0])
+comprobar("la pausa depende de la puntuación: dos puntos más larga que coma", [p for _, p in frases.trocear(FRASES[3], CFG)] == [CFG["pausas_s"]["medio"], CFG["pausas_s"]["coma"], CFG["pausas_s"]["coma"], 0.0] and CFG["pausas_s"]["coma"] < CFG["pausas_s"]["medio"] < CFG["pausas_s"]["fin"])
 comprobar("una frase corta sin puntuación queda en un solo trozo sin pausa", frases.trocear(FRASES[2], CFG) == [(FRASES[2], 0.0)])
 comprobar("ningún trozo tiene menos de 4 palabras salvo que la frase entera sea más corta", all(
     len(t.split()) >= CFG["min_palabras_trozo"] for f in FRASES if len(f.split()) >= 4 for t, _ in frases.trocear(f, CFG)))
 comprobar("el trozo de la pregunta conserva su principio «¿Y tú,»", frases.trocear(FRASES[1], CFG)[0][0].startswith("¿Y tú,"))
-comprobar("la configuración de marca se lee y los ajustes del usuario mandan sobre los de por defecto", CFG["pausas_s"]["fin"] == 0.42 and CFG["musica"]["activa"] is True)
+comprobar("la configuración de marca se lee y los ajustes del usuario mandan sobre los de por defecto", CFG["pausas_s"]["fin"] == 0.30 and CFG["velocidad"] == 1.06 and CFG["musica"]["activa"] is True)
 
 # --- 2. Unir trozos ----------------------------------------------------------------------------------------------------
 sr = 24000
@@ -144,6 +144,28 @@ cob = _pal.cobertura(TEXTO, ww("decide cuánto estás dispuesto a perder"))
 comprobar(f"el caso real (solo se oye el final) da cobertura baja ({cob:.0%}) y por debajo del umbral", cob < _pal.COBERTURA_MIN)
 comprobar("palabras de más que oye Whisper no restan cobertura, y mayúsculas, tildes y signos no cuentan", _pal.cobertura("Hola, ¿qué tal?", ww("pues HOLA que tal amigo")) == 1.0)
 comprobar("un texto vacío no rompe la cobertura", _pal.cobertura("", ww("hola")) == 1.0)
+
+# --- 6. Ritmo: voz más rápida sin cambiar el tono, pausas cortas, ajustes coherentes -------------------------------------------------------
+import json as _json
+cfg_archivo = _json.loads((RAIZ / "marca" / "audio.json").read_text(encoding="utf-8"))
+comprobar("los valores por defecto del código coinciden con marca/audio.json (nadie cambia el ritmo sin querer)",
+          all(frases.DEFECTO[k] == cfg_archivo[k] for k in frases.DEFECTO))
+comprobar("el ritmo de la marca: voz un 6 % más rápida, pausas de 0,14 / 0,22 / 0,30 s y un hueco de 0,2 s entre escenas",
+          CFG["velocidad"] == 1.06 and CFG["pausas_s"] == {"coma": 0.14, "medio": 0.22, "fin": 0.30} and CFG["gap_escenas_s"] == 0.2)
+h1 = frases.huella_audio(CFG)
+h2 = frases.huella_audio({**CFG, "velocidad": 1.0})
+h3 = frases.huella_audio({**CFG, "pausas_s": {**CFG["pausas_s"], "fin": 0.5}})
+comprobar("la huella cambia si cambia la velocidad o las pausas (y entonces la voz se rehace)", h1 != h2 and h1 != h3 and h1 == frases.huella_audio(CFG))
+import shutil as _sh2
+if _sh2.which("ffmpeg"):
+    tono = np.sin(2 * np.pi * 180 * np.arange(24000 * 3) / 24000).astype("float32") * 0.3
+    rapido = frases.acelerar(tono, 24000, 1.06)
+    pico = lambda y: float(np.argmax(np.abs(np.fft.rfft(y[: 24000]))))      # frecuencia dominante en Hz (1 s de ventana)
+    comprobar(f"acelerar 1,06 acorta un 6 % ({len(rapido) / 24000:.2f} s de 3,00 s)", abs(len(rapido) / len(tono) - 1 / 1.06) < 0.02)
+    comprobar("acelerar NO cambia el tono (180 Hz antes y después)", abs(pico(rapido) - pico(tono)) <= 3)
+    comprobar("velocidad 1,0 no toca el audio", np.array_equal(frases.acelerar(tono, 24000, 1.0), tono))
+else:
+    print("AVISO: no hay ffmpeg; se omiten las pruebas de aceleración")
 
 print("\nTODO CORRECTO" if not fallos else f"\nFALLOS ({len(fallos)}): {fallos}")
 sys.exit(1 if fallos else 0)

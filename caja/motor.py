@@ -112,6 +112,10 @@ def construir(proyecto):
     voz = proyecto / "assets" / "voz"
     DUR = json.loads((voz / "duraciones.json").read_text(encoding="utf-8"))
     PAL = json.loads((voz / "palabras.json").read_text(encoding="utf-8"))
+    global GAP, H
+    cfg_ritmo = config_audio()
+    GAP = cfg_ritmo["gap_escenas_s"]
+    H = GAP / 2
     escenas = sb["escenas"]
     n = len(escenas)
     ks = [f"l{i}" for i in range(1, n + 1)]
@@ -157,10 +161,12 @@ def construir(proyecto):
         h, js = ESCENAS[e["tipo"]][0](ctx, dict(e, _habla=habla[i], _lado=LADO[habla[i]]))
         sid = f"S{i}"
         html_esc.append(f'<div class="scene clip" id="{sid}" data-start="{t0s[i]}" data-duration="{round(t1s[i] - t0s[i], 2)}" data-track-index="1" style="left:{left}px;width:{W}px">{h}</div>')
-        js_esc.append(fromTo(f"#{sid}", {"opacity": 0}, {"opacity": 1, "duration": .05 if i == 0 else .2}, t0s[i]))
+        js_esc.append(fromTo(f"#{sid}", {"opacity": 0}, {"opacity": 1, "duration": .05 if i == 0 else .12}, t0s[i]))
+        if cfg_ritmo["zoom_escena"]:                      # empuje de cámara muy lento: nada se queda quieto
+            js_esc.append(fromTo(f"#{sid}", {"scale": 1}, {"scale": round(1 + cfg_ritmo["zoom_escena"], 4), "duration": round(t1s[i] - t0s[i], 2), "ease": "none"}, t0s[i]))
         js_esc += js
         if i < n - 1:
-            js_esc.append(to(f"#{sid}", {"opacity": 0, "duration": .25}, t1s[i] - .25))
+            js_esc.append(to(f"#{sid}", {"opacity": 0, "duration": .15}, t1s[i] - .15))
         EV += ctx.ev
         avisos += ctx.avisos
         EV.append((0.1 if i == 0 else t0s[i], f"whoosh:{i % 3}", .4 if i == 0 else .45))
@@ -249,6 +255,9 @@ def construir(proyecto):
                 cc = round(fin[k] + 0.02, 3)
                 prof_js.append(f'tl.set("#{pref}boca_cerrada",{{opacity:1}},{cc});tl.set("#{pref}boca_media",{{opacity:0}},{cc});tl.set("#{pref}boca_abierta",{{opacity:0}},{cc});')
                 actual = 0
+            if cfg_ritmo["pulso_avatar"]:                                      # pequeño pulso al empezar a hablar
+                sx = -1 if LADO[av] == "der" else 1
+                prof_js.append(f'tl.to("#flip_{av}",{{scaleX:{round(sx * (1 + cfg_ritmo["pulso_avatar"]), 4)},scaleY:{round(1 + cfg_ritmo["pulso_avatar"], 4)},duration:.16,yoyo:true,repeat:1,ease:"power2.out"}},{round(inicio[k], 2)});')
             ang = ANGULO[i % len(ANGULO)]
             prof_js.append(f'tl.to("#{pref}brazo_d",{{rotation:{ang},svgOrigin:"274 286",duration:.55,ease:"power2.inOut"}},{round(inicio[k] - 0.05, 2)});'
                            f'tl.to("#{pref}brazo_d",{{rotation:{ang + 5},svgOrigin:"274 286",duration:.45,ease:"sine.inOut",yoyo:true,repeat:{max(1, int(DUR[k]["segundos"] / 0.9))}}},{round(inicio[k] + 0.6, 2)});')

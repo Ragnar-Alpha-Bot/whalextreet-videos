@@ -24,7 +24,10 @@ def voz_al_dia(proyecto, lin, hab=None):
         return False
     d = json.loads(f.read_text(encoding="utf-8"))
     hab = hab or {}
-    return set(d) == set(lin) and all(d[k]["texto"] == lin[k] and d[k].get("voz", "profesor") == hab.get(k, "profesor") and (proyecto / "assets" / "voz" / f"{k}.wav").exists() for k in lin)
+    import frases
+    huella = frases.huella_audio()
+    return set(d) == set(lin) and all(d[k]["texto"] == lin[k] and d[k].get("voz", "profesor") == hab.get(k, "profesor") and d[k].get("huella") == huella
+                                      and (proyecto / "assets" / "voz" / f"{k}.wav").exists() for k in lin)
 
 
 def main(proyecto, render=True, forzar=False):
