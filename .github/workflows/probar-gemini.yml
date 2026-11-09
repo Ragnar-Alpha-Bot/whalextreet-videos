@@ -1,0 +1,29 @@
+name: Probar modelos de Gemini
+
+# Diagnóstico manual: lista los modelos de Gemini disponibles para la clave y mide cuánto tarda cada uno en responder a un encargo parecido
+# al de los borradores (cinco hilos en JSON). No imprime nunca la clave.
+on:
+  workflow_dispatch:
+    inputs:
+      modelos:
+        description: "Modelos a probar, separados por comas (vacío = los candidatos habituales)"
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install requests
+      - name: Listar y medir
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          MODELOS: ${{ inputs.modelos }}
+        run: python caja/probar_gemini.py
