@@ -18,3 +18,4 @@ proyectos/*/package.json
 proyectos/*/pipeline.log
 .hyperframes/
 caja/muestras/
+voz_cache/

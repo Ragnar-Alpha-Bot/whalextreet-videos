@@ -1,24 +1,44 @@
 """Validación del guion de escenas (storyboard). Un guion mal formado (por ejemplo, uno generado por una IA) se rechaza con un
 mensaje claro en lugar de producir un vídeo roto.
 
+Reglas fijas de la marca:
+  · La PRIMERA escena es siempre un «gancho» (frena el scroll en el primer segundo) y la ÚLTIMA siempre un «cta» (Síguenos en WhaleXtreet).
+  · Ninguna frase puede prometer ganancias ni ausencia de riesgo (lista PROHIBIDAS).
+
 Formato (JSON):
 {
   "tema": "bolsa",                      # cripto | bolsa | alerta | macro | educativo  -> color de acento
   "tipo_post": "datos",                 # tipo de post de la agencia -> cuándo sale el profesor (formatos_video.json)
   "etiqueta": "BOLSA · ACCIONES",       # opcional, texto de la píldora de arriba (máx. 24)
   "ilustrativo": true,                  # opcional: añade «Gráficos ilustrativos, sin datos reales» al pie
-  "cierre": "El mercado, con contexto.",# opcional
-  "escenas": [ {"tipo": "titulo", "voz": "texto que se locuta", ...campos de la escena...}, ... ]   # de 2 a 8
+  "escenas": [
+    {"tipo": "gancho", "voz": "...", "texto": "¿COMPRASTE PORQUE SUBÍA?", "resalte": "SUBÍA", "icono": "alerta"},
+    {"tipo": "numero", "voz": "...", ...},          # escenas intermedias: titulo, numero, grafico, barras, donut, lista, tarjetas, pregunta
+    {"tipo": "cta"}                                 # «voz», texto y redes salen de marca/redes.json si no se indican
+  ]
 }
 """
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from escenas import ESCENAS  # noqa: E402
+from escenas import ESCENAS, marca_redes, norm  # noqa: E402
 from paletas import TEMAS  # noqa: E402
 
-MAX_ESCENAS = 8
+MIN_ESCENAS, MAX_ESCENAS = 3, 10
+PROHIBIDAS = ["garantizado", "garantizada", "garantizados", "garantizadas", "sin riesgo", "dinero facil", "hazte rico", "ganancia segura",
+              "ganancias seguras", "100% seguro", "seguro que ganas", "no puedes perder"]
+
+
+def _textos(x):
+    if isinstance(x, str):
+        yield x
+    elif isinstance(x, dict):
+        for v in x.values():
+            yield from _textos(v)
+    elif isinstance(x, list):
+        for v in x:
+            yield from _textos(v)
 
 
 def validar(sb):
@@ -29,14 +49,22 @@ def validar(sb):
         errores.append(f"«tema» debe ser uno de {sorted(TEMAS)}")
     if not isinstance(sb.get("tipo_post", "datos"), str):
         errores.append("«tipo_post» debe ser texto")
-    for k, mx in (("etiqueta", 24), ("cierre", 48)):
-        v = sb.get(k)
-        if v is not None and (not isinstance(v, str) or not v or len(v) > mx):
-            errores.append(f"«{k}» debe ser un texto de hasta {mx} caracteres")
+    v = sb.get("etiqueta")
+    if v is not None and (not isinstance(v, str) or not v or len(v) > 24):
+        errores.append("«etiqueta» debe ser un texto de hasta 24 caracteres")
     esc = sb.get("escenas")
-    if not isinstance(esc, list) or not 2 <= len(esc) <= MAX_ESCENAS:
-        errores.append(f"«escenas» debe ser una lista de 2 a {MAX_ESCENAS} escenas")
+    if not isinstance(esc, list) or not MIN_ESCENAS <= len(esc) <= MAX_ESCENAS:
+        errores.append(f"«escenas» debe ser una lista de {MIN_ESCENAS} a {MAX_ESCENAS} escenas")
         esc = []
+    if esc:
+        if not isinstance(esc[0], dict) or esc[0].get("tipo") != "gancho":
+            errores.append("la primera escena debe ser un «gancho» (obligatorio: frena el scroll en el primer segundo)")
+        if not isinstance(esc[-1], dict) or esc[-1].get("tipo") != "cta":
+            errores.append("la última escena debe ser un «cta» (obligatorio: «Síguenos en WhaleXtreet»)")
+        for i, e in enumerate(esc[1:-1], 2):
+            if isinstance(e, dict) and e.get("tipo") in ("gancho", "cta"):
+                errores.append(f"escena {i}: «{e['tipo']}» solo puede ir {'al principio' if e['tipo'] == 'gancho' else 'al final'}")
+    cfg = marca_redes()
     for i, e in enumerate(esc, 1):
         def err(m, i=i, e=e):
             errores.append(f"escena {i} ({e.get('tipo') if isinstance(e, dict) else '?'}): {m}")
@@ -44,20 +72,38 @@ def validar(sb):
             errores.append(f"escena {i}: «tipo» debe ser uno de {sorted(ESCENAS)}")
             continue
         voz = e.get("voz")
+        if e["tipo"] == "cta" and not voz:
+            voz = cfg["cta_voz"]
         if not isinstance(voz, str) or not voz.strip():
             err("falta «voz» (el texto que se locuta)")
         elif len(voz) > 300:
             err(f"«voz» es demasiado larga ({len(voz)} > 300 caracteres)")
+        elif e["tipo"] == "gancho" and len(voz) > 110:
+            err(f"la «voz» del gancho debe ser corta (máx. 110 caracteres; tiene {len(voz)}): el gancho dura 2-4 segundos")
         ESCENAS[e["tipo"]][1](e, err)
+    for t in _textos({"tema": sb.get("tema"), "escenas": esc}):
+        for frase in PROHIBIDAS:
+            if frase in norm_espacios(t):
+                errores.append(f"frase prohibida «{frase}» en «{t[:50]}»: la marca no promete ganancias ni ausencia de riesgo")
     if errores:
         raise ValueError("Guion de escenas no válido:\n - " + "\n - ".join(errores))
     out = dict(sb)
     out.setdefault("tipo_post", "datos")
     out.setdefault("ilustrativo", True)
-    out.setdefault("cierre", "El mercado, con contexto.")
+    out["escenas"] = [dict(e, voz=cfg["cta_voz"]) if e["tipo"] == "cta" and not e.get("voz") else e for e in esc]
     return out
 
 
+def norm_espacios(t):
+    """Minúsculas, sin tildes y con espacios simples, para buscar frases prohibidas."""
+    import re
+    import unicodedata
+    s = unicodedata.normalize("NFD", t.lower())
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    return re.sub(r"\s+", " ", s)
+
+
 def lineas(sb):
-    """Una línea de voz por escena: {"l1": "...", "l2": "..."}."""
-    return {f"l{i}": e["voz"].strip() for i, e in enumerate(sb["escenas"], 1)}
+    """Una línea de voz por escena: {"l1": "...", "l2": "..."} (el cta usa la voz de marca/redes.json si no trae)."""
+    cfg = marca_redes()
+    return {f"l{i}": (e.get("voz") or cfg["cta_voz"]).strip() for i, e in enumerate(sb["escenas"], 1)}

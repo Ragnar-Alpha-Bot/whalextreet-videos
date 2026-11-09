@@ -1,0 +1,29 @@
+{
+  "tema": "alerta",
+  "tipo_post": "error_principiante",
+  "etiqueta": "ALERTA · IMPULSO",
+  "escenas": [
+    {"tipo": "gancho",
+     "voz": "¿Compraste solo porque estaba subiendo? Escucha esto.",
+     "texto": "¿Compraste porque subía?", "resalte": "subía", "icono": "alerta"},
+    {"tipo": "grafico",
+     "voz": "Cuando un precio sube muy rápido, aparece el miedo a quedarte fuera, y ahí es donde muchos compran demasiado tarde.",
+     "titulo": "Subida rápida (ilustrativo)", "puntos": [10, 11, 12, 14, 18, 25, 37, 34], "etiquetas": ["Hace 1 semana", "Hoy"],
+     "anotaciones": [{"i": 6, "texto": "Aquí entra el miedo", "cuando": "miedo"}]},
+    {"tipo": "lista",
+     "voz": "Tres señales de que compras por impulso: no tienes un plan, no sabes dónde saldrías si te equivocas, y solo miras el precio.",
+     "titulo": "3 SEÑALES DE IMPULSO",
+     "items": [{"t": "Compras sin plan", "cuando": "plan"}, {"t": "No sabes dónde saldrías", "cuando": "saldrías"}, {"t": "Solo miras el precio", "cuando": "precio"}]},
+    {"tipo": "tarjetas",
+     "voz": "Antes de comprar, decide tu plan, dónde reconocerías el error, y cuánto estás dispuesto a perder.",
+     "titulo": "ANTES DE COMPRAR",
+     "items": [{"etiqueta": "TU PLAN", "valor": "Plan", "nota": "Entrada, salida y objetivo", "tono": "acc", "cuando": "plan"},
+               {"etiqueta": "TU LÍMITE", "valor": "Stop", "nota": "Dónde reconoces el error", "tono": "down", "cuando": "error"},
+               {"etiqueta": "TU RIESGO", "valor": "Tamaño", "nota": "Cuánto estás dispuesto a perder", "tono": "warn", "cuando": "perder"}]},
+    {"tipo": "pregunta",
+     "voz": "¿Te ha pasado alguna vez? Cuéntanoslo en los comentarios.",
+     "pregunta": "¿Te ha pasado alguna vez?",
+     "opciones": ["Sí, más de una vez", "No, siempre con plan"]},
+    {"tipo": "cta"}
+  ]
+}

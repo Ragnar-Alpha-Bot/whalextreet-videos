@@ -26,10 +26,10 @@ from guion import validar  # noqa: E402
 from paletas import paleta, rgb  # noqa: E402
 from sfx import mezclar  # noqa: E402
 
-GAP, LEAD, TAIL = 0.35, 0.3, 3.4
+GAP, LEAD, TAIL = 0.35, 0.05, 2.8              # la voz del gancho arranca a los 0,05 s
 MIN_BLOQUE = 0.2                     # duración mínima de un bloque de subtítulos (s)
 H = GAP / 2
-AREA_TOP, AREA_H = 500, 1180
+AREA_TOP, AREA_H = 470, 1010                  # zona segura: TikTok/Instagram/Shorts tapan la parte de abajo
 ANGULO = [10, 4, 22, 14, 18, 8, 16, 12]
 
 CSS = """
@@ -66,9 +66,8 @@ html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg);
 .opcion b { flex:none; border-radius:50%; color:#0B1020; display:flex; align-items:center; justify-content:center; }
 #prof { position:absolute; left:-6px; top:566px; width:366px; height:640px; z-index:15; opacity:0; }
 #prof svg { width:366px; height:640px; display:block; overflow:visible; }
-#foot { position:absolute; left:40px; right:40px; top:1745px; font-family:"PlexW",monospace; font-size:27px; line-height:1.35; color:rgba(178,190,209,.8); text-align:center; z-index:20; }
-#fin { position:absolute; left:0; top:0; width:1080px; height:1920px; z-index:40; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:var(--bg); opacity:0; }
-#logoF { width:440px; } #nomF { font-weight:700; font-size:92px; letter-spacing:-.03em; margin-top:36px; } #tagF { font-weight:600; font-size:50px; color:var(--acc); margin-top:14px; padding:0 60px; }
+#foot { position:absolute; left:40px; right:40px; top:1510px; font-family:"PlexW",monospace; font-size:27px; line-height:1.35; color:rgba(178,190,209,.8); text-align:center; z-index:20; }
+#flash { position:absolute; inset:0; background:#fff; opacity:0; z-index:50; pointer-events:none; }
 """
 
 
@@ -116,12 +115,13 @@ def construir(proyecto):
     s_end = round(fin[ks[-1]] + H, 2)
     TOTAL = round(s_end + TAIL, 2)
     t0s = [0.0 if i == 0 else round(inicio[k] - H, 2) for i, k in enumerate(ks)]
-    t1s = [t0s[i + 1] if i + 1 < n else s_end for i in range(n)]
+    t1s = [t0s[i + 1] if i + 1 < n else TOTAL for i in range(n)]       # el cta se queda en pantalla hasta el final
 
     # --- profesor según la regla de formatos -----------------------------------------------------------------------
     formato = formato_para(sb["tipo_post"])
-    momento = lambda i: "gancho" if i == 0 else ("cierre" if i == n - 1 else "cuerpo")
-    visible = [profesor_en(sb["tipo_post"], momento(i)) for i in range(n)]
+    # escena 0 = gancho a pantalla completa (sin profesor); la 1ª escena de contenido hace de «gancho» de la regla; la última (cta) de «cierre»
+    momento = lambda i: "gancho" if i == 1 else ("cierre" if i == n - 1 else "cuerpo")
+    visible = [False if i == 0 else profesor_en(sb["tipo_post"], momento(i)) for i in range(n)]
     tramos, cur = [], None
     for i in range(n):
         if visible[i]:
@@ -139,9 +139,10 @@ def construir(proyecto):
         h, js = ESCENAS[e["tipo"]][0](ctx, e)
         sid = f"S{i}"
         html_esc.append(f'<div class="scene clip" id="{sid}" data-start="{t0s[i]}" data-duration="{round(t1s[i] - t0s[i], 2)}" data-track-index="1" style="left:{left}px;width:{W}px">{h}</div>')
-        js_esc.append(fromTo(f"#{sid}", {"opacity": 0}, {"opacity": 1, "duration": .2}, t0s[i]))
+        js_esc.append(fromTo(f"#{sid}", {"opacity": 0}, {"opacity": 1, "duration": .05 if i == 0 else .2}, t0s[i]))
         js_esc += js
-        js_esc.append(to(f"#{sid}", {"opacity": 0, "duration": .25}, t1s[i] - .25))
+        if i < n - 1:
+            js_esc.append(to(f"#{sid}", {"opacity": 0, "duration": .25}, t1s[i] - .25))
         EV += ctx.ev
         avisos += ctx.avisos
         EV.append((0.1 if i == 0 else t0s[i], f"whoosh:{i % 3}", .4 if i == 0 else .45))
@@ -216,7 +217,6 @@ def construir(proyecto):
         prof_js += parp
 
     # --- cierre y sonidos -------------------------------------------------------------------------------------------
-    EV += [(s_end, "whoosh:1", .5), (s_end + .5, "ding:1", .45), (s_end + .55, "pop:1", .4)]
     (proyecto / "assets").mkdir(parents=True, exist_ok=True)
     for f in (RAIZ / "marca").iterdir():
         shutil.copy(f, proyecto / "assets" / f.name)
@@ -234,18 +234,14 @@ def construir(proyecto):
             + ("\n".join(sub_html)) + "\n" + ("\n".join(html_esc)) + "\n"
             + (f'<div id="prof">{_profesor_svg()}</div>\n' if any(visible) else "")
             + f'<div id="foot">{pie}</div>\n'
-            f'<div id="fin" class="clip" data-start="{s_end}" data-duration="{round(TOTAL - s_end, 2)}" data-track-index="3"><img id="logoF" src="assets/isotipo-cierre.png" alt="" />'
-            f'<div id="nomF">WhaleXtreet</div><div id="tagF">{sb["cierre"]}</div></div>\n{audio}\n</div>')
+            f'<div id="flash"></div>\n{audio}\n</div>')
 
     js = ("const fm=(v,d)=>{const neg=v<0;let s=Math.abs(v).toFixed(d);let [a,b]=s.split('.');a=a.replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.');return (neg?'-':'')+(b?a+','+b:a)};\n"
           "const tl = gsap.timeline({ paused: true });\n"
           f'tl.fromTo("#grid",{{y:0}},{{y:-72,duration:{TOTAL},ease:"none"}},0);\n'
           'tl.fromTo("#top",{opacity:0,y:-20},{opacity:1,y:0,duration:.5,ease:"power3.out"},.05);\n'
           + "\n".join(js_esc) + "\n"
-          + f'tl.fromTo("#fin",{{opacity:0}},{{opacity:1,duration:.4}},{s_end});'
-          f'tl.fromTo("#logoF",{{opacity:0,scale:.8}},{{opacity:1,scale:1,duration:.7,ease:"back.out(1.8)"}},{round(s_end + .15, 2)});'
-          f'tl.fromTo("#nomF",{{opacity:0,y:30}},{{opacity:1,y:0,duration:.5,ease:"power3.out"}},{round(s_end + .55, 2)});'
-          f'tl.fromTo("#tagF",{{opacity:0,y:24}},{{opacity:1,y:0,duration:.5,ease:"power3.out"}},{round(s_end + .95, 2)});\n'
+          + "\n"
           + "\n".join(prof_js) + "\n" + "\n".join(sub_js) + '\nwindow.__timelines["main"] = tl;\ntl.seek(0);\n')
 
     html = ('<!doctype html>\n<html lang="es">\n<head>\n<meta charset="UTF-8" />\n<meta name="viewport" content="width=1080, height=1920" />\n'

@@ -11,6 +11,7 @@ import json
 import math
 import re
 import unicodedata
+from pathlib import Path
 
 J = lambda d: json.dumps(d, separators=(",", ":"), ensure_ascii=False)
 r2 = lambda x: round(float(x), 2)
@@ -226,7 +227,7 @@ def e_grafico(c, d):
     cambio = ""
     if pts[0] != 0:
         ch = (pts[-1] / pts[0] - 1) * 100
-        cambio = f'{"▲ +" if ch >= 0 else "▼ −"}{es(abs(ch), 1)} %'
+        cambio = f'{"▲ +" if ch >= 0 else "▼ −"}{es(abs(ch), 0 if abs(ch) >= 100 else 1)} %'
     grid = "".join(f'<path d="M0 {VH * k / 4:.0f} H{VW:.0f}" stroke="var(--border)" stroke-width="2" opacity=".55"/>' for k in range(1, 4))
     pins, pin_js = "", []
     for k, a in enumerate(d.get("anotaciones", [])):
@@ -470,3 +471,109 @@ ESCENAS = {
     "titulo": (e_titulo, v_titulo), "numero": (e_numero, v_numero), "grafico": (e_grafico, v_grafico), "barras": (e_barras, v_barras),
     "donut": (e_donut, v_donut), "lista": (e_lista, v_lista), "tarjetas": (e_tarjetas, v_tarjetas), "pregunta": (e_pregunta, v_pregunta),
 }
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 9 · GANCHO INICIAL (obligatoria, siempre la primera): frena el scroll en el primer segundo
+# ---------------------------------------------------------------------------------------------------------------------
+ICONOS = {
+    "alerta": ('<svg viewBox="0 0 100 100"><path d="M50 8 L96 90 H4Z" fill="none" stroke="var(--acc)" stroke-width="8" stroke-linejoin="round"/>'
+               '<path d="M50 38 V62" stroke="var(--acc)" stroke-width="9" stroke-linecap="round"/><circle cx="50" cy="77" r="5.5" fill="var(--acc)"/></svg>'),
+    "subida": ('<svg viewBox="0 0 100 100"><path d="M6 80 L34 52 L54 66 L90 22" fill="none" stroke="var(--up)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>'
+               '<path d="M66 20 H92 V46" fill="none" stroke="var(--up)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>'),
+    "bajada": ('<svg viewBox="0 0 100 100"><path d="M6 22 L34 50 L54 36 L90 80" fill="none" stroke="var(--down)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>'
+               '<path d="M66 82 H92 V56" fill="none" stroke="var(--down)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>'),
+    "pregunta": ('<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--acc)" stroke-width="8"/>'
+                 '<text x="50" y="72" text-anchor="middle" font-family="InterW" font-weight="700" font-size="64" fill="var(--acc)">?</text></svg>'),
+}
+
+
+def v_gancho(d, err):
+    _txt(d, "texto", err, 42)
+    _txt(d, "resalte", err, 20, req=False)
+    t, r = d.get("texto"), d.get("resalte")
+    if isinstance(t, str) and isinstance(r, str) and r and norm(r) not in [norm(w) for w in t.split()]:
+        err("«resalte» debe ser una palabra que aparezca en «texto»")
+    if d.get("icono", "alerta") not in list(ICONOS) + ["ninguno"]:
+        err(f"«icono» debe ser uno de {list(ICONOS) + ['ninguno']}")
+
+
+def e_gancho(c, d):
+    t = d["texto"]
+    n = len(t)
+    fs = 200 if n <= 14 else 160 if n <= 24 else 128 if n <= 34 else 106
+    fs = min(fs, int(0.92 * 984 / (0.70 * max(len(w) for w in t.split()))))   # la palabra más larga debe caber en el ancho
+    res = norm(d.get("resalte") or "")
+    ws = t.split()
+    spans = "".join(f'<span id="{c.pf}w{j}" style="display:inline-block;margin:0 .13em;opacity:0;{"color:var(--acc);" if res and norm(w) == res else ""}">{esc(w)}</span>' for j, w in enumerate(ws))
+    icono = d.get("icono", "alerta")
+    html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(46)}">'
+            + (f'<div id="{c.pf}ico" style="width:{c.px(190)};height:{c.px(190)};opacity:0">{ICONOS[icono]}</div>' if icono != "ninguno" else "")
+            + f'<div class="big" style="font-size:{c.px(fs)};line-height:1.0;text-transform:uppercase;text-shadow:0 6px 40px rgba(0,0,0,.6)">{spans}</div></div>')
+    js = [fromTo("#flash", {"opacity": .55}, {"opacity": 0, "duration": .4, "ease": "power2.out"}, 0),
+          fromTo(f"#S{c.i}", {"x": -14}, {"x": 14, "duration": .045, "repeat": 7, "yoyo": True, "ease": "none"}, .02),
+          to(f"#S{c.i}", {"x": 0, "duration": .05}, .4)]
+    if icono != "ninguno":
+        js.append(fromTo(f"#{c.pf}ico", {"opacity": 0, "scale": .3, "rotation": -14}, {"opacity": 1, "scale": 1, "rotation": 0, "duration": .3, "ease": "back.out(3)"}, .0))
+    for j in range(len(ws)):
+        js.append(fromTo(f"#{c.pf}w{j}", {"opacity": 0, "scale": 1.7, "y": -34}, {"opacity": 1, "scale": 1, "y": 0, "duration": .22, "ease": "power4.out"}, .02 + .09 * j))
+        c.snd(.02 + .09 * j, "tick", .35)
+    c.snd(0.0, "impact", .7)
+    c.snd(0.0, "whoosh:2", .4)
+    c.snd(0.35, "pop:3", .4)
+    return html, js
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# 10 · LLAMADA A LA ACCIÓN (obligatoria, siempre la última): «Síguenos en WhaleXtreet»
+# ---------------------------------------------------------------------------------------------------------------------
+def marca_redes():
+    ruta = Path(__file__).resolve().parent.parent / "marca" / "redes.json"
+    base = {"cta_texto": "Síguenos en WhaleXtreet", "cta_voz": "Síguenos en WhaleXtreet para más ideas como esta.", "redes": ["Instagram", "TikTok", "YouTube Shorts"], "usuario": None, "web": None}
+    if ruta.exists():
+        base.update(json.loads(ruta.read_text(encoding="utf-8")))
+    return base
+
+
+def v_cta(d, err):
+    _txt(d, "texto", err, 40, req=False)
+    _txt(d, "usuario", err, 24, req=False)
+    _txt(d, "web", err, 40, req=False)
+    r = d.get("redes")
+    if r is not None and not (isinstance(r, list) and 1 <= len(r) <= 4 and all(isinstance(x, str) and 0 < len(x) <= 16 for x in r)):
+        err("«redes» debe ser una lista de 1 a 4 nombres cortos")
+
+
+def e_cta(c, d):
+    cfg = marca_redes()
+    texto = d.get("texto") or cfg["cta_texto"]
+    redes = d.get("redes") or cfg["redes"]
+    usuario, web = d.get("usuario") or cfg.get("usuario"), d.get("web") or cfg.get("web")
+    pills = "".join(f'<span class="pildora h" id="{c.pf}r{j}" style="font-size:{c.px(40)};margin:{c.px(8)}">{esc(x)}</span>' for j, x in enumerate(redes))
+    html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(26)}">'
+            f'<img class="h" id="{c.pf}logo" src="assets/isotipo-cierre.png" alt="" style="width:{c.px(330)}"/>'
+            f'{chip(c, "SÍGUENOS", c.pf + "chip", 40)}'
+            f'<div class="big h" id="{c.pf}tx" style="font-size:{c.px(84)};padding:0 {c.px(20)}">{esc(texto)}</div>'
+            f'<div style="display:flex;flex-wrap:wrap;justify-content:center">{pills}</div>'
+            + (f'<div class="big h" id="{c.pf}us" style="font-size:{c.px(64)};color:var(--acc)">{esc(usuario)}</div>' if usuario else "")
+            + (f'<div class="nota h" id="{c.pf}web" style="font-size:{c.px(42)}">{esc(web)}</div>' if web else "") + '</div>')
+    t = c.t0
+    js = [fromTo(f"#{c.pf}logo", {"opacity": 0, "scale": .7}, {"opacity": 1, "scale": 1, "duration": .6, "ease": "back.out(1.8)"}, t + .1),
+          fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, t + .45),
+          fromTo(f"#{c.pf}tx", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .5, "ease": "power3.out"}, t + .6)]
+    c.snd(t + .1, "card", .5)
+    c.snd(t + .45, "ding:1", .45)
+    c.snd(t + .6, "swipe", .3)
+    for j in range(len(redes)):
+        js.append(fromTo(f"#{c.pf}r{j}", {"opacity": 0, "scale": .5}, {"opacity": 1, "scale": 1, "duration": .35, "ease": "back.out(3)"}, t + 1.0 + .16 * j))
+        c.snd(t + 1.0 + .16 * j, "pop:" + str(j % 4), .45)
+    k = 1.0 + .16 * len(redes)
+    for idn, ok in ((f"{c.pf}us", usuario), (f"{c.pf}web", web)):
+        if ok:
+            js.append(fromTo(f"#{idn}", {"opacity": 0, "y": 20}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, t + k + .2))
+            c.snd(t + k + .2, "pop:2", .4)
+            k += .4
+    return html, js
+
+
+ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta)})

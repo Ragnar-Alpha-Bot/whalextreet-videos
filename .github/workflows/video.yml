@@ -38,6 +38,13 @@ jobs:
           path: ~/.cache/huggingface
           key: hf-qwen3-tts-whisper-small-v1
 
+      - name: Caché de frases de voz (el cierre se repite en todos los vídeos)
+        uses: actions/cache@v4
+        with:
+          path: voz_cache
+          key: voz-cache-v1-${{ github.run_id }}
+          restore-keys: voz-cache-v1-
+
       - name: Pruebas
         run: |
           python test_formatos.py

@@ -1,0 +1,8 @@
+{
+  "_comentario": "Datos de marca para el cierre de TODOS los vídeos. Rellena usuario y web cuando existan; mientras sean null no se muestran.",
+  "cta_texto": "Síguenos en WhaleXtreet",
+  "cta_voz": "Síguenos en WhaleXtreet para más ideas como esta.",
+  "redes": ["Instagram", "TikTok", "YouTube Shorts"],
+  "usuario": null,
+  "web": null
+}
