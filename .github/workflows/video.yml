@@ -49,6 +49,7 @@ jobs:
         run: |
           python test_formatos.py
           python tests/test_caja.py
+          python tests/test_voz.py
 
       - name: Generar el vídeo (voz D, subtítulos, montaje y render)
         run: |

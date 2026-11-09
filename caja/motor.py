@@ -25,6 +25,8 @@ from formatos_video import formato_para, profesor_en  # noqa: E402
 from guion import validar  # noqa: E402
 from paletas import paleta, rgb  # noqa: E402
 from sfx import mezclar  # noqa: E402
+import musica  # noqa: E402
+from frases import config_audio  # noqa: E402
 
 GAP, LEAD, TAIL = 0.35, 0.05, 2.8              # la voz del gancho arranca a los 0,05 s
 MIN_BLOQUE = 0.2                     # duración mínima de un bloque de subtítulos (s)
@@ -224,6 +226,17 @@ def construir(proyecto):
 
     audio = "\n".join(f'<audio id="a{k}" src="assets/voz/{k}.wav" data-start="{inicio[k]}" data-duration="{DUR[k]["segundos"]}" data-volume="1"></audio>' for k in ks)
     audio += f'\n<audio id="asfx" src="assets/sfx_mix.wav" data-start="0" data-duration="{TOTAL}" data-volume="0.6"></audio>'
+    cfg_audio = config_audio()
+    if cfg_audio["musica"]["activa"]:                       # fondo musical propio, siempre por debajo de la voz
+        rms = []
+        for k in ks:
+            v, _ = sf.read(voz / f"{k}.wav", dtype="float32")
+            v = v if v.ndim == 1 else v.mean(axis=1)
+            act = v[np.abs(v) > 0.01]
+            if len(act):
+                rms.append(float(np.sqrt(np.mean(act ** 2))))
+        musica.generar(str(proyecto / "assets" / "musica.wav"), TOTAL, sb["tema"], float(np.mean(rms)) if rms else 0.07, cfg_audio["musica"]["nivel_db"])
+        audio += f'\n<audio id="amus" src="assets/musica.wav" data-start="0" data-duration="{TOTAL}" data-volume="1"></audio>'
     etiqueta = sb.get("etiqueta") or p["etiqueta"]
     pie = "Contenido educativo, no es asesoramiento financiero" + ("<br/>Gráficos ilustrativos, sin datos reales" if sb["ilustrativo"] else "")
     vars_ = ";".join(f"--{k}:{p[k]}" for k in ("bg", "surface", "raised", "text", "muted", "border", "up", "down", "warn", "acc", "acc2", "resalte"))

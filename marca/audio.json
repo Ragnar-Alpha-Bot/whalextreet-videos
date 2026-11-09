@@ -1,0 +1,7 @@
+{
+  "_comentario": "Ajustes de la locución para que suene natural y no a voz de IA: la frase se parte en trozos cortos con pausas, cada trozo se iguala de volumen y hay un fondo musical muy suave generado por código (sin licencias).",
+  "pausas_s": {"coma": 0.2, "medio": 0.3, "fin": 0.42},
+  "min_palabras_trozo": 4,
+  "volumen_objetivo_rms": 0.07,
+  "musica": {"activa": true, "nivel_db": -24}
+}
