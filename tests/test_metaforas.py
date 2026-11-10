@@ -87,3 +87,38 @@ for texto, extra in peor:
         total = escenas._alto_fijo_gancho(ws, f2, d0) + gr
         assert total <= escenas.AREA_UTIL + 40, (texto, graf, f2, total)
 print("OK: el gancho cabe en su zona")
+
+# --- escenas de panel: pasos y checklist ---
+import fidelidad  # noqa: E402
+assert "pasos" in ESCENAS and "checklist" in ESCENAS
+assert "pasos:" in storyboard_ia.SISTEMA and "checklist:" in storyboard_ia.SISTEMA and "__ICONOS__" not in storyboard_ia.SISTEMA and "persona|barras" in storyboard_ia.SISTEMA
+e = []
+ESCENAS["pasos"][1]({"fase": "FASE 1", "items": [{"n": "TU PRESUPUESTO"}, {"n": "TU FONDO", "icono": "no_existe"}]}, e.append)
+assert e, "icono desconocido"
+e = []
+ESCENAS["pasos"][1]({"fase": "FASE 1 · TU PLAN", "items": [{"n": "TU PRESUPUESTO", "etiqueta": "PRIMERO", "icono": "cartera"}, {"n": "TU FONDO"}, {"n": "TU INVERSIÓN"}]}, e.append)
+assert not e, e
+e = []
+ESCENAS["pasos"][1]({"items": [{"n": "A"}]}, e.append)
+assert e, "mínimo 2 pasos"
+e = []
+ESCENAS["checklist"][1]({"titulo": "ANTES DE INVERTIR", "items": ["Fondo de emergencia", {"t": "Sin deudas caras"}, "Plazo claro"]}, e.append)
+assert not e, e
+e = []
+ESCENAS["checklist"][1]({"titulo": "x", "items": ["a" * 50, "b"]}, e.append)
+assert e
+p = paleta("cripto")
+c = Ctx(2, 3.0, 9.0, 3.1, 8.8, [{"t": "fondo", "ini": .5, "fin": .9}, {"t": "deudas", "ini": 1.5, "fin": 1.9}], 648, 1010, p)
+h, j = ESCENAS["pasos"][0](c, {"fase": "FASE 1 · TU PLAN", "items": [{"n": "TU PRESUPUESTO"}, {"n": "TU FONDO", "cuando": "fondo"}, {"n": "TU INVERSIÓN"}]})
+assert "01" in h and "02" in h and "03" in h and "FASE 1" in h and len(j) >= 9
+c = Ctx(3, 3.0, 9.0, 3.1, 8.8, [{"t": "fondo", "ini": .5, "fin": .9}], 984, 1010, p)
+h, j = ESCENAS["checklist"][0](c, {"titulo": "ANTES DE INVERTIR", "items": [{"t": "Fondo de emergencia", "cuando": "fondo"}, "Sin deudas caras", "Plazo claro"]})
+assert "0/3" in h and "3/3" in h and "stroke=\"var(--up)\"" in h and "var(--up)" in "".join(j)
+# las cifras de estas escenas también cuentan como datos y deben salir del post
+sb = {"tema": "bolsa", "escenas": [{"tipo": "metafora", "motivo": "hucha", "titulo": "AHORRA 87 € AL MES"}, {"tipo": "pasos", "items": [{"n": "GANA 34 %"}, {"n": "SIN CIFRA"}]},
+                                     {"tipo": "checklist", "titulo": "CHECK", "items": ["Rendimiento 61 %", "Otro"]}]}
+pr = fidelidad.comprobar(sb, "Un post sin esas cifras")
+assert any("87" in x for x in pr) and any("34" in x for x in pr) and any("61" in x for x in pr), pr
+validar({"tema": "bolsa", "escenas": [{"tipo": "gancho", "voz": "Tu plan empieza hoy.", "texto": "TU PLAN"}, {"tipo": "pasos", "voz": "Tres pasos.", "fase": "FASE 1", "items": [{"n": "A"}, {"n": "B"}]},
+                                       {"tipo": "checklist", "voz": "Marca cada punto.", "titulo": "T", "items": ["a", "b"]}, {"tipo": "cta"}]})
+print("OK: pasos y checklist")

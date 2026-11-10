@@ -69,6 +69,12 @@ def _visibles(e):
         return [e.get("titulo"), [x if isinstance(x, str) else x.get("t") for x in e.get("items", [])]]
     if t == "tarjetas":
         return [e.get("titulo"), [(x.get("etiqueta"), x.get("valor"), x.get("nota")) for x in e.get("items", [])]]
+    if t == "metafora":
+        return [e.get("titulo"), e.get("subtitulo")]
+    if t == "pasos":
+        return [e.get("fase"), e.get("titulo"), [(x.get("n"), x.get("etiqueta")) for x in e.get("items", []) if isinstance(x, dict)]]
+    if t == "checklist":
+        return [e.get("titulo"), e.get("etiqueta"), [x if isinstance(x, str) else x.get("t") for x in e.get("items", [])]]
     if t == "dialogo":
         return [e.get("texto")]
     if t == "pregunta":

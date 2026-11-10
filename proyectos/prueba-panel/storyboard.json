@@ -1,0 +1,23 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "leccion",
+  "avatar": "profesor",
+  "etiqueta": "BOLSA · TU PLAN",
+  "ilustrativo": false,
+  "escenas": [
+    {"tipo": "gancho", "angulo": "error", "habla": "profesor",
+     "voz": "Invertir sin un plan es la forma más cara de aprender.",
+     "texto": "SIN PLAN PIERDES", "resalte": "PLAN", "kicker": "ERROR COMÚN", "subtexto": "Esto es lo que haría primero",
+     "motivo": "balanza", "icono": "ninguno", "grafico": "ninguno"},
+    {"tipo": "pasos", "habla": "profesor", "fase": "FASE 1 · TU PLAN", "titulo": "ANTES DE COMPRAR NADA",
+     "voz": "Primero, tu presupuesto. Después, tu fondo de emergencia. Y solo entonces, tu inversión.",
+     "items": [{"n": "TU PRESUPUESTO", "etiqueta": "PRIMERO", "icono": "cartera", "cuando": "presupuesto"},
+               {"n": "TU FONDO", "etiqueta": "DESPUÉS", "icono": "escudo", "cuando": "fondo"},
+               {"n": "TU INVERSIÓN", "etiqueta": "POR ÚLTIMO", "icono": "grafico", "cuando": "inversión"}]},
+    {"tipo": "checklist", "habla": "profesor", "titulo": "ANTES DE INVERTIR", "etiqueta": "CHECKLIST",
+     "voz": "Comprueba que tienes ahorro para imprevistos, que no tienes deudas caras, que sabes en qué inviertes y que tu plazo es largo.",
+     "items": [{"t": "Ahorro para imprevistos", "cuando": "ahorro"}, {"t": "Sin deudas caras", "cuando": "deudas"},
+               {"t": "Entiendes en qué inviertes", "cuando": "sabes"}, {"t": "Plazo largo", "cuando": "plazo"}]},
+    {"tipo": "cta", "habla": "profesor"}
+  ]
+}
