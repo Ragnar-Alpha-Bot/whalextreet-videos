@@ -12,6 +12,8 @@ Repositorio público a propósito: así las ejecuciones de GitHub Actions no gas
 
 ## Piezas
 - `caja/escenas.py` — escenas: titulo, numero, grafico, barras, donut, lista, tarjetas, pregunta. Cada una engancha sus apariciones a palabras de la voz.
+- `marca/motivos.js` + `caja/escenas_meta.py` — **50 metáforas visuales** animadas (toro, oso, ciudad de velas, hucha, caja fuerte, cohete, ballena, blockchain, burbuja…), dibujadas con código propio (gratis, sin cifras ni datos inventados).
+  Se usan como escena `metafora` y como `motivo` del gancho. Para ver todas: abre una galería con un servidor local sobre `marca/` (ver `tests/test_metaforas.py`).
 - `caja/sfx.py` — sonidos propios con variantes (whoosh, pop, card, ding, riser, blip…): un sonido en cada transición y aparición.
 - `caja/paletas.py` — marca fija (ballena, fondo azul marino, tipografías, cierre) + color de acento por tema: cripto, bolsa, alerta, macro, educativo.
 - `formatos_video.json` — cuándo sale el profesor: presentador (todo), cameo (gancho y cierre), solo_datos (nunca).

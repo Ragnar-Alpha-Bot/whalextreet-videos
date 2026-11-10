@@ -503,6 +503,9 @@ def v_gancho(d, err):
         err("«resalte» debe ser una palabra que aparezca en «texto»")
     if d.get("icono", "alerta") not in list(ICONOS) + ["ninguno"]:
         err(f"«icono» debe ser uno de {list(ICONOS) + ['ninguno']}")
+    if d.get("motivo") is not None:
+        from escenas_meta import v_motivo
+        v_motivo(d, err)
     g = d.get("grafico", "pulso")
     if g not in GRAFICOS_GANCHO:
         err(f"«grafico» debe ser uno de {list(GRAFICOS_GANCHO)}")
@@ -527,6 +530,9 @@ def e_gancho(c, d):
     ws = t.split()
     icono = d.get("icono", "alerta")
     graf = d.get("grafico", "pulso")
+    motivo = d.get("motivo") if graf != "cifra" else None        # una animación de metáfora apoya el gancho (si hay cifra gigante, manda la cifra)
+    if motivo:
+        graf = "ninguno"
     if graf == "pulso" and icono == "ninguno":
         graf = "ninguno"
     pf = c.pf
@@ -566,6 +572,11 @@ def e_gancho(c, d):
         for k in range(10):
             c.snd(.03 + .065 * k, "tick", .3)
         c.snd(.72, "error" if cf["valor"] < 0 else "ding:2", .45)
+    if motivo:
+        import escenas_meta
+        ident = f"{pf}mv"
+        gr_html = escenas_meta.canvas(ident, c.W, c.n(400)) + escenas_meta.modulo(ident, motivo, c.t0 + .02, {"escala": 1.3})
+        escenas_meta.sonido_entrada(c, motivo, .05)
     # --- estructura: kicker, gráfico, texto enorme, subtexto ---
     kicker = (f'<span class="chip" id="{pf}kick" style="font-size:{c.px(34)};--c:var(--acc)">{esc(d["kicker"])}</span>' if d.get("kicker") else "")
     sub = (f'<div id="{pf}sub" class="nota" style="font-size:{c.px(50)};max-width:{c.px(860)}">{esc(d["subtexto"])}</div>' if d.get("subtexto") else "")
@@ -691,3 +702,4 @@ def e_dialogo(c, d):
 ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta), "dialogo": (e_dialogo, v_dialogo)})
 
 import escenas3d  # noqa: E402,F401  (registra las escenas 3D: barras3d, moneda3d)
+import escenas_meta  # noqa: E402,F401  (registra la escena «metafora» y el «motivo» del gancho)
