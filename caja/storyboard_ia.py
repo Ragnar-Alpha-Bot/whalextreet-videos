@@ -15,6 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fidelidad  # noqa: E402
 from ganchos import BIBLIOTECA  # noqa: E402
+from escenas_meta import lista_para_gemini, sugeridos  # noqa: E402
 from guion import validar  # noqa: E402
 from paletas import TEMAS  # noqa: E402
 
@@ -51,7 +52,9 @@ ESTRUCTURA
   Usa SIEMPRE kicker + subtexto y elige un gráfico llamativo:
   {"tipo":"gancho","angulo":"error|verdad|secreto|urgencia|pregunta","voz":"frase corta hablada (máx. 15 palabras y 110 caracteres)","texto":"TEXTO ENORME (máx. 42 caracteres)","resalte":"una palabra del texto",
   "kicker":"etiqueta corta sobre el texto, máx. 22, p. ej. ERROR COMÚN, ALERTA, NADIE LO MIRA","subtexto":"frase de apoyo, máx. 70, que da más contexto o promete la explicación",
-  "icono":"alerta|subida|bajada|pregunta|ninguno","grafico":"pulso|caida|subida|cifra|ninguno"}
+  "icono":"alerta|subida|bajada|pregunta|ninguno","grafico":"pulso|caida|subida|cifra|ninguno","motivo":"id de la lista de METÁFORAS (muy recomendado)"}
+  «motivo» pone una animación grande bajo el kicker que APOYA el gancho de forma literal (p. ej. «grafico_cae» si habla de caídas, «billete_se_va» si habla de perder valor).
+  Elígelo siempre que haya uno que encaje: un gancho con imagen retiene mucho más. Con «cifra» gigante manda la cifra y no se usa motivo.
   Gráficos: «pulso» (anillos que laten, genérico), «caida» / «subida» (línea que se dibuja, solo para ilustrar una dirección, sin cifras),
   «cifra» (número gigante que cuenta, SOLO si el post da esa cifra): añade "cifra":{"valor":número,"decimales":0-2,"prefijo":"","sufijo":"%"}.
 
@@ -69,8 +72,11 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - lista: {"titulo":"máx. 44","items":[{"t":"máx. 36","cuando":"palabra"}] (2 a 5)}
 - tarjetas: {"titulo":"máx. 44","items":[{"etiqueta":"máx. 30","valor":"texto de máx. 12","nota":"máx. 44","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
 - pregunta: {"pregunta":"máx. 70","opciones":["máx. 26 cada una"] (2 a 3),"pie":"opcional"}
+- metafora: {"motivo":"id de la lista de METÁFORAS","titulo":"máx. 44, opcional","subtitulo":"máx. 60, opcional"} animación a pantalla completa que ilustra de forma LITERAL lo que dice la voz de esa escena. No lleva datos ni cifras.
+  Incluye 2 o 3 escenas «metafora» por vídeo (las que mejor ilustren la voz) y NO repitas el mismo motivo en el vídeo (tampoco el del gancho). Es lo que hace el vídeo vistoso y profesional.
 Elige las escenas por lo que mejor explique ESTE post; no repitas siempre la misma estructura.
 """
+SISTEMA += ("\nMETÁFORAS DISPONIBLES (campo «motivo»; elige por lo que dice la voz):\n" + lista_para_gemini() + "\n\n")
 SISTEMA += BIBLIOTECA + """
 
 SALIDA
@@ -97,7 +103,9 @@ def _prompt(post, errores=None, anterior=None):
     p = {"formato_del_post": post.get("format"), "plataformas": post.get("platforms"), "texto_del_post": post.get("parts")}
     if post.get("chart"):
         p["datos_reales"] = post["chart"]
-    txt = "POST APROBADO:\n" + json.dumps(p, ensure_ascii=False, indent=1) + "\n\n" + sugerencia_3d(post)
+    txt = ("POST APROBADO:\n" + json.dumps(p, ensure_ascii=False, indent=1) + "\n\n" + sugerencia_3d(post)
+           + "\n\nMETÁFORAS SUGERIDAS PARA ESTE VÍDEO (úsalas si encajan con la voz; si otras encajan mejor, elige otras de la lista): "
+           + ", ".join(sugeridos("\n".join(post.get("parts") or []))))
     if errores:
         txt += ("\n\nTU RESPUESTA ANTERIOR NO ERA VÁLIDA:\n" + json.dumps(anterior, ensure_ascii=False)[:6000]
                 + "\n\nERRORES A CORREGIR:\n - " + "\n - ".join(errores) + "\n\nDevuelve el JSON completo corregido.")

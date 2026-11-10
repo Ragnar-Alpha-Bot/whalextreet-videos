@@ -58,6 +58,7 @@ jobs:
           python tests/test_reintento_voz.py
           python tests/test_escenas3d.py
           python tests/test_gancho.py
+          python tests/test_metaforas.py
           python tests/test_cobertura_numeros.py
           python tests/test_post.py
 

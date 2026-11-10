@@ -1,0 +1,22 @@
+{
+  "tema": "alerta",
+  "tipo_post": "leccion",
+  "avatar": "profesor",
+  "etiqueta": "ALERTA · AHORRO",
+  "ilustrativo": false,
+  "escenas": [
+    {"tipo": "gancho", "angulo": "error", "habla": "profesor",
+     "voz": "Tu dinero parado en el banco se deshace cada año.",
+     "texto": "TU DINERO SE DESHACE", "resalte": "DESHACE", "kicker": "ERROR COMÚN", "subtexto": "Y casi nadie lo nota",
+     "motivo": "billete_se_va", "icono": "ninguno", "grafico": "ninguno"},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "grafico_sube", "titulo": "LA INFLACIÓN",
+     "voz": "Los precios suben poco a poco, y lo mismo cuesta más cada año."},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "cubo_agujero", "titulo": "FUGAS SILENCIOSAS",
+     "voz": "Es como un cubo con un agujero: no ves la fuga, pero el nivel baja."},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "arbol_monedas", "titulo": "HAZLO CRECER",
+     "voz": "Invertir con cabeza y a largo plazo es una forma de que tu dinero trabaje, sin promesas ni atajos."},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "escudo", "subtitulo": "Primero, protege lo tuyo",
+     "voz": "Y antes de nada, protege tu base: un colchón para imprevistos."},
+    {"tipo": "cta", "habla": "profesor"}
+  ]
+}

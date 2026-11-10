@@ -95,6 +95,13 @@ def validar(sb):
         elif e["tipo"] == "gancho" and norm_espacios(voz).lstrip("¡¿ ").startswith(APERTURAS_PROHIBIDAS):
             err("el gancho no puede empezar con «Hola», «¿Sabías que…?», «En este vídeo…», «Hoy vamos a hablar de…» ni fórmulas genéricas: empieza directo con el golpe")
         ESCENAS[e["tipo"]][1](e, err)
+    vistos = {}
+    for i, e in enumerate(esc, 1):          # la misma animación dos veces en un vídeo se nota: cada metáfora, una sola vez
+        m = e.get("motivo") if isinstance(e, dict) and e.get("tipo") in ("metafora", "gancho") else None
+        if m:
+            if m in vistos:
+                errores.append(f"escena {i}: el motivo «{m}» ya se usó en la escena {vistos[m]}; elige otra metáfora")
+            vistos.setdefault(m, i)
     for t in _textos({"tema": sb.get("tema"), "escenas": esc}):
         for frase in PROHIBIDAS:
             if frase in norm_espacios(t):
