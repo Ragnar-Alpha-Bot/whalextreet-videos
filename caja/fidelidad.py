@@ -61,9 +61,9 @@ def _visibles(e):
         return [e.get("titulo"), e.get("puntos"), e.get("etiquetas"), [a.get("texto") for a in e.get("anotaciones", [])]]
     if t in ("barras", "barras3d"):
         return [e.get("titulo"), [(x.get("n"), x.get("v")) for x in e.get("items", [])]]
-    if t == "moneda3d":
+    if t in ("moneda3d", "esfera3d"):
         return [e.get("titulo"), e.get("subtitulo")]
-    if t == "donut":
+    if t in ("donut", "donut3d"):
         return [e.get("titulo"), [(x.get("n"), x.get("v")) for x in e.get("segmentos", [])]]
     if t == "lista":
         return [e.get("titulo"), [x if isinstance(x, str) else x.get("t") for x in e.get("items", [])]]
@@ -82,7 +82,7 @@ def comprobar(sb, texto_fuente, datos=None):
     problemas = []
     for i, e in enumerate(sb["escenas"], 1):
         if e.get("ilustrativo"):
-            if e["tipo"] not in ("grafico", "barras", "barras3d", "donut", "numero"):
+            if e["tipo"] not in ("grafico", "barras", "barras3d", "donut", "donut3d", "numero"):
                 problemas.append(f"escena {i} ({e['tipo']}): solo grafico, barras, barras3d, donut y numero pueden ser ilustrativos")
             elif "ilustrativo" not in str(e.get("titulo") or e.get("etiqueta") or "").lower():
                 problemas.append(f"escena {i} ({e['tipo']}): una escena ilustrativa debe decir «(ilustrativo)» en su título o etiqueta")
