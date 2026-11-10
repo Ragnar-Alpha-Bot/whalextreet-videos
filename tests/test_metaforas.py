@@ -68,3 +68,22 @@ for i in range(200):
 assert len(vistos) >= len(escenas_meta.CATALOGO) - 3, len(vistos)
 assert escenas_meta.sugeridos("igual") == escenas_meta.sugeridos("igual")
 print("OK: test_metaforas")
+
+# --- el gancho cabe en su zona (no pisa subtítulos ni pie), aun con kicker, subtexto largo y 3 líneas de texto ---
+import escenas  # noqa: E402
+peor = [("TU DINERO SE DESHACE", {"kicker": "ERROR COMÚN", "subtexto": "Y casi nadie lo nota cuando mira su cuenta"}),
+        ("¿COMPRASTE PORQUE SUBÍA O PORQUE LO ENTIENDES?", {"kicker": "NADIE LO MIRA", "subtexto": "Lo que decide todo y casi nadie lee antes de comprar"}),
+        ("PERDER 50 % EXIGE GANAR 100 %", {"kicker": "ERROR COMÚN", "subtexto": "Las matemáticas de las pérdidas"}),
+        ("AHORRA", {})]
+for texto, extra in peor:
+    d0 = dict(texto=texto, **extra)
+    ws = texto.split()
+    n = len(texto)
+    fs = 200 if n <= 14 else 160 if n <= 24 else 128 if n <= 34 else 106
+    fs = min(fs, int(0.92 * 984 / (0.70 * max(len(w) for w in ws))))
+    for graf, motivo in (("pulso", None), ("caida", None), ("ninguno", "billete_se_va")):
+        f2 = escenas._ajustar_fs_gancho(ws, fs, d0, graf, motivo, 984)
+        gr = escenas.altura_motivo_gancho(ws, f2, d0) if motivo else {"pulso": 260, "caida": 300}[graf]
+        total = escenas._alto_fijo_gancho(ws, f2, d0) + gr
+        assert total <= escenas.AREA_UTIL + 40, (texto, graf, f2, total)
+print("OK: el gancho cabe en su zona")
