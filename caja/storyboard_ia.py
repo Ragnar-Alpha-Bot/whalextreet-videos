@@ -37,11 +37,19 @@ ESTRUCTURA
 - Objetivo: 30-45 segundos hablados en total (90-130 palabras entre todas las «voz»).
 - Cada escena lleva «voz»: lo que se locuta, en español de España natural y hablado. Sin emojis, hashtags ni URLs. Escribe en letra los números
   pequeños y las siglas difíciles de leer en voz alta (en pantalla sí van en cifras). Máx. 300 caracteres por «voz».
-- GANCHO: lo más importante del vídeo. Los 2 primeros segundos deben frenar el scroll: MUCHA información visual y mucha intensidad, y ser honesto con el contenido
-  (nada de promesas falsas ni cifras inventadas). Fórmulas que funcionan: pregunta que incomoda («¿Compraste porque subía?»), error común («El error que arruina tu cartera»),
-  dato llamativo del post, contraste, aviso («CUIDADO con…»). Usa SIEMPRE kicker + subtexto y elige un gráfico llamativo:
-  {"tipo":"gancho","voz":"frase corta hablada (máx. 110 caracteres)","texto":"TEXTO ENORME (máx. 42 caracteres)","resalte":"una palabra del texto",
-  "kicker":"etiqueta corta sobre el texto, máx. 22, p. ej. ERROR COMÚN, ALERTA, ¿LO SABÍAS?","subtexto":"frase de apoyo, máx. 70, que da más contexto o promete la explicación",
+- GANCHO (pauta de la marca, obligatoria): lo más importante del vídeo. Eres un copywriter experto en contenido viral de finanzas, bolsa, trading y cripto. Los 2 primeros segundos
+  deben romper el patrón de scroll: generar curiosidad extrema, tocar un dolor financiero o lanzar un dato contraintuitivo, con MUCHA información visual e intensidad,
+  pero siempre con fundamento. CLICKBAIT CON FUNDAMENTO (clave para crecer): pon en juego dinero o una decisión concreta (lo que el espectador puede perder, ganar, ahorrar o evitar). Si el post trae
+  datos reales, abre con el dato más fuerte, con su cifra; si no, apóyate en consecuencias reales y comprobables (comisiones, perder un 50 % exige ganar un 100 %, interés compuesto, vender en pánico).
+  Puede ser provocador y llamativo. ÚNICO LÍMITE: que sea verdad y el vídeo lo cumpla; nada de porcentajes de gente («el 90 %…») ni cifras que no estén en el post, ni promesas de ganancias.
+  REGLAS: la «voz» del gancho tiene MÁXIMO 15 palabras (ideal 10-15); PROHIBIDO empezar con «Hola», «¿Sabías que…?», «En este vídeo te enseño…», «Hoy vamos a hablar de…»
+  ni con preguntas retóricas obvias. Usa UNO de estos 5 ángulos (campo «angulo»): «error» (una equivocación costosa que mucha gente comete sin saberlo),
+  «verdad» (una verdad incómoda opuesta al sentido común), «secreto» (una ventaja o dato que la mayoría desconoce), «urgencia» (un escenario extremo de pérdida,
+  ganancia o cambio inminente) o «pregunta» (una pregunta incisiva que confronta al espectador sobre sus finanzas; nunca obvia).
+  TRANSICIÓN: la voz de la escena 2 retoma de inmediato el hueco que abrió el gancho, sin saludos ni introducciones; cada escena deja una razón para seguir viendo hasta el cta.
+  Usa SIEMPRE kicker + subtexto y elige un gráfico llamativo:
+  {"tipo":"gancho","angulo":"error|verdad|secreto|urgencia|pregunta","voz":"frase corta hablada (máx. 15 palabras y 110 caracteres)","texto":"TEXTO ENORME (máx. 42 caracteres)","resalte":"una palabra del texto",
+  "kicker":"etiqueta corta sobre el texto, máx. 22, p. ej. ERROR COMÚN, ALERTA, NADIE LO MIRA","subtexto":"frase de apoyo, máx. 70, que da más contexto o promete la explicación",
   "icono":"alerta|subida|bajada|pregunta|ninguno","grafico":"pulso|caida|subida|cifra|ninguno"}
   Gráficos: «pulso» (anillos que laten, genérico), «caida» / «subida» (línea que se dibuja, solo para ilustrar una dirección, sin cifras),
   «cifra» (número gigante que cuenta, SOLO si el post da esa cifra): añade "cifra":{"valor":número,"decimales":0-2,"prefijo":"","sufijo":"%"}.
