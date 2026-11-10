@@ -122,3 +122,14 @@ assert any("87" in x for x in pr) and any("34" in x for x in pr) and any("61" in
 validar({"tema": "bolsa", "escenas": [{"tipo": "gancho", "voz": "Tu plan empieza hoy.", "texto": "TU PLAN"}, {"tipo": "pasos", "voz": "Tres pasos.", "fase": "FASE 1", "items": [{"n": "A"}, {"n": "B"}]},
                                        {"tipo": "checklist", "voz": "Marca cada punto.", "titulo": "T", "items": ["a", "b"]}, {"tipo": "cta"}]})
 print("OK: pasos y checklist")
+
+# --- informe de uso ---
+import informe_metaforas  # noqa: E402
+sbs = [{"escenas": [{"tipo": "gancho", "motivo": "balanza"}, {"tipo": "metafora", "motivo": "hucha"}, {"tipo": "pasos"}, {"tipo": "cta"}]},
+       {"escenas": [{"tipo": "gancho", "motivo": "balanza"}, {"tipo": "metafora", "motivo": "ya_no_existe"}, {"tipo": "cta"}]}]
+assert informe_metaforas.resumen_escenas(sbs[0]) == "gancho(balanza) · metafora(hucha) · pasos · cta"
+mot, tip, n = informe_metaforas.contar(sbs)
+assert mot["balanza"] == 2 and mot["hucha"] == 1 and tip["cta"] == 2 and n == 2
+txt = informe_metaforas.informe(sbs)
+assert "balanza 2" in txt and "ya no existen" in txt and "no han salido nunca" in txt
+print("OK: informe de metáforas")
