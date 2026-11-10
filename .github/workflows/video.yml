@@ -51,6 +51,7 @@ jobs:
           python tests/test_caja.py
           python tests/test_voz.py
           python tests/test_reintento_voz.py
+          python tests/test_cobertura_numeros.py
 
       - name: Generar el vídeo (voz D, subtítulos, montaje y render)
         run: |

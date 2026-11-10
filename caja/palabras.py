@@ -66,10 +66,35 @@ def alinear(texto, ww, dur):
 COBERTURA_MIN = 0.7   # fracción del texto del guion que Whisper debe reconocer en la voz
 
 
+NUMEROS = set("""cero uno una un dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince dieciseis diecisiete dieciocho diecinueve
+veinte veintiuno veintiun veintiuna veintidos veintitres veinticuatro veinticinco veintiseis veintisiete veintiocho veintinueve treinta cuarenta cincuenta
+sesenta setenta ochenta noventa cien ciento doscientos doscientas trescientos trescientas cuatrocientos cuatrocientas quinientos quinientas seiscientos seiscientas
+setecientos setecientas ochocientos ochocientas novecientos novecientas mil millon millones""".split())
+
+
+def _agrupar_numeros(tokens):
+    """Whisper escribe «761» y el guion dice «setecientos sesenta y uno»: cada grupo de número, en cifras o en letras, cuenta como una sola palabra."""
+    out, i = [], 0
+    while i < len(tokens):
+        t = tokens[i]
+        if t in NUMEROS or t.isdigit():
+            j = i + 1
+            while j < len(tokens) and (tokens[j] in NUMEROS or tokens[j].isdigit() or (tokens[j] == "y" and j + 1 < len(tokens) and tokens[j + 1] in NUMEROS)):
+                j += 1
+            if j + 1 < len(tokens) and tokens[j] == "por" and tokens[j + 1] == "ciento":
+                j += 2                                  # «siete por ciento» = «7 %»
+            out.append("#")
+            i = j
+        else:
+            out.append(t)
+            i += 1
+    return out
+
+
 def cobertura(texto, ww):
     """Qué fracción de las palabras del guion aparece (en orden) en lo que Whisper oyó. 1.0 = la voz dice todo el texto."""
-    ns = [norm(t) for t in texto.split()]
-    nw = [norm(w.word) for w in ww]
+    ns = _agrupar_numeros([n for n in (norm(t) for t in texto.split()) if n])
+    nw = _agrupar_numeros([n for n in (norm(w.word) for w in ww) if n])
     if not ns:
         return 1.0
     return sum(b.size for b in difflib.SequenceMatcher(None, ns, nw, autojunk=False).get_matching_blocks()) / len(ns)
