@@ -1,7 +1,7 @@
 """Fidelidad de las cifras: un vídeo hecho a partir de un post aprobado no puede inventar datos.
 
 Toda cifra que se muestre (valor, puntos de un gráfico, barras, porcentajes, tarjetas, textos) debe aparecer en el post o en sus datos,
-salvo en escenas marcadas «ilustrativo»: true (solo gráfico, barras, donut y número), cuyo título debe decir «ilustrativo».
+salvo en escenas marcadas «ilustrativo»: true (solo gráfico, barras, barras3d, donut y número), cuyo título debe decir «ilustrativo».
 Los números pequeños (≤ 10, como «3 señales») se permiten siempre.
 """
 import re
@@ -59,8 +59,10 @@ def _visibles(e):
         return [e.get("valor"), e.get("delta"), e.get("etiqueta"), e.get("detalle"), e.get("prefijo"), e.get("sufijo")]
     if t == "grafico":
         return [e.get("titulo"), e.get("puntos"), e.get("etiquetas"), [a.get("texto") for a in e.get("anotaciones", [])]]
-    if t == "barras":
+    if t in ("barras", "barras3d"):
         return [e.get("titulo"), [(x.get("n"), x.get("v")) for x in e.get("items", [])]]
+    if t == "moneda3d":
+        return [e.get("titulo"), e.get("subtitulo")]
     if t == "donut":
         return [e.get("titulo"), [(x.get("n"), x.get("v")) for x in e.get("segmentos", [])]]
     if t == "lista":
@@ -80,8 +82,8 @@ def comprobar(sb, texto_fuente, datos=None):
     problemas = []
     for i, e in enumerate(sb["escenas"], 1):
         if e.get("ilustrativo"):
-            if e["tipo"] not in ("grafico", "barras", "donut", "numero"):
-                problemas.append(f"escena {i} ({e['tipo']}): solo grafico, barras, donut y numero pueden ser ilustrativos")
+            if e["tipo"] not in ("grafico", "barras", "barras3d", "donut", "numero"):
+                problemas.append(f"escena {i} ({e['tipo']}): solo grafico, barras, barras3d, donut y numero pueden ser ilustrativos")
             elif "ilustrativo" not in str(e.get("titulo") or e.get("etiqueta") or "").lower():
                 problemas.append(f"escena {i} ({e['tipo']}): una escena ilustrativa debe decir «(ilustrativo)» en su título o etiqueta")
             continue
