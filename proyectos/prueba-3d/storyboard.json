@@ -1,0 +1,23 @@
+{
+  "tema": "educativo",
+  "tipo_post": "leccion",
+  "avatar": "profesor",
+  "etiqueta": "APRENDE · TIEMPO",
+  "escenas": [
+    {"tipo": "gancho", "habla": "profesor",
+     "voz": "Cien euros pueden convertirse en setecientos sesenta y uno. Solo con tiempo.",
+     "texto": "El tiempo también invierte", "resalte": "tiempo", "kicker": "INTERÉS COMPUESTO", "subtexto": "Ejemplo hipotético, sin garantías",
+     "grafico": "cifra", "cifra": {"valor": 761, "sufijo": " €"}, "ilustrativo": true},
+    {"tipo": "moneda3d", "habla": "profesor",
+     "voz": "Imagina que inviertes cien euros y ganan un siete por ciento cada año. Es un ejemplo, no una promesa.",
+     "titulo": "UN EJEMPLO HIPOTÉTICO", "simbolo": "€", "subtitulo": "100 € al 7 % anual", "ilustrativo": true},
+    {"tipo": "barras3d", "habla": "profesor",
+     "voz": "A los diez años serían unos ciento noventa y siete euros. A los veinte, trescientos ochenta y siete. Y a los treinta, setecientos sesenta y uno.",
+     "titulo": "100 € AL 7 % ANUAL", "unidad": " €", "destacar": 2, "ilustrativo": true,
+     "items": [{"n": "10 años", "v": 197, "cuando": "diez"}, {"n": "20 años", "v": 387, "cuando": "veinte"}, {"n": "30 años", "v": 761, "cuando": "treinta"}]},
+    {"tipo": "pregunta", "habla": "profesor",
+     "voz": "Ojo: los mercados reales suben y bajan, y nada está asegurado. Y tú, ¿qué pesa más para ti, empezar pronto o esperar al momento perfecto?",
+     "pregunta": "¿Empezar pronto o esperar?", "opciones": ["Empezar pronto", "Esperar el momento"]},
+    {"tipo": "cta", "habla": "profesor"}
+  ]
+}
