@@ -56,6 +56,7 @@ jobs:
           python tests/test_caja.py
           python tests/test_voz.py
           python tests/test_reintento_voz.py
+          python tests/test_escenas3d.py
           python tests/test_cobertura_numeros.py
           python tests/test_post.py
 

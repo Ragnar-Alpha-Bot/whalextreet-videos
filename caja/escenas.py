@@ -687,3 +687,5 @@ def e_dialogo(c, d):
 
 
 ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta), "dialogo": (e_dialogo, v_dialogo)})
+
+import escenas3d  # noqa: E402,F401  (registra las escenas 3D: barras3d, moneda3d)
