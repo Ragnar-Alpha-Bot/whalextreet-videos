@@ -75,13 +75,20 @@ def cobertura(texto, ww):
     return sum(b.size for b in difflib.SequenceMatcher(None, ns, nw, autojunk=False).get_matching_blocks()) / len(ns)
 
 
+class VozMala(RuntimeError):
+    """La voz no dijo lo que debía en algunas líneas (claves como «l2»)."""
+    def __init__(self, mensaje, claves):
+        super().__init__(mensaje)
+        self.claves = claves
+
+
 def procesar(proyecto):
     """Escribe <proyecto>/assets/voz/palabras.json con el tiempo de cada palabra de cada frase."""
     proyecto = Path(proyecto).resolve()
     voz = proyecto / "assets" / "voz"
     dur = json.loads((voz / "duraciones.json").read_text(encoding="utf-8"))
     modelo = WhisperModel("small", device="cpu", compute_type="int8")
-    res, bajas = {}, []
+    res, bajas, claves_bajas = {}, [], []
     for k, info in dur.items():
         x, sr = sf.read(voz / f"{k}.wav", dtype="float32")
         if x.ndim > 1:
@@ -93,11 +100,12 @@ def procesar(proyecto):
         cob = cobertura(info["texto"], ww)
         print(f"[{k}] whisper oyó ({cob:.0%} del texto): " + " ".join(w.word.strip() for w in ww))
         if cob < COBERTURA_MIN:
+            claves_bajas.append(k)
             bajas.append(f"{k} ({cob:.0%}): «{info['texto'][:50]}»")
     (voz / "palabras.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     print("LISTO palabras.json")
     if bajas:
-        raise RuntimeError("La voz no dice lo que debería en: " + "; ".join(bajas) + ". Se rehace con --forzar.")
+        raise VozMala("La voz no dice lo que debería en: " + "; ".join(bajas) + ". Se rehace con --forzar.", claves_bajas)
 
 
 if __name__ == "__main__":
