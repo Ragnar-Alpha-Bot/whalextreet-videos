@@ -28,3 +28,26 @@ assert any("87" in x for x in probs) and any("44" in x or "61" in x for x in pro
 base["escenas"][1].update(ilustrativo=True, titulo="A (ilustrativo)")
 assert not any("barras3d" in x for x in fidelidad.comprobar(base, "Un post sin esas cifras")), "barras3d puede ser ilustrativa"
 print("OK: test_escenas3d")
+
+# --- más figuras y reparto entre vídeos ---
+import escenas3d_mas  # noqa: E402,F401
+for t in ("donut3d", "esfera3d", "velas3d"):
+    assert t in ESCENAS, t
+e = []
+ESCENAS["velas3d"][1]({"titulo": "Velas", "tendencia": "alcista"}, e.append)
+assert e and "ilustrativo" in e[0], e                                  # las velas 3D siempre son una ilustración
+e = []
+ESCENAS["velas3d"][1]({"titulo": "Velas (ilustrativo)", "tendencia": "alcista"}, e.append)
+assert not e, e
+e = []
+ESCENAS["esfera3d"][1]({"titulo": "Mundo", "etiquetas": ["a" * 30]}, e.append)
+assert e
+reparto = {}
+for i in range(300):
+    s = storyboard_ia.sugerencia_3d({"parts": [f"post número {i}"]})
+    clave = "ninguna" if "NO uses" in s else s.split("«")[1].split("»")[0]
+    reparto[clave] = reparto.get(clave, 0) + 1
+assert set(reparto) == {"ninguna", *storyboard_ia.FIGURAS_3D}, reparto
+assert max(reparto.values()) < 150 and min(reparto.values()) > 15, reparto     # ninguna figura domina
+assert storyboard_ia.sugerencia_3d({"parts": ["igual"]}) == storyboard_ia.sugerencia_3d({"parts": ["igual"]})   # mismo post, misma sugerencia
+print("OK: figuras 3D y reparto")

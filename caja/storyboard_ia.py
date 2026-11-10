@@ -9,6 +9,7 @@ Si Gemini devuelve un guion no válido (formato, frases prohibidas, cifras inven
 import copy
 import json
 import sys
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -51,8 +52,11 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - grafico: {"titulo":"máx. 44","puntos":[2 a 40 números],"etiquetas":["inicio","fin"],"unidad":"","anotaciones":[{"i":posición,"texto":"máx. 28","cuando":"palabra"}]}
 - barras: {"titulo":"máx. 44","unidad":"","destacar":posición,"items":[{"n":"máx. 24","v":número,"cuando":"palabra"}] (2 a 6)}
 - barras3d: igual que «barras» pero en 3D (cámara que gira, barras con volumen). Úsala para el gráfico principal de comparación cuando haya 2 a 4 cifras; en el mismo vídeo no mezcles barras y barras3d.
-- moneda3d: {"titulo":"máx. 44","simbolo":"máx. 4: $, € o BTC/ETH","subtitulo":"máx. 60, opcional"} moneda dorada en 3D que gira; sirve de apertura visual al hablar de dinero, ahorro o cripto. Máximo una por vídeo y sin cifras inventadas.
-- donut: {"titulo":"máx. 44","segmentos":[{"n":"máx. 22","v":número>0,"cuando":"palabra"}] (2 a 5)}
+- moneda3d: {"titulo":"máx. 44","simbolo":"máx. 4: $, € o BTC/ETH","subtitulo":"máx. 60, opcional"} moneda dorada en 3D que gira (solo si el post trata de dinero concreto, ahorro o cripto).
+- donut3d: igual que «donut» pero en 3D (tarta con volumen que gira); mismas reglas de cifras.
+- esfera3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional","etiquetas":["máx. 18 cada una"] (0 a 4)} globo con anillos y satélites; sirve para ideas globales: mercados mundiales, macroeconomía, diversificación. Sin cifras.
+- velas3d: {"titulo":"máx. 44 y DEBE incluir «(ilustrativo)»","tendencia":"alcista|bajista|lateral"} velas japonesas 3D que se levantan una a una; es una ilustración de un concepto (tendencia, volatilidad), nunca datos reales.
+- donut:{"titulo":"máx. 44","segmentos":[{"n":"máx. 22","v":número>0,"cuando":"palabra"}] (2 a 5)}
 - lista: {"titulo":"máx. 44","items":[{"t":"máx. 36","cuando":"palabra"}] (2 a 5)}
 - tarjetas: {"titulo":"máx. 44","items":[{"etiqueta":"máx. 30","valor":"texto de máx. 12","nota":"máx. 44","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
 - pregunta: {"pregunta":"máx. 70","opciones":["máx. 26 cada una"] (2 a 3),"pie":"opcional"}
@@ -64,11 +68,25 @@ El «tema» fija el color: cripto, bolsa (acciones), alerta (riesgos y errores),
 """
 
 
+FIGURAS_3D = ["barras3d", "donut3d", "esfera3d", "velas3d", "moneda3d"]
+
+
+def sugerencia_3d(post):
+    """Reparte las figuras 3D entre vídeos (según el texto del post, siempre igual para el mismo post) para que no se repita siempre la misma:
+    uno de cada tres vídeos sale sin 3D y el resto recibe una figura distinta que Gemini solo cambia si no encaja con el contenido."""
+    n = zlib.crc32("\n".join(post.get("parts") or []).encode("utf-8"))
+    if n % 3 == 0:
+        return "ESCENAS 3D: en este vídeo NO uses ninguna escena 3D (usa las 2D normales)."
+    fig = FIGURAS_3D[(n // 3) % len(FIGURAS_3D)]
+    return (f"ESCENAS 3D: como máximo UNA escena 3D en todo el vídeo. La figura sugerida para este vídeo es «{fig}»; úsala si encaja con el contenido, "
+            "y si no encaja, no uses ninguna. No uses moneda3d salvo que sea la sugerida.")
+
+
 def _prompt(post, errores=None, anterior=None):
     p = {"formato_del_post": post.get("format"), "plataformas": post.get("platforms"), "texto_del_post": post.get("parts")}
     if post.get("chart"):
         p["datos_reales"] = post["chart"]
-    txt = "POST APROBADO:\n" + json.dumps(p, ensure_ascii=False, indent=1)
+    txt = "POST APROBADO:\n" + json.dumps(p, ensure_ascii=False, indent=1) + "\n\n" + sugerencia_3d(post)
     if errores:
         txt += ("\n\nTU RESPUESTA ANTERIOR NO ERA VÁLIDA:\n" + json.dumps(anterior, ensure_ascii=False)[:6000]
                 + "\n\nERRORES A CORREGIR:\n - " + "\n - ".join(errores) + "\n\nDevuelve el JSON completo corregido.")

@@ -136,3 +136,5 @@ def e_moneda3d(c, d):
 
 
 ESCENAS.update({"barras3d": (e_barras3d, v_barras), "moneda3d": (e_moneda3d, v_moneda3d)})
+
+import escenas3d_mas  # noqa: E402,F401  (donut3d, esfera3d, velas3d)
