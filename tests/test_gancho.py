@@ -46,7 +46,7 @@ def test_angulo_desconocido_se_rechaza():
 
 
 def test_el_prompt_de_gemini_lleva_las_pautas():
-    for t in ("MÁXIMO 15 palabras", "«error»", "«verdad»", "«secreto»", "«urgencia»", "«pregunta»", "TRANSICIÓN", "¿Sabías que…?"):
+    for t in ("MÁXIMO 15 palabras", "«error»", "«verdad»", "«secreto»", "«urgencia»", "«pregunta»", "TRANSICIÓN", "CLICKBAIT CON FUNDAMENTO", "¿Sabías que…?"):
         assert t in storyboard_ia.SISTEMA, t
 
 
