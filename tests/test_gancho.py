@@ -50,6 +50,16 @@ def test_el_prompt_de_gemini_lleva_las_pautas():
         assert t in storyboard_ia.SISTEMA, t
 
 
+
+
+def test_la_biblioteca_de_ganchos_va_en_el_prompt_sin_palabras_prohibidas():
+    from ganchos import BIBLIOTECA
+    assert BIBLIOTECA in storyboard_ia.SISTEMA and "OBLIGATORIO y BRUTAL" in storyboard_ia.SISTEMA
+    assert len([l for l in BIBLIOTECA.splitlines() if l[:3].strip().rstrip(".").isdigit()]) == 30
+    for w in guion.PROHIBIDAS:
+        assert w not in guion.norm_espacios(storyboard_ia.SISTEMA), w
+
+
 if __name__ == "__main__":
     for n, f in list(globals().items()):
         if n.startswith("test_"):

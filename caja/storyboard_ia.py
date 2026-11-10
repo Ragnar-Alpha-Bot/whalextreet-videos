@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fidelidad  # noqa: E402
+from ganchos import BIBLIOTECA  # noqa: E402
 from guion import validar  # noqa: E402
 from paletas import TEMAS  # noqa: E402
 
@@ -29,7 +30,7 @@ REGLAS DE LA MARCA (innegociables)
 - Datos reales siempre: usa solo cifras que aparezcan en el post o en sus «datos». No inventes estadísticas, precios ni resultados.
   Si necesitas un gráfico o un ejemplo sin datos reales, marca esa escena con "ilustrativo": true y pon «(ilustrativo)» en su título o etiqueta
   (solo grafico, barras, barras3d, donut y numero pueden ser ilustrativos).
-- Habla de «probabilidad estimada», nunca de «seguro» ni de ganancias garantizadas. Prohibido: garantizado, sin riesgo, hazte rico, dinero fácil.
+- Habla de «probabilidad estimada»; nunca prometas ganancias ni resultados asegurados, ni presentes la inversión como algo exento de pérdidas.
 - Tono educativo, cercano y claro. Nada de consejos de inversión personalizados.
 
 ESTRUCTURA
@@ -37,7 +38,7 @@ ESTRUCTURA
 - Objetivo: 30-45 segundos hablados en total (90-130 palabras entre todas las «voz»).
 - Cada escena lleva «voz»: lo que se locuta, en español de España natural y hablado. Sin emojis, hashtags ni URLs. Escribe en letra los números
   pequeños y las siglas difíciles de leer en voz alta (en pantalla sí van en cifras). Máx. 300 caracteres por «voz».
-- GANCHO (pauta de la marca, obligatoria): lo más importante del vídeo. Eres un copywriter experto en contenido viral de finanzas, bolsa, trading y cripto. Los 2 primeros segundos
+- GANCHO (pauta de la marca, OBLIGATORIO y BRUTAL: tiene que hacer PARAR el vídeo en 2 segundos; si no lo consigue, reescríbelo): lo más importante del vídeo. Eres un copywriter experto en contenido viral de finanzas, bolsa, trading y cripto. Los 2 primeros segundos
   deben romper el patrón de scroll: generar curiosidad extrema, tocar un dolor financiero o lanzar un dato contraintuitivo, con MUCHA información visual e intensidad,
   pero siempre con fundamento. CLICKBAIT CON FUNDAMENTO (clave para crecer): pon en juego dinero o una decisión concreta (lo que el espectador puede perder, ganar, ahorrar o evitar). Si el post trae
   datos reales, abre con el dato más fuerte, con su cifra; si no, apóyate en consecuencias reales y comprobables (comisiones, perder un 50 % exige ganar un 100 %, interés compuesto, vender en pánico).
@@ -69,6 +70,8 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - tarjetas: {"titulo":"máx. 44","items":[{"etiqueta":"máx. 30","valor":"texto de máx. 12","nota":"máx. 44","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
 - pregunta: {"pregunta":"máx. 70","opciones":["máx. 26 cada una"] (2 a 3),"pie":"opcional"}
 Elige las escenas por lo que mejor explique ESTE post; no repitas siempre la misma estructura.
+"""
+SISTEMA += BIBLIOTECA + """
 
 SALIDA
 {"tema":"cripto|bolsa|alerta|macro|educativo","etiqueta":"máx. 24, p. ej. BOLSA · ACCIONES","escenas":[ ... ]}
