@@ -30,6 +30,8 @@ def main(post, render=True, cliente=None):
         proyecto.mkdir(parents=True, exist_ok=True)
         (proyecto / "storyboard.json").write_text(json.dumps(sb, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"Guion de escenas listo: {len(sb['escenas'])} escenas, tema {sb['tema']}")
+        from informe_metaforas import resumen_escenas
+        print("Escenas:", resumen_escenas(sb))
         if not render:
             return proyecto, None
         import pipeline
