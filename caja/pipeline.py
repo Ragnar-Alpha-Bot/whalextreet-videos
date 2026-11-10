@@ -84,6 +84,8 @@ def main(proyecto, render=True, forzar=False):
         import volumen
         antes, despues = volumen.normalizar(mp4)
         print(f"Volumen normalizado: {antes:.1f} → {despues:.1f} LUFS")
+        import portada
+        print("Portada (primer fotograma = gancho):", portada.poner_portada(mp4))
         print("VÍDEO:", mp4)
     return resumen
 
