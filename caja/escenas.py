@@ -492,6 +492,8 @@ GRAFICOS_GANCHO = ("pulso", "caida", "subida", "cifra", "ninguno")
 
 
 def v_gancho(d, err):
+    if d.get("angulo") is not None and d["angulo"] not in ("error", "verdad", "secreto", "urgencia", "pregunta"):
+        err("«angulo» debe ser error, verdad, secreto, urgencia o pregunta")
     _txt(d, "texto", err, 42)
     _txt(d, "resalte", err, 20, req=False)
     _txt(d, "kicker", err, 22, req=False)

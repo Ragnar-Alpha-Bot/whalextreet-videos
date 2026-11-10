@@ -90,6 +90,10 @@ def validar(sb):
             err(f"«voz» es demasiado larga ({len(voz)} > 300 caracteres)")
         elif e["tipo"] == "gancho" and len(voz) > 110:
             err(f"la «voz» del gancho debe ser corta (máx. 110 caracteres; tiene {len(voz)}): el gancho dura 2-4 segundos")
+        elif e["tipo"] == "gancho" and len(voz.split()) > MAX_PALABRAS_GANCHO:
+            err(f"la «voz» del gancho tiene {len(voz.split())} palabras: máximo {MAX_PALABRAS_GANCHO} (se dice en menos de 3 segundos)")
+        elif e["tipo"] == "gancho" and norm_espacios(voz).lstrip("¡¿ ").startswith(APERTURAS_PROHIBIDAS):
+            err("el gancho no puede empezar con «Hola», «¿Sabías que…?», «En este vídeo…», «Hoy vamos a hablar de…» ni fórmulas genéricas: empieza directo con el golpe")
         ESCENAS[e["tipo"]][1](e, err)
     for t in _textos({"tema": sb.get("tema"), "escenas": esc}):
         for frase in PROHIBIDAS:
@@ -102,6 +106,11 @@ def validar(sb):
     out.setdefault("ilustrativo", True)
     out["escenas"] = [dict(e, voz=cfg["cta_voz"]) if e["tipo"] == "cta" and not e.get("voz") else e for e in esc]
     return out
+
+
+MAX_PALABRAS_GANCHO = 15
+APERTURAS_PROHIBIDAS = ("hola", "sabias que", "en este video", "hoy vamos", "hoy hablamos", "hoy hablaremos", "hoy te cuento", "hoy te ensenare",
+                        "te ensenare", "te voy a ensenar", "te ensenio", "bienvenid", "buenas", "vamos a ver")
 
 
 def norm_espacios(t):
