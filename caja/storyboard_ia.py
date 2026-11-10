@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fidelidad  # noqa: E402
 from ganchos import BIBLIOTECA  # noqa: E402
 from escenas_meta import lista_para_gemini, sugeridos  # noqa: E402
+from escenas_ui import lista_iconos  # noqa: E402
 from guion import validar  # noqa: E402
 from paletas import TEMAS  # noqa: E402
 
@@ -72,10 +73,15 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - lista: {"titulo":"máx. 44","items":[{"t":"máx. 36","cuando":"palabra"}] (2 a 5)}
 - tarjetas: {"titulo":"máx. 44","items":[{"etiqueta":"máx. 30","valor":"texto de máx. 12","nota":"máx. 44","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
 - pregunta: {"pregunta":"máx. 70","opciones":["máx. 26 cada una"] (2 a 3),"pie":"opcional"}
+- pasos: {"fase":"máx. 30, p. ej. «FASE 1 · TU PLAN»","titulo":"máx. 44, opcional","items":[{"n":"máx. 24, el paso","etiqueta":"máx. 28, opcional, p. ej. «PRIMERO»","icono":"__ICONOS__","cuando":"palabra"}] (2 a 4)}
+  recuadros numerados (01, 02…) con marco de neón que entran uno a uno al decir cada paso. Úsala para un plan, un método o una secuencia de pasos (no para cifras).
+- checklist: {"titulo":"máx. 44","etiqueta":"máx. 24, opcional, p. ej. «ANTES DE INVERTIR»","items":[{"t":"máx. 40","cuando":"palabra"}] (2 a 6)}
+  casillas que se marcan con un tick verde al decir cada punto, con contador y barra de progreso. Úsala para checklists, errores a evitar, requisitos o resumen final.
 - metafora: {"motivo":"id de la lista de METÁFORAS","titulo":"máx. 44, opcional","subtitulo":"máx. 60, opcional"} animación a pantalla completa que ilustra de forma LITERAL lo que dice la voz de esa escena. No lleva datos ni cifras.
   Incluye 2 o 3 escenas «metafora» por vídeo (las que mejor ilustren la voz) y NO repitas el mismo motivo en el vídeo (tampoco el del gancho). Es lo que hace el vídeo vistoso y profesional.
 Elige las escenas por lo que mejor explique ESTE post; no repitas siempre la misma estructura.
 """
+SISTEMA = SISTEMA.replace("__ICONOS__", lista_iconos().replace(", ", "|"))
 SISTEMA += ("\nMETÁFORAS DISPONIBLES (campo «motivo»; elige por lo que dice la voz):\n" + lista_para_gemini() + "\n\n")
 SISTEMA += BIBLIOTECA + """
 

@@ -32,6 +32,11 @@ GAP, LEAD, TAIL = 0.35, 0.05, 2.8              # la voz del gancho arranca a los
 MIN_BLOQUE = 0.2                     # duración mínima de un bloque de subtítulos (s)
 H = GAP / 2
 AREA_TOP, AREA_H = 470, 1010                  # zona segura: TikTok/Instagram/Shorts tapan la parte de abajo
+HUD_HTML = ('<div id="hud"><div id="suelo"></div><div id="vineta"></div><div id="scan"></div><div id="barrido"></div>'
+            '<i class="esq e1"></i><i class="esq e2"></i><i class="esq e3"></i><i class="esq e4"></i></div>\n')   # fondo de panel: rejilla en perspectiva, marcos y escaneo (color del tema)
+HUD_JS = ('tl.fromTo("#suelo",{backgroundPositionY:0},{backgroundPositionY:"%%TOTAL%%px",duration:%%TOTAL%%,ease:"none"},0);\n'
+          'tl.fromTo("#barrido",{y:0},{y:1930,duration:6,ease:"none",repeat:Math.ceil(%%TOTAL%%/6)},0);\n'
+          'tl.fromTo(".esq",{opacity:0,scale:.6},{opacity:.7,scale:1,duration:.6,ease:"back.out(2)",stagger:.08},.1);\n')
 ANGULO = [10, 4, 22, 14, 18, 8, 16, 12]
 
 CSS = """
@@ -45,6 +50,16 @@ html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg);
   background: radial-gradient(900px 700px at 85% 10%, %%GLOW1%%, transparent 60%), radial-gradient(900px 800px at 10% 80%, %%GLOW2%%, transparent 60%), var(--bg); }
 #grid { position:absolute; inset:-80px; opacity:.5; background-image: linear-gradient(rgba(178,190,209,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(178,190,209,.07) 1px, transparent 1px); background-size:72px 72px; }
 .h { opacity:0; }
+#hud { position:absolute; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+#suelo { position:absolute; left:-70%; right:-70%; top:1130px; height:1100px; transform:perspective(560px) rotateX(66deg); transform-origin:top center; opacity:.34;
+  background-image: linear-gradient(var(--acc) 2px, transparent 2px), linear-gradient(90deg, var(--acc) 2px, transparent 2px); background-size:96px 96px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 45%, #000 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 45%, #000 100%); }
+.esq { position:absolute; width:74px; height:74px; border:0 solid var(--acc); opacity:.7; filter:drop-shadow(0 0 10px var(--acc)); }
+.e1 { left:30px; top:30px; border-left-width:5px; border-top-width:5px; } .e2 { right:30px; top:30px; border-right-width:5px; border-top-width:5px; }
+.e3 { left:30px; bottom:30px; border-left-width:5px; border-bottom-width:5px; } .e4 { right:30px; bottom:30px; border-right-width:5px; border-bottom-width:5px; }
+#scan { position:absolute; inset:0; background:repeating-linear-gradient(0deg, rgba(255,255,255,.028) 0 2px, transparent 2px 6px); }
+#barrido { position:absolute; left:0; right:0; top:-8px; height:6px; background:linear-gradient(90deg, transparent, var(--acc), transparent); opacity:.22; filter:blur(1px); }
+#vineta { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 55%, rgba(4,7,16,.55) 100%); }
 #top { position:absolute; left:64px; right:64px; top:110px; display:flex; align-items:center; justify-content:space-between; z-index:20; }
 #top img { height:54px; }
 #pill { font-family:"PlexW",monospace; font-weight:700; font-size:26px; letter-spacing:.14em; color:var(--acc); border:2px solid var(--acc); padding:10px 22px; border-radius:999px; }
@@ -288,7 +303,7 @@ def construir(proyecto):
     css = CSS.replace("%%VARS%%", vars_).replace("%%GLOW1%%", rgb(p["acc"], .12)).replace("%%GLOW2%%", rgb(p["acc2"], .13)).replace("%%TOP%%", str(AREA_TOP)).replace("%%AH%%", str(AREA_H))
 
     body = (f'<div id="root" data-composition-id="main" data-start="0" data-duration="{TOTAL}" data-width="1080" data-height="1920">\n'
-            f'<div id="grid"></div>\n<div id="top"><img src="assets/isotipo.png" alt="WhaleXtreet" /><div id="pill">{etiqueta}</div></div>\n'
+            f'<div id="grid"></div>\n' + HUD_HTML + f'<div id="top"><img src="assets/isotipo.png" alt="WhaleXtreet" /><div id="pill">{etiqueta}</div></div>\n'
             + ("\n".join(sub_html)) + "\n" + ("\n".join(html_esc)) + "\n"
             + "".join(f'<div id="av_{av}" class="av {LADO[av]}"><div id="flip_{av}">{_svg_avatar(av)}</div></div>\n' for av in LISTA_AVATARES if any(av in q for q in quienes))
             + f'<div id="foot">{pie}</div>\n'
@@ -297,6 +312,7 @@ def construir(proyecto):
     js = ("const fm=(v,d)=>{const neg=v<0;let s=Math.abs(v).toFixed(d);let [a,b]=s.split('.');a=a.replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.');return (neg?'-':'')+(b?a+','+b:a)};\n"
           "const tl = gsap.timeline({ paused: true });\n"
           f'tl.fromTo("#grid",{{y:0}},{{y:-72,duration:{TOTAL},ease:"none"}},0);\n'
+          + HUD_JS.replace("%%TOTAL%%", str(TOTAL)) +
           'tl.fromTo("#top",{opacity:0,y:-20},{opacity:1,y:0,duration:.5,ease:"power3.out"},.05);\n'
           + "\n".join(js_esc) + "\n"
           + "\n"

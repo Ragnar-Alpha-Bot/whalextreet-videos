@@ -741,3 +741,4 @@ ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta), "dialogo"
 
 import escenas3d  # noqa: E402,F401  (registra las escenas 3D: barras3d, moneda3d)
 import escenas_meta  # noqa: E402,F401  (registra la escena «metafora» y el «motivo» del gancho)
+import escenas_ui  # noqa: E402,F401  (registra «pasos» y «checklist»)
