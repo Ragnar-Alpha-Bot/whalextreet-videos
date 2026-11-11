@@ -6,30 +6,149 @@
   "subs": "recuadro",
   "ilustrativo": false,
   "escenas": [
-    {"tipo": "gancho", "angulo": "verdad", "habla": "profesor",
-     "voz": "Mismo dinero, mismo mercado. Uno busca ganar rápido; el otro, sobrevivir.",
-     "texto": "AMATEUR VS PRO", "resalte": "PRO", "kicker": "LA DIFERENCIA REAL", "subtexto": "No es suerte: es proceso",
-     "motivo": "toro", "icono": "ninguno", "grafico": "ninguno"},
-    {"tipo": "versus", "habla": "profesor", "ronda": {"n": "1", "titulo": "ANTES DE ENTRAR"}, "cuando_pro": "pro",
-     "voz": "Primero, antes de entrar. El amateur compra porque algo sube. El pro escribe su plan antes de tocar nada.",
-     "novato": {"accion": "mirar_grafico", "texto": "Compra porque sube", "etiqueta": "SIN PLAN", "chip": "AMATEUR", "tono": "down"},
-     "pro": {"accion": "teclear", "texto": "Escribe su plan antes", "etiqueta": "CON PLAN", "tono": "up"}},
-    {"tipo": "versus", "habla": "profesor", "ronda": {"n": "2", "titulo": "EL RIESGO"}, "cuando_pro": "pro",
-     "voz": "Segundo, el riesgo. El amateur se la juega a una carta. El pro arriesga poco en cada operación, y si falla, sigue en pie.",
-     "novato": {"accion": "saltar_valla", "texto": "Se la juega a una carta", "etiqueta": "TODO O NADA", "chip": "AMATEUR", "tono": "down"},
-     "pro": {"accion": "saltar_valla", "texto": "Pierde poco si se equivoca", "etiqueta": "RIESGO CONTROLADO", "tono": "up"}},
-    {"tipo": "versus", "habla": "profesor", "ronda": {"n": "3", "titulo": "CUANDO SALE MAL"}, "cuando_pro": "pro",
-     "voz": "Tercero, cuando sale mal. El amateur dobla la apuesta para recuperar. El pro acepta la pérdida y sigue su plan.",
-     "novato": {"accion": "correr", "texto": "Dobla la apuesta para recuperar", "etiqueta": "PERSIGUE PÉRDIDAS", "chip": "AMATEUR", "tono": "down"},
-     "pro": {"accion": "correr", "texto": "Acepta la pérdida y sigue su plan", "etiqueta": "SIGUE SU PLAN", "tono": "up"}},
-    {"tipo": "calendario", "habla": "profesor", "titulo": "EL PRO ES CONSTANTE", "etiqueta": "SEMANA TRAS SEMANA", "cuando_pie": "emociones",
-     "voz": "Y sobre todo, el pro es constante: revisa su plan cada semana, sin dejarse llevar por las emociones.",
-     "marcas": [{"dia": 0}, {"dia": 1}, {"dia": 2}, {"dia": 3}, {"dia": 4}], "pie": "Revisa su plan, no sus emociones"},
-    {"tipo": "versus", "habla": "profesor", "ronda": {"n": "4", "titulo": "AL FINAL"}, "cuando_pro": "pro",
-     "voz": "Y al final, el amateur no entiende qué falló. El pro mejora poco a poco, y sabe por qué.",
-     "novato": {"accion": "resultado", "texto": "No entiende qué ha fallado", "chip": "AMATEUR", "tono": "down"},
-     "pro": {"accion": "resultado", "texto": "Mejora poco a poco, con método", "tono": "up"}},
-    {"tipo": "cta", "habla": "profesor", "compartir": "ese amigo que compra por impulso", "cuando_respuesta": "impulso",
-     "voz": "Envíaselo a ese amigo que compra por impulso, y síguenos en WhaleXtreet."}
+    {
+      "tipo": "gancho",
+      "angulo": "verdad",
+      "habla": "profesor",
+      "voz": "Las diferencias entre un inversor pro y uno amateur.",
+      "texto": "AMATEUR VS PRO",
+      "resalte": "PRO",
+      "kicker": "LA DIFERENCIA REAL",
+      "subtexto": "No es suerte: es proceso",
+      "motivo": "toro",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "balanza",
+      "titulo": "MISMO DINERO, MISMO MERCADO",
+      "subtitulo": "Uno busca ganar rápido; el otro, sobrevivir",
+      "voz": "Mismo dinero, mismo mercado. Uno busca ganar rápido; el otro, sobrevivir."
+    },
+    {
+      "tipo": "versus",
+      "habla": "profesor",
+      "ronda": {
+        "n": "1",
+        "titulo": "ANTES DE ENTRAR"
+      },
+      "cuando_pro": "pro",
+      "voz": "Primero, antes de entrar. El amateur compra porque algo sube. El pro escribe su plan antes de tocar nada.",
+      "novato": {
+        "accion": "mirar_grafico",
+        "texto": "Compra porque sube",
+        "etiqueta": "SIN PLAN",
+        "chip": "AMATEUR",
+        "tono": "down"
+      },
+      "pro": {
+        "accion": "teclear",
+        "texto": "Escribe su plan antes",
+        "etiqueta": "CON PLAN",
+        "tono": "up"
+      }
+    },
+    {
+      "tipo": "versus",
+      "habla": "profesor",
+      "ronda": {
+        "n": "2",
+        "titulo": "EL RIESGO"
+      },
+      "cuando_pro": "pro",
+      "voz": "Segundo, el riesgo. El amateur se la juega a una carta. El pro arriesga poco en cada operación, y si falla, sigue en pie.",
+      "novato": {
+        "accion": "saltar_valla",
+        "texto": "Se la juega a una carta",
+        "etiqueta": "TODO O NADA",
+        "chip": "AMATEUR",
+        "tono": "down"
+      },
+      "pro": {
+        "accion": "saltar_valla",
+        "texto": "Pierde poco si se equivoca",
+        "etiqueta": "RIESGO CONTROLADO",
+        "tono": "up"
+      }
+    },
+    {
+      "tipo": "versus",
+      "habla": "profesor",
+      "ronda": {
+        "n": "3",
+        "titulo": "CUANDO SALE MAL"
+      },
+      "cuando_pro": "pro",
+      "voz": "Tercero, cuando sale mal. El amateur dobla la apuesta para recuperar. El pro acepta la pérdida y sigue su plan.",
+      "novato": {
+        "accion": "correr",
+        "texto": "Dobla la apuesta para recuperar",
+        "etiqueta": "PERSIGUE PÉRDIDAS",
+        "chip": "AMATEUR",
+        "tono": "down"
+      },
+      "pro": {
+        "accion": "correr",
+        "texto": "Acepta la pérdida y sigue su plan",
+        "etiqueta": "SIGUE SU PLAN",
+        "tono": "up"
+      }
+    },
+    {
+      "tipo": "calendario",
+      "habla": "profesor",
+      "titulo": "EL PRO ES CONSTANTE",
+      "etiqueta": "SEMANA TRAS SEMANA",
+      "cuando_pie": "emociones",
+      "voz": "Y sobre todo, el pro es constante: revisa su plan cada semana, sin dejarse llevar por las emociones.",
+      "marcas": [
+        {
+          "dia": 0
+        },
+        {
+          "dia": 1
+        },
+        {
+          "dia": 2
+        },
+        {
+          "dia": 3
+        },
+        {
+          "dia": 4
+        }
+      ],
+      "pie": "Revisa su plan, no sus emociones"
+    },
+    {
+      "tipo": "versus",
+      "habla": "profesor",
+      "ronda": {
+        "n": "4",
+        "titulo": "AL FINAL"
+      },
+      "cuando_pro": "pro",
+      "voz": "Y al final, el amateur no entiende qué falló. El pro mejora poco a poco, y sabe por qué.",
+      "novato": {
+        "accion": "resultado",
+        "texto": "No entiende qué ha fallado",
+        "chip": "AMATEUR",
+        "tono": "down"
+      },
+      "pro": {
+        "accion": "resultado",
+        "texto": "Mejora poco a poco, con método",
+        "tono": "up"
+      }
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "compartir": "ese amigo que compra por impulso",
+      "cuando_respuesta": "impulso",
+      "voz": "Envíaselo a ese amigo que compra por impulso, y síguenos en WhaleXtreet."
+    }
   ]
 }
