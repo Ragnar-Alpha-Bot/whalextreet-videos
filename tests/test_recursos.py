@@ -102,6 +102,12 @@ assert p and "no aparece literalmente" in p[0], p
 sb = {"tema": "bolsa", "escenas": [{"tipo": "metafora", "voz": "x", "motivo": "hucha", "sello": "OFERTA 50 %"}]}
 assert fidelidad.comprobar(sb, "texto sin cifras"), "una cifra en el sello también se comprueba"
 
+# --- el «%» no queda huérfano en otra línea ----------------------------------------------------------------------------
+from escenas import _palabras  # noqa: E402
+assert _palabras("PERDER 50 % EXIGE GANAR 100 %") == ["PERDER", "50 %", "EXIGE", "GANAR", "100 %"]
+assert esc("Si pierdes un 50 % hoy") == "Si pierdes un 50 % hoy"
+assert _palabras("SUBE 5 %,") == ["SUBE", "5 %,"]
+
 # --- la IA sabe cuándo usarlos --------------------------------------------------------------------------------------
 for palabra in ("RECURSOS ESPECIALES", "ranking:", "terminal:", "sello", "acento", '"subs":"recuadro"', "NO la uses"):
     assert palabra in storyboard_ia.SISTEMA, palabra
