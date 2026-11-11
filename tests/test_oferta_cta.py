@@ -31,6 +31,11 @@ assert storyboard_ia.resumen_oferta(NOMBRE) == "la guía en PDF"
 assert storyboard_ia.resumen_oferta("una plantilla de plan de trading") == "una plantilla de plan de trading"
 assert len(storyboard_ia.resumen_oferta("una guía larguísima " * 6)) <= 40
 
+CHECK = {"keyword": "CHECKLIST", "name": "la checklist de 10 preguntas antes de comprar una acción", "short": "la checklist en PDF"}
+assert storyboard_ia.cierre(dict(POST, oferta=CHECK), {})["oferta"] == {"palabra": "CHECKLIST", "que": "la checklist en PDF"}, "usa el texto corto de la oferta"
+sin_corto = storyboard_ia.cierre(dict(POST, oferta={k: v for k, v in CHECK.items() if k != "short"}), {})["oferta"]["que"]
+assert 3 <= len(sin_corto) <= 40, "sin texto corto, el resumen automático sigue cabiendo"
+
 # --- el cierre lo decide el código ----------------------------------------------------------------------------------------------------------
 assert storyboard_ia.cierre(POST, {}) == {"tipo": "cta", "oferta": {"palabra": "CLAUDE", "que": "la guía en PDF"}}
 assert storyboard_ia.cierre(POST, {"tipo": "cta", "oferta": {"palabra": "OTRA", "que": "algo"}, "voz": "inventada"}) == storyboard_ia.cierre(POST, {}), "la IA no decide la oferta"
