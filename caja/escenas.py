@@ -677,12 +677,16 @@ def v_cta(d, err):
     _txt(d, "texto", err, 40, req=False)
     _txt(d, "usuario", err, 24, req=False)
     _txt(d, "web", err, 40, req=False)
+    _txt(d, "compartir", err, 40, req=False)      # cierre «Envíaselo a ese amigo que…» (maqueta de chat); ver escenas_versus.py
     r = d.get("redes")
     if r is not None and not (isinstance(r, list) and 1 <= len(r) <= 4 and all(isinstance(x, str) and 0 < len(x) <= 16 for x in r)):
         err("«redes» debe ser una lista de 1 a 4 nombres cortos")
 
 
 def e_cta(c, d):
+    if d.get("compartir"):
+        from escenas_versus import e_compartir
+        return e_compartir(c, d)
     cfg = marca_redes()
     texto = d.get("texto") or cfg["cta_texto"]
     redes = d.get("redes") or cfg["redes"]
@@ -761,3 +765,4 @@ import escenas3d  # noqa: E402,F401  (registra las escenas 3D: barras3d, moneda3
 import escenas_meta  # noqa: E402,F401  (registra la escena «metafora» y el «motivo» del gancho)
 import escenas_ui  # noqa: E402,F401  (registra «pasos» y «checklist»)
 import escenas_recursos  # noqa: E402,F401  (registra «terminal», «ranking» y «captura»: recursos que se usan solo cuando el tema lo pide)
+import escenas_versus  # noqa: E402,F401  (registra «versus» con muñecos, «movil», «calendario» y «panel»; el cierre «compartir» se pide desde e_cta)

@@ -38,7 +38,7 @@ HUD_JS = ('tl.fromTo("#suelo",{backgroundPositionY:0},{backgroundPositionY:"%%TO
           'tl.fromTo("#barrido",{y:0},{y:1930,duration:6,ease:"none",repeat:Math.ceil(%%TOTAL%%/6)},0);\n'
           'tl.fromTo(".esq",{opacity:0,scale:.6},{opacity:.7,scale:1,duration:.6,ease:"back.out(2)",stagger:.08},.1);\n')
 ANGULO = [10, 4, 22, 14, 18, 8, 16, 12]
-ANCHO_COMPLETO = ("terminal", "captura")       # escenas que necesitan todo el ancho para leerse: en ellas no sale el avatar (la voz sigue)
+ANCHO_COMPLETO = ("terminal", "captura", "versus", "panel")       # escenas que necesitan todo el ancho para leerse: en ellas no sale el avatar (la voz sigue)
 
 CSS = """
 @font-face { font-family:"InterW"; src:url("assets/Inter-Bold.otf"); font-weight:700; }
