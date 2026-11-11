@@ -82,6 +82,14 @@ def _visibles(e):
         return [e.get("titulo"), [(x if isinstance(x, str) else x.get("t")) for x in e.get("lineas", [])]]
     if t == "captura":
         return [e.get("titulo"), e.get("pie")]
+    if t == "versus":
+        return [e.get("ronda"), [(e.get(l) or {}).get("texto") for l in ("novato", "pro")], [(e.get(l) or {}).get("etiqueta") for l in ("novato", "pro")]]
+    if t == "movil":
+        return [e.get("titulo"), [x.get("t") for x in e.get("mensajes", []) if isinstance(x, dict)], e.get("sello")]
+    if t == "calendario":
+        return [e.get("titulo"), e.get("pie"), e.get("etiqueta")]
+    if t == "panel":
+        return [e.get("titulo"), e.get("busqueda"), [(x.get("n"), x.get("valor"), x.get("sub"), x.get("badge")) for x in e.get("items", []) if isinstance(x, dict)]]
     if t == "pasos":
         return [e.get("fase"), e.get("titulo"), [(x.get("n"), x.get("etiqueta")) for x in e.get("items", []) if isinstance(x, dict)]]
     if t == "checklist":
@@ -104,11 +112,16 @@ def comprobar(sb, texto_fuente, datos=None):
             elif "ilustrativo" not in str(e.get("titulo") or e.get("etiqueta") or "").lower():
                 problemas.append(f"escena {i} ({e['tipo']}): una escena ilustrativa debe decir «(ilustrativo)» en su título o etiqueta")
             continue
-        if e["tipo"] == "ranking":                       # las cifras del ranking son datos: valen aunque sean pequeñas (3,86x), no hay «número libre»
+        if e["tipo"] in ("ranking", "panel"):                       # las cifras del ranking son datos: valen aunque sean pequeñas (3,86x), no hay «número libre»
             for x in e.get("items", []):
                 for n in sorted(numeros_de(x.get("valor") if isinstance(x, dict) else None)):
                     if not _cerca(n, permitidos):
                         problemas.append(f"escena {i} (ranking): la cifra {n:g} no aparece en el post ni en sus datos")
+        if e["tipo"] == "versus":                        # las etiquetas del versus (p. ej. «4 horas») también son datos: tienen que venir del post
+            for lado in ("novato", "pro"):
+                for n in sorted(numeros_de((e.get(lado) or {}).get("etiqueta"))):
+                    if not _cerca(n, permitidos):
+                        problemas.append(f"escena {i} (versus): la cifra {n:g} de la etiqueta de «{lado}» no aparece en el post ni en sus datos")
         if e["tipo"] == "terminal":                      # un comando de terminal se copia tal cual del post; las respuestas son solo texto de apoyo breve
             fuente = _sin_espacios(texto_fuente) + _sin_espacios(json.dumps(datos or {}, ensure_ascii=False))
             for x in e.get("lineas", []):

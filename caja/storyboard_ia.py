@@ -17,6 +17,7 @@ import fidelidad  # noqa: E402
 from ganchos import BIBLIOTECA  # noqa: E402
 from escenas_meta import lista_para_gemini, sugeridos  # noqa: E402
 from escenas_ui import lista_iconos  # noqa: E402
+from escenas_versus import ACCIONES, lista_acciones_para_gemini  # noqa: E402
 from guion import validar  # noqa: E402
 from paletas import TEMAS  # noqa: E402
 
@@ -81,7 +82,7 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
   Incluye 2 o 3 escenas «metafora» por vídeo (las que mejor ilustren la voz) y NO repitas el mismo motivo en el vídeo (tampoco el del gancho). Es lo que hace el vídeo vistoso y profesional.
 Elige las escenas por lo que mejor explique ESTE post; no repitas siempre la misma estructura.
 
-RECURSOS ESPECIALES (opcionales; la MAYORÍA de los vídeos NO los lleva: úsalos solo si el post lo pide de verdad y como máximo 2 en un mismo vídeo)
+RECURSOS ESPECIALES (opcionales; la MAYORÍA de los vídeos NO los lleva: úsalos solo si el post lo pide de verdad y como máximo 2 recursos distintos en un mismo vídeo; las rondas «versus» de una misma comparación cuentan como un solo recurso)
 - ranking: {"titulo":"máx. 44","items":[{"valor":"la cifra EXACTA del post, máx. 8, p. ej. «3,86x» o «+12 %»","t":"máx. 44","sub":"máx. 30, opcional","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4, ordenadas de mayor a menor)}
   filas con una cifra grande y su título que entran de borroso a nítido. SOLO si el post compara 2-4 elementos con su cifra real (rendimientos, multiplicadores, posiciones). Si no hay cifras reales, no la uses.
 - terminal: {"titulo":"máx. 30, p. ej. «Claude Code»","lineas":[{"t":"máx. 56","tipo":"cmd|ok|nota","cuando":"palabra"}] (2 a 6)}
@@ -90,9 +91,23 @@ RECURSOS ESPECIALES (opcionales; la MAYORÍA de los vídeos NO los lleva: úsalo
 - sello (campo extra de una escena «metafora»): "sello":"máx. 14, p. ej. GRATIS". Sello inclinado que cae como un tampón. SOLO si el post dice que algo es gratis, nuevo o está en oferta real.
 - acento: dentro de los títulos de pantalla (campo «titulo» de metafora, pasos, checklist, ranking, lista…) puedes poner UNA palabra entre asteriscos, *así*, para que salga en cursiva serif de color. Máximo una palabra por escena y en pocas escenas del vídeo; no la pongas en el campo «voz».
 - "subs":"recuadro" (campo del guion, junto a «tema»): la palabra que se está diciendo va en un recuadro de color en vez de subrayada. Úsalo solo en vídeos de herramientas, trucos o tutoriales; en el resto, no pongas «subs».
+- versus: {"ronda":{"n":"1","titulo":"máx. 30, p. ej. ANTES DE ENTRAR"},"novato":{"accion":"__ACCIONES__","texto":"máx. 36","etiqueta":"máx. 28, opcional","chip":"máx. 12, opcional","tono":"acc|up|down|warn"},"pro":{ …igual… },"cuando_pro":"palabra en la que entra el pro"}
+  dos paneles apilados con muñecos 2D animados: arriba el NOVATO (fondo gris), abajo el PRO. Úsala SOLO para un post que compara dos maneras de hacer algo (novato contra pro, error contra buena práctica, antes y después):
+  una escena «versus» por ronda (2 o 3 rondas en el vídeo). La «voz» cuenta primero lo del novato y luego lo del pro (pon «cuando_pro» en la palabra donde empieza el pro). Acciones de los muñecos (elige la que ilustre cada texto):
+__LISTA_ACCIONES__
+  El texto de cada panel es una frase corta de conducta, nunca una promesa («Escribe su plan antes», no «Gana siempre»). Una «etiqueta» con cifra solo si la cifra viene del post. En el mismo vídeo no repitas la misma acción más de dos veces.
+- movil: {"titulo":"máx. 20, nombre de la app","mensajes":[{"de":"yo|ia","t":"máx. 70","cuando":"palabra"}] (2 a 5),"sello":"máx. 14, opcional, p. ej. SATURADO","cuando_sello":"palabra"}
+  pantalla de móvil con una conversación que se escribe sola. SOLO si el post trata de una conversación, pregunta-respuesta o consejo recibido; los mensajes se copian o resumen del post, nunca se inventan respuestas de una IA o de un experto.
+- calendario: {"titulo":"máx. 30","etiqueta":"máx. 24, opcional","marcas":[{"dia":0-6,"tipo":"ok|fallo","cuando":"palabra"}] (1 a 7, el día 0 es lunes),"pie":"máx. 40, opcional"}
+  semana con casillas que se marcan (✓ cumplido, ✕ fallo). SOLO para constancia, hábito o aportaciones periódicas; sin cifras que no estén en el post.
+- panel: {"titulo":"máx. 30","busqueda":"máx. 36, opcional","items":[{"n":"máx. 28","valor":"cifra EXACTA del post, máx. 10, con coma decimal y sin puntos de miles (p. ej. «2,4 M»)","sub":"máx. 20","badge":"máx. 8","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
+  filas con una cifra grande que cuenta hasta su valor y una mini gráfica. SOLO si el post da 2-4 cifras reales comparables; si no hay cifras reales, no la uses.
+- cierre «compartir» (campo extra de la escena cta): {"tipo":"cta","compartir":"ese amigo que …, máx. 40","cuando_respuesta":"palabra"}: maqueta de chat «Envíaselo a ese amigo que…». Úsalo en vídeos de comparación o de error común
+  que alguien reconocería en un conocido; la «voz» del cta debe decirlo («Envíaselo a ese amigo que… y síguenos en WhaleXtreet»). En el resto de vídeos, el cta normal.
 - captura: NO la uses (necesita una imagen que tú no puedes aportar).
 """
 SISTEMA = SISTEMA.replace("__ICONOS__", lista_iconos().replace(", ", "|"))
+SISTEMA = SISTEMA.replace("__ACCIONES__", "|".join(ACCIONES)).replace("__LISTA_ACCIONES__", lista_acciones_para_gemini())
 SISTEMA += ("\nMETÁFORAS DISPONIBLES (campo «motivo»; elige por lo que dice la voz):\n" + lista_para_gemini() + "\n\n")
 SISTEMA += BIBLIOTECA + """
 
