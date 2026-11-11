@@ -80,6 +80,17 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - metafora: {"motivo":"id de la lista de METÁFORAS","titulo":"máx. 44, opcional","subtitulo":"máx. 60, opcional"} animación a pantalla completa que ilustra de forma LITERAL lo que dice la voz de esa escena. No lleva datos ni cifras.
   Incluye 2 o 3 escenas «metafora» por vídeo (las que mejor ilustren la voz) y NO repitas el mismo motivo en el vídeo (tampoco el del gancho). Es lo que hace el vídeo vistoso y profesional.
 Elige las escenas por lo que mejor explique ESTE post; no repitas siempre la misma estructura.
+
+RECURSOS ESPECIALES (opcionales; la MAYORÍA de los vídeos NO los lleva: úsalos solo si el post lo pide de verdad y como máximo 2 en un mismo vídeo)
+- ranking: {"titulo":"máx. 44","items":[{"valor":"la cifra EXACTA del post, máx. 8, p. ej. «3,86x» o «+12 %»","t":"máx. 44","sub":"máx. 30, opcional","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4, ordenadas de mayor a menor)}
+  filas con una cifra grande y su título que entran de borroso a nítido. SOLO si el post compara 2-4 elementos con su cifra real (rendimientos, multiplicadores, posiciones). Si no hay cifras reales, no la uses.
+- terminal: {"titulo":"máx. 30, p. ej. «Claude Code»","lineas":[{"t":"máx. 56","tipo":"cmd|ok|nota","cuando":"palabra"}] (2 a 6)}
+  ventana de terminal con comandos que se escriben solos. SOLO si el post trae comandos o instrucciones de instalación LITERALES: cada línea «cmd» debe copiarse tal cual del post (si no está, el vídeo se rechaza).
+  Las líneas «ok» y «nota» son respuestas cortas de apoyo sin cifras («Listo», «Instalado»). Para temas de finanzas normales NO la uses.
+- sello (campo extra de una escena «metafora»): "sello":"máx. 14, p. ej. GRATIS". Sello inclinado que cae como un tampón. SOLO si el post dice que algo es gratis, nuevo o está en oferta real.
+- acento: dentro de los títulos de pantalla (campo «titulo» de metafora, pasos, checklist, ranking, lista…) puedes poner UNA palabra entre asteriscos, *así*, para que salga en cursiva serif de color. Máximo una palabra por escena y en pocas escenas del vídeo; no la pongas en el campo «voz».
+- "subs":"recuadro" (campo del guion, junto a «tema»): la palabra que se está diciendo va en un recuadro de color en vez de subrayada. Úsalo solo en vídeos de herramientas, trucos o tutoriales; en el resto, no pongas «subs».
+- captura: NO la uses (necesita una imagen que tú no puedes aportar).
 """
 SISTEMA = SISTEMA.replace("__ICONOS__", lista_iconos().replace(", ", "|"))
 SISTEMA += ("\nMETÁFORAS DISPONIBLES (campo «motivo»; elige por lo que dice la voz):\n" + lista_para_gemini() + "\n\n")

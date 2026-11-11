@@ -139,6 +139,7 @@ def v_metafora(d, err):
     v_motivo(d, err)
     _txt(d, "titulo", err, MAX_TITULO, req=False)
     _txt(d, "subtitulo", err, MAX_SUBTITULO, req=False)
+    _txt(d, "sello", err, 14, req=False)          # recurso opcional: sello inclinado tipo «GRATIS» (solo si el post lo dice)
 
 
 def sonido_entrada(c, motivo, t):
@@ -157,8 +158,15 @@ def e_metafora(c, d):
             + (f'<div class="lab h" id="{c.pf}tit" style="font-size:{c.px(36)};align-self:flex-start;margin-bottom:{c.px(10)}">{esc(tit)}</div>' if tit else "")
             + canvas(ident, c.W, alto)
             + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.px(52)};text-align:center;color:var(--acc2);margin-top:{c.px(8)}">{esc(sub)}</div>' if sub else "")
+            + (f'<div class="h" id="{c.pf}sello" style="position:absolute;right:{c.px(6)};top:{c.px(150)};padding:{c.px(6)} {c.px(26)};border:{c.px(8)} double var(--resalte);'
+               f'border-radius:{c.px(16)};color:var(--resalte);font-family:PlexW,monospace;font-weight:700;font-size:{c.px(76)};letter-spacing:.08em;'
+               f'text-transform:uppercase;background:rgba(4,7,16,.55);transform:rotate(-9deg)">{esc(d["sello"])}</div>' if d.get("sello") else "")
             + '</div>' + modulo(ident, d["motivo"], c.t0 + .02, {"escala": 1.2 if c.W >= 900 else 1.0}))
     js = []
+    if d.get("sello"):                      # el sello cae desde grande, como un golpe de tampón, hacia la mitad de la escena
+        ts = c.T(d.get("cuando_sello"), .35)
+        js.append(fromTo(f"#{c.pf}sello", {"opacity": 0, "scale": 2.6, "rotation": -22}, {"opacity": .95, "scale": 1, "rotation": -9, "duration": .35, "ease": "back.out(1.7)"}, ts))
+        c.snd(ts + .22, "impact", .5)
     if tit:
         js.append(fromTo(f"#{c.pf}tit", {"opacity": 0, "y": -20}, {"opacity": 1, "y": 0, "duration": .4, "ease": "power3.out"}, c.t0 + .15))
     if sub:

@@ -55,6 +55,7 @@ jobs:
           python tests/test_gancho.py
           python tests/test_portada.py
           python tests/test_metaforas.py
+          python tests/test_recursos.py
           python tests/test_cobertura_numeros.py
 
       - name: Generar el vídeo (voz D, subtítulos, montaje y render)

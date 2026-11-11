@@ -14,6 +14,8 @@ Repositorio público a propósito: así las ejecuciones de GitHub Actions no gas
 - `caja/escenas.py` — escenas: titulo, numero, grafico, barras, donut, lista, tarjetas, pregunta. Cada una engancha sus apariciones a palabras de la voz.
 - `marca/motivos.js` + `caja/escenas_meta.py` — **50 metáforas visuales** animadas (toro, oso, ciudad de velas, hucha, caja fuerte, cohete, ballena, blockchain, burbuja…), dibujadas con código propio (gratis, sin cifras ni datos inventados).
   Se usan como escena `metafora` y como `motivo` del gancho. Para ver todas: abre una galería con un servidor local sobre `marca/` (ver `tests/test_metaforas.py`).
+
+- `caja/escenas_recursos.py` — **recursos de uso puntual** (no van en todos los vídeos; la IA solo los elige cuando el tema lo pide): escena `terminal` (comandos que se escriben solos; deben salir literales del post), escena `ranking` (cifra grande + título, con las cifras del post), escena `captura` (imagen real con recuadro y zoom; manual), `sello` en la metáfora (p. ej. GRATIS), `*palabra*` en cursiva serif (fuente Instrument Serif, licencia OFL, en `marca/`) y `"subs": "recuadro"` para subtítulos con la palabra activa en un cuadro de color. Prueba: `tests/test_recursos.py`; muestra: `proyectos/prueba-recursos`.
 - `caja/sfx.py` — sonidos propios con variantes (whoosh, pop, card, ding, riser, blip…): un sonido en cada transición y aparición.
 - `caja/paletas.py` — marca fija (ballena, fondo azul marino, tipografías, cierre) + color de acento por tema: cripto, bolsa, alerta, macro, educativo.
 - `formatos_video.json` — cuándo sale el profesor: presentador (todo), cameo (gancho y cierre), solo_datos (nunca).
