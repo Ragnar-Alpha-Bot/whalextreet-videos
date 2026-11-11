@@ -70,6 +70,11 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - donut3d: igual que «donut» pero en 3D (tarta con volumen que gira); mismas reglas de cifras.
 - esfera3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional","etiquetas":["máx. 18 cada una"] (0 a 4)} globo con anillos y satélites; sirve para ideas globales: mercados mundiales, macroeconomía, diversificación. Sin cifras.
 - velas3d: {"titulo":"máx. 44 y DEBE incluir «(ilustrativo)»","tendencia":"alcista|bajista|lateral"} velas japonesas 3D que se levantan una a una; es una ilustración de un concepto (tendencia, volatilidad), nunca datos reales.
+- animal3d: {"animal":"toro|oso","titulo":"máx. 44","subtitulo":"máx. 60, opcional"} un TORO (mercado alcista, optimismo) u OSO (mercado bajista, caídas) 3D galopando con la cámara girando. SOLO si el post habla de mercado alcista o bajista; sin datos ni cifras.
+- lingotes3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional"} pila de lingotes de oro que cae lingote a lingote, con monedas. Para ahorro, oro, patrimonio o valor refugio; sin cifras.
+- linea3d: igual que «grafico» (titulo, puntos, unidad, etiquetas; sin anotaciones) pero en 3D (cinta brillante con área y cámara que gira). Úsala para la evolución de un dato REAL del post (2 a 40 puntos); misma regla de cifras que «grafico» (si es un ejemplo, "ilustrativo": true y «(ilustrativo)» en el título).
+- escudo3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional"} escudo 3D con un visto bueno y anillos que giran. Para proteger el capital, stop loss, gestión del riesgo; sin cifras.
+- ciudad3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional"} ciudad de rascacielos que crece mientras la cámara avanza por la avenida. Para economía, crecimiento o mercados en general; es una ilustración, sin datos.
 - donut:{"titulo":"máx. 44","segmentos":[{"n":"máx. 22","v":número>0,"cuando":"palabra"}] (2 a 5)}
 - lista: {"titulo":"máx. 44","items":[{"t":"máx. 36","cuando":"palabra"}] (2 a 5)}
 - tarjetas: {"titulo":"máx. 44","items":[{"etiqueta":"máx. 30","valor":"texto de máx. 12","nota":"máx. 44","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
@@ -117,7 +122,7 @@ El «tema» fija el color: cripto, bolsa (acciones), alerta (riesgos y errores),
 """
 
 
-FIGURAS_3D = ["barras3d", "donut3d", "esfera3d", "velas3d", "moneda3d"]
+FIGURAS_3D = ["barras3d", "donut3d", "esfera3d", "velas3d", "moneda3d", "animal3d", "lingotes3d", "linea3d", "escudo3d", "ciudad3d"]
 
 
 def sugerencia_3d(post):
@@ -128,7 +133,7 @@ def sugerencia_3d(post):
         return "ESCENAS 3D: en este vídeo NO uses ninguna escena 3D (usa las 2D normales)."
     fig = FIGURAS_3D[(n // 3) % len(FIGURAS_3D)]
     return (f"ESCENAS 3D: como máximo UNA escena 3D en todo el vídeo. La figura sugerida para este vídeo es «{fig}»; úsala si encaja con el contenido, "
-            "y si no encaja, no uses ninguna. No uses moneda3d salvo que sea la sugerida.")
+            "y si no encaja, no uses ninguna. No uses moneda3d, animal3d, lingotes3d, escudo3d ni ciudad3d salvo que sea la sugerida (son figuras decorativas); linea3d solo si el post trae una serie de datos reales.")
 
 
 def _prompt(post, errores=None, anterior=None):

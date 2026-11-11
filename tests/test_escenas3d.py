@@ -48,6 +48,6 @@ for i in range(300):
     clave = "ninguna" if "NO uses" in s else s.split("«")[1].split("»")[0]
     reparto[clave] = reparto.get(clave, 0) + 1
 assert set(reparto) == {"ninguna", *storyboard_ia.FIGURAS_3D}, reparto
-assert max(reparto.values()) < 150 and min(reparto.values()) > 15, reparto     # ninguna figura domina
+assert max(reparto.values()) < 150 and min(reparto.values()) > 8, reparto     # ninguna figura domina
 assert storyboard_ia.sugerencia_3d({"parts": ["igual"]}) == storyboard_ia.sugerencia_3d({"parts": ["igual"]})   # mismo post, misma sugerencia
 print("OK: figuras 3D y reparto")

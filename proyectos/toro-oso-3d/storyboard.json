@@ -1,0 +1,23 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "hilo",
+  "avatar": "profesor",
+  "etiqueta": "BOLSA · TORO Y OSO",
+  "ilustrativo": false,
+  "escenas": [
+    {"tipo": "gancho", "angulo": "pregunta", "habla": "profesor",
+     "voz": "Toro o oso: el mercado sube y baja, y tú decides cómo protegerte.",
+     "texto": "¿TORO U OSO?", "resalte": "OSO", "kicker": "ALCISTA O BAJISTA", "subtexto": "Y cómo protegerte de los dos",
+     "motivo": "montana_rusa", "icono": "ninguno", "grafico": "ninguno"},
+    {"tipo": "animal3d", "habla": "profesor", "animal": "toro", "titulo": "MERCADO ALCISTA", "subtitulo": "Los precios suben",
+     "voz": "En un mercado alcista, los precios suben y reina el optimismo."},
+    {"tipo": "animal3d", "habla": "profesor", "animal": "oso", "titulo": "MERCADO BAJISTA", "subtitulo": "Los precios caen",
+     "voz": "En uno bajista, los precios caen y manda el miedo."},
+    {"tipo": "linea3d", "habla": "profesor", "ilustrativo": true, "titulo": "ALTIBAJOS (ilustrativo)", "etiquetas": ["Antes", "Después"],
+     "puntos": [40, 48, 44, 56, 50, 62, 55, 47, 52, 60, 66],
+     "voz": "Y entre un ciclo y otro, el precio sube y baja sin avisar."},
+    {"tipo": "escudo3d", "habla": "profesor", "titulo": "PROTEGE TU CAPITAL", "subtitulo": "Un plan y un límite de pérdida",
+     "voz": "Por eso, lo importante es proteger tu capital, con un plan y un límite de pérdida."},
+    {"tipo": "cta", "habla": "profesor"}
+  ]
+}

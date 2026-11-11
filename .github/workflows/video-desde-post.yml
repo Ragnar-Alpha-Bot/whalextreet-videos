@@ -62,6 +62,7 @@ jobs:
           python tests/test_metaforas.py
           python tests/test_recursos.py
           python tests/test_versus.py
+          python tests/test_escenas3d_nicho.py
           python tests/test_cobertura_numeros.py
           python tests/test_post.py
 
