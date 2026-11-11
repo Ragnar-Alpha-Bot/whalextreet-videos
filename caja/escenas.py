@@ -20,7 +20,8 @@ _ACENTO = re.compile(r"\*([^*\n]{1,40})\*")
 
 def esc(s):
     """Escapa el texto para HTML. Lo que va entre asteriscos (*palabra*) sale en cursiva serif con el color de acento (recurso de estilo, usar con cuentagotas)."""
-    return _ACENTO.sub(r'<em class="ac">\1</em>', _html.escape(str(s), quote=False))
+    t = re.sub(r"(\d) %", "\\1\u00a0%", _html.escape(str(s), quote=False))      # el «%» no se queda solo en otra línea
+    return _ACENTO.sub(r'<em class="ac">\1</em>', t)
 
 
 def es(n, dec=0):
@@ -564,13 +565,24 @@ def _ajustar_fs_gancho(ws, fs, d, graf, motivo, ancho):
     return fs
 
 
+def _palabras(t):
+    """Palabras del texto del gancho; un «%» suelto se pega al número anterior para que no quede huérfano en otra línea."""
+    out = []
+    for w in t.split():
+        if out and re.fullmatch(r"%\W*", w):
+            out[-1] += " " + w
+        else:
+            out.append(w)
+    return out
+
+
 def e_gancho(c, d):
     t = d["texto"]
     n = len(t)
     fs = 200 if n <= 14 else 160 if n <= 24 else 128 if n <= 34 else 106
-    fs = min(fs, int(0.92 * 984 / (0.70 * max(len(w) for w in t.split()))))   # la palabra más larga debe caber en el ancho
+    fs = min(fs, int(0.92 * 984 / (0.70 * max(len(w) for w in _palabras(t)))))   # la palabra más larga debe caber en el ancho
     res = norm(d.get("resalte") or "")
-    ws = t.split()
+    ws = _palabras(t)
     icono = d.get("icono", "alerta")
     graf = d.get("grafico", "pulso")
     motivo = d.get("motivo") if graf != "cifra" else None        # una animación de metáfora apoya el gancho (si hay cifra gigante, manda la cifra)
