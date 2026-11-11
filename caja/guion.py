@@ -85,7 +85,7 @@ def validar(sb):
             err("las escenas «dialogo» solo existen en vídeos con «avatar»: «ambos»")
         voz = e.get("voz")
         if e["tipo"] == "cta" and not voz:
-            voz = cfg["cta_voz"]
+            voz = voz_cta(e, cfg)
         if not isinstance(voz, str) or not voz.strip():
             err("falta «voz» (el texto que se locuta)")
         elif len(voz) > 300:
@@ -113,8 +113,16 @@ def validar(sb):
     out = dict(sb)
     out.setdefault("tipo_post", "datos")
     out.setdefault("ilustrativo", True)
-    out["escenas"] = [dict(e, voz=cfg["cta_voz"]) if e["tipo"] == "cta" and not e.get("voz") else e for e in esc]
+    out["escenas"] = [dict(e, voz=voz_cta(e, cfg)) if e["tipo"] == "cta" and not e.get("voz") else e for e in esc]
     return out
+
+
+def voz_cta(e, cfg):
+    """Lo que se dice en el cierre: lo de siempre, o «Comenta X y sígueme…» si el cierre lleva una oferta (el cta de un vídeo con oferta)."""
+    o = e.get("oferta")
+    if isinstance(o, dict) and o.get("palabra") and o.get("que"):
+        return f"Comenta {str(o['palabra']).title()} y sígueme en WhaleXtreet, y te envío {o['que']} por privado."
+    return cfg["cta_voz"]
 
 
 MAX_PALABRAS_GANCHO = 15
@@ -141,4 +149,4 @@ def hablantes(sb):
 def lineas(sb):
     """Una línea de voz por escena: {"l1": "...", "l2": "..."} (el cta usa la voz de marca/redes.json si no trae)."""
     cfg = marca_redes()
-    return {f"l{i}": (e.get("voz") or cfg["cta_voz"]).strip() for i, e in enumerate(sb["escenas"], 1)}
+    return {f"l{i}": (e.get("voz") or voz_cta(e, cfg)).strip() for i, e in enumerate(sb["escenas"], 1)}

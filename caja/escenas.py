@@ -678,12 +678,22 @@ def v_cta(d, err):
     _txt(d, "usuario", err, 24, req=False)
     _txt(d, "web", err, 40, req=False)
     _txt(d, "compartir", err, 40, req=False)      # cierre «Envíaselo a ese amigo que…» (maqueta de chat); ver escenas_versus.py
+    o = d.get("oferta")                           # cierre «Comenta X y sígueme y te envío Y por privado» (solo cuando el post trae una oferta real)
+    if o is not None:
+        if not (isinstance(o, dict) and isinstance(o.get("palabra"), str) and re.fullmatch(r"[A-ZÁÉÍÓÚÜÑ0-9]{3,12}", o["palabra"])
+                and isinstance(o.get("que"), str) and 3 <= len(o["que"]) <= 40):
+            err("«oferta» necesita «palabra» (3-12 letras o cifras en mayúsculas, fácil de decir) y «que» (qué se envía, 3-40 caracteres, p. ej. «la guía en PDF»)")
+        if d.get("compartir"):
+            err("un cierre no puede llevar a la vez «oferta» y «compartir»")
     r = d.get("redes")
     if r is not None and not (isinstance(r, list) and 1 <= len(r) <= 4 and all(isinstance(x, str) and 0 < len(x) <= 16 for x in r)):
         err("«redes» debe ser una lista de 1 a 4 nombres cortos")
 
 
 def e_cta(c, d):
+    if d.get("oferta"):
+        from escenas_versus import e_comenta
+        return e_comenta(c, d)
     if d.get("compartir"):
         from escenas_versus import e_compartir
         return e_compartir(c, d)

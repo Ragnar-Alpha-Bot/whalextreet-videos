@@ -1,0 +1,162 @@
+{
+  "tema": "educativo",
+  "tipo_post": "hilo",
+  "avatar": "profesor",
+  "etiqueta": "CLAUDE · TRADING",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "secreto",
+      "habla": "profesor",
+      "voz": "Imagina tener once ayudantes de trading trabajando para ti.",
+      "texto": "11 AYUDANTES DE TRADING",
+      "resalte": "11",
+      "kicker": "DENTRO DE CLAUDE",
+      "subtexto": "Cada uno hace una sola cosa",
+      "motivo": "pared_pantallas",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "engranajes",
+      "titulo": "11 PIEZAS QUE ENCAJAN",
+      "voz": "Son once habilidades de Claude. Cada una hace una tarea."
+    },
+    {
+      "tipo": "pasos",
+      "habla": "profesor",
+      "fase": "FASE 1",
+      "titulo": "BUSCAR IDEAS",
+      "voz": "Primero, buscar ideas. El escáner revisa miles de gráficos y encuentra rupturas, banderas y rebotes. Noticias vigila los titulares de lo que sigues. Analista resume qué ha cambiado en los resultados de cada empresa. Y Pelosi lee las operaciones que declara el Congreso.",
+      "items": [
+        {
+          "n": "Escáner",
+          "etiqueta": "RUPTURAS, BANDERAS, REBOTES",
+          "icono": "lupa",
+          "cuando": "escáner"
+        },
+        {
+          "n": "Noticias",
+          "etiqueta": "VIGILA TUS TITULARES",
+          "icono": "rayo",
+          "cuando": "noticias"
+        },
+        {
+          "n": "Analista",
+          "etiqueta": "RESUME RESULTADOS",
+          "icono": "libro",
+          "cuando": "analista"
+        },
+        {
+          "n": "Pelosi",
+          "etiqueta": "SIGUE AL CONGRESO",
+          "icono": "persona",
+          "cuando": "Pelosi"
+        }
+      ]
+    },
+    {
+      "tipo": "pasos",
+      "habla": "profesor",
+      "fase": "FASE 2",
+      "titulo": "PLANIFICAR",
+      "voz": "Planificar: entrada marca el momento, salida fija tu stop, y la máquina del tiempo simula miles de veces.",
+      "items": [
+        {
+          "n": "Entrada",
+          "etiqueta": "EL MOMENTO",
+          "icono": "diana",
+          "cuando": "entrada"
+        },
+        {
+          "n": "Salida",
+          "etiqueta": "STOP Y OBJETIVO",
+          "icono": "etiqueta",
+          "cuando": "salida"
+        },
+        {
+          "n": "Máquina del tiempo",
+          "etiqueta": "SIMULA MILES DE VECES",
+          "icono": "reloj",
+          "cuando": "máquina"
+        }
+      ]
+    },
+    {
+      "tipo": "pasos",
+      "habla": "profesor",
+      "fase": "FASE 3",
+      "titulo": "PROTEGER Y EJECUTAR",
+      "voz": "Proteger: presupuesto calcula cuánto comprar, riesgo frena lo peligroso, alertas te avisa, y el ejecutor solo envía en simulación y con tu sí.",
+      "items": [
+        {
+          "n": "Presupuesto",
+          "etiqueta": "CUÁNTO COMPRAR",
+          "icono": "cartera",
+          "cuando": "presupuesto"
+        },
+        {
+          "n": "Riesgo",
+          "etiqueta": "FRENA LO PELIGROSO",
+          "icono": "escudo",
+          "cuando": "riesgo"
+        },
+        {
+          "n": "Alertas",
+          "etiqueta": "TE AVISAN",
+          "icono": "moneda",
+          "cuando": "alertas"
+        },
+        {
+          "n": "Ejecutor",
+          "etiqueta": "SOLO CON TU SÍ",
+          "icono": "candado",
+          "cuando": "ejecutor"
+        }
+      ]
+    },
+    {
+      "tipo": "checklist",
+      "habla": "profesor",
+      "titulo": "LO QUE GANAS",
+      "etiqueta": "BENEFICIOS",
+      "voz": "Beneficios: un proceso ordenado, límites de riesgo fijos, pruebas sin dinero real, y la decisión es tuya.",
+      "items": [
+        {
+          "t": "Proceso ordenado",
+          "cuando": "ordenado"
+        },
+        {
+          "t": "Límites de riesgo fijos",
+          "cuando": "límites"
+        },
+        {
+          "t": "Pruebas sin dinero real",
+          "cuando": "pruebas"
+        },
+        {
+          "t": "La decisión es tuya",
+          "cuando": "tuya"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "escudo",
+      "subtitulo": "Herramientas, no promesas",
+      "voz": "Ojo: no prometen resultados, y el riesgo sigue siendo tuyo."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "CLAUDE",
+        "que": "la guía en PDF"
+      }
+    }
+  ]
+}
