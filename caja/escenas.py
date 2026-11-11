@@ -15,7 +15,12 @@ from pathlib import Path
 
 J = lambda d: json.dumps(d, separators=(",", ":"), ensure_ascii=False)
 r2 = lambda x: round(float(x), 2)
-esc = lambda s: _html.escape(str(s), quote=False)
+_ACENTO = re.compile(r"\*([^*\n]{1,40})\*")
+
+
+def esc(s):
+    """Escapa el texto para HTML. Lo que va entre asteriscos (*palabra*) sale en cursiva serif con el color de acento (recurso de estilo, usar con cuentagotas)."""
+    return _ACENTO.sub(r'<em class="ac">\1</em>', _html.escape(str(s), quote=False))
 
 
 def es(n, dec=0):
@@ -37,6 +42,7 @@ class Ctx:
         self.u = W / 984
         self.dur = l1 - l0
         self.ev, self.avisos = [], []
+        self.proyecto = None                  # carpeta del proyecto (la pone el motor; lo usa «captura» para comprobar su imagen)
 
     def px(self, n):
         return f"{round(n * self.u)}px"
@@ -742,3 +748,4 @@ ESCENAS.update({"gancho": (e_gancho, v_gancho), "cta": (e_cta, v_cta), "dialogo"
 import escenas3d  # noqa: E402,F401  (registra las escenas 3D: barras3d, moneda3d)
 import escenas_meta  # noqa: E402,F401  (registra la escena «metafora» y el «motivo» del gancho)
 import escenas_ui  # noqa: E402,F401  (registra «pasos» y «checklist»)
+import escenas_recursos  # noqa: E402,F401  (registra «terminal», «ranking» y «captura»: recursos que se usan solo cuando el tema lo pide)

@@ -52,6 +52,8 @@ def validar(sb):
     modo = sb.get("avatar", "profesor")
     if modo not in ("profesor", "rubio", "ambos"):
         errores.append("«avatar» debe ser «profesor», «rubio» o «ambos» (los dos, para conversaciones)")
+    if sb.get("subs", "subrayado") not in ("subrayado", "recuadro"):
+        errores.append("«subs» debe ser «subrayado» (por defecto) o «recuadro» (la palabra activa en un cuadro de color)")
     v = sb.get("etiqueta")
     if v is not None and (not isinstance(v, str) or not v or len(v) > 24):
         errores.append("«etiqueta» debe ser un texto de hasta 24 caracteres")

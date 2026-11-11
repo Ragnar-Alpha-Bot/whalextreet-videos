@@ -1,0 +1,31 @@
+{
+  "tema": "educativo",
+  "tipo_post": "hilo",
+  "avatar": "profesor",
+  "etiqueta": "RECURSOS · PRUEBA",
+  "subs": "recuadro",
+  "ilustrativo": false,
+  "escenas": [
+    {"tipo": "gancho", "angulo": "secreto", "habla": "profesor",
+     "voz": "Once ayudantes de trading, gratis, y están en GitHub.",
+     "texto": "11 AYUDANTES, GRATIS", "resalte": "GRATIS", "kicker": "CÓDIGO ABIERTO", "subtexto": "Para Claude, con licencia MIT",
+     "motivo": "pared_pantallas", "icono": "ninguno", "grafico": "ninguno"},
+    {"tipo": "captura", "habla": "profesor", "imagen": "repo.png", "titulo": "EL REPOSITORIO", "pie": "Público, con licencia MIT",
+     "resalte": {"x": 74, "y": 32, "w": 25, "h": 22}, "cuando": "público",
+     "voz": "Es un repositorio público de GitHub, con el pack completo y su licencia."},
+    {"tipo": "terminal", "habla": "profesor", "titulo": "Claude Code",
+     "voz": "Se instala con dos comandos en Claude Code, y listo.",
+     "lineas": [{"t": "/plugin marketplace add Jakeschincariol/day-trader-skill", "cuando": "dos"},
+                {"t": "Listo", "tipo": "ok"},
+                {"t": "/plugin install day-trader-skill@day-trader-skill", "cuando": "Claude"},
+                {"t": "Instalado", "tipo": "ok"}]},
+    {"tipo": "ranking", "habla": "profesor", "titulo": "EJEMPLO DEL AUTOR · TSLA",
+     "voz": "En su ejemplo, la máquina del tiempo simula diez mil sesiones: la operación sigue abierta, llega al objetivo o toca el stop.",
+     "items": [{"valor": "45,1 %", "t": "Sigue abierta al cierre", "tono": "acc", "cuando": "abierta"},
+               {"valor": "29,4 %", "t": "Llega antes al objetivo", "tono": "up", "cuando": "objetivo"},
+               {"valor": "25,5 %", "t": "Toca antes el stop", "tono": "down", "cuando": "stop"}]},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "escudo", "titulo": "TÚ DECIDES *SIEMPRE*", "sello": "GRATIS", "cuando_sello": "gratis",
+     "voz": "Nada se ejecuta sin tu sí. Es gratis, de código abierto, y el riesgo sigue siendo tuyo."},
+    {"tipo": "cta", "habla": "profesor"}
+  ]
+}

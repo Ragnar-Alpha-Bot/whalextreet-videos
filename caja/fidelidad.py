@@ -4,9 +4,14 @@ Toda cifra que se muestre (valor, puntos de un gráfico, barras, porcentajes, ta
 salvo en escenas marcadas «ilustrativo»: true (solo gráfico, barras, barras3d, donut y número), cuyo título debe decir «ilustrativo».
 Los números pequeños (≤ 10, como «3 señales») se permiten siempre.
 """
+import json
 import re
 
 _NUM = re.compile(r"\d[\d.,]*")
+
+
+def _sin_espacios(s):
+    return re.sub(r"\s+", "", str(s)).lower()
 SIEMPRE_OK = 10
 
 
@@ -70,7 +75,13 @@ def _visibles(e):
     if t == "tarjetas":
         return [e.get("titulo"), [(x.get("etiqueta"), x.get("valor"), x.get("nota")) for x in e.get("items", [])]]
     if t == "metafora":
-        return [e.get("titulo"), e.get("subtitulo")]
+        return [e.get("titulo"), e.get("subtitulo"), e.get("sello")]
+    if t == "ranking":
+        return [e.get("titulo"), [(x.get("valor"), x.get("t"), x.get("sub")) for x in e.get("items", []) if isinstance(x, dict)]]
+    if t == "terminal":
+        return [e.get("titulo"), [(x if isinstance(x, str) else x.get("t")) for x in e.get("lineas", [])]]
+    if t == "captura":
+        return [e.get("titulo"), e.get("pie")]
     if t == "pasos":
         return [e.get("fase"), e.get("titulo"), [(x.get("n"), x.get("etiqueta")) for x in e.get("items", []) if isinstance(x, dict)]]
     if t == "checklist":
@@ -93,6 +104,17 @@ def comprobar(sb, texto_fuente, datos=None):
             elif "ilustrativo" not in str(e.get("titulo") or e.get("etiqueta") or "").lower():
                 problemas.append(f"escena {i} ({e['tipo']}): una escena ilustrativa debe decir «(ilustrativo)» en su título o etiqueta")
             continue
+        if e["tipo"] == "ranking":                       # las cifras del ranking son datos: valen aunque sean pequeñas (3,86x), no hay «número libre»
+            for x in e.get("items", []):
+                for n in sorted(numeros_de(x.get("valor") if isinstance(x, dict) else None)):
+                    if not _cerca(n, permitidos):
+                        problemas.append(f"escena {i} (ranking): la cifra {n:g} no aparece en el post ni en sus datos")
+        if e["tipo"] == "terminal":                      # un comando de terminal se copia tal cual del post; las respuestas son solo texto de apoyo breve
+            fuente = _sin_espacios(texto_fuente) + _sin_espacios(json.dumps(datos or {}, ensure_ascii=False))
+            for x in e.get("lineas", []):
+                x = {"t": x, "tipo": "cmd"} if isinstance(x, str) else x
+                if x.get("tipo", "cmd") == "cmd" and _sin_espacios(x.get("t", "")) not in fuente:
+                    problemas.append(f"escena {i} (terminal): el comando «{x.get('t')}» no aparece literalmente en el post (los comandos no se inventan)")
         for n in sorted(numeros_de(_visibles(e))):
             if n > SIEMPRE_OK and not _cerca(n, permitidos):
                 problemas.append(f"escena {i} ({e['tipo']}): la cifra {n:g} no aparece en el post ni en sus datos (si es un ejemplo, marca la escena «ilustrativo»: true)")

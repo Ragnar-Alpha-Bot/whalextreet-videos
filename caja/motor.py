@@ -38,11 +38,15 @@ HUD_JS = ('tl.fromTo("#suelo",{backgroundPositionY:0},{backgroundPositionY:"%%TO
           'tl.fromTo("#barrido",{y:0},{y:1930,duration:6,ease:"none",repeat:Math.ceil(%%TOTAL%%/6)},0);\n'
           'tl.fromTo(".esq",{opacity:0,scale:.6},{opacity:.7,scale:1,duration:.6,ease:"back.out(2)",stagger:.08},.1);\n')
 ANGULO = [10, 4, 22, 14, 18, 8, 16, 12]
+ANCHO_COMPLETO = ("terminal", "captura")       # escenas que necesitan todo el ancho para leerse: en ellas no sale el avatar (la voz sigue)
 
 CSS = """
 @font-face { font-family:"InterW"; src:url("assets/Inter-Bold.otf"); font-weight:700; }
 @font-face { font-family:"InterW"; src:url("assets/Inter-SemiBold.otf"); font-weight:600; }
 @font-face { font-family:"PlexW"; src:url("assets/IBMPlexMono-Bold.ttf"); font-weight:700; }
+@font-face { font-family:"SerifW"; src:url("assets/InstrumentSerif-Italic.ttf"); font-style:italic; font-weight:400; }
+.ac { font-family:"SerifW",Georgia,serif; font-style:italic; font-weight:400; color:var(--acc); letter-spacing:0; text-transform:none; font-size:1.16em; }
+.sub.rc .u { display:none; } .sub.rc .w { padding:0 .16em; border-radius:.2em; background:transparent; }
 :root { %%VARS%% }
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg); }
@@ -159,7 +163,7 @@ def construir(proyecto):
     for i, e in enumerate(escenas):
         if e["tipo"] == "dialogo":
             quienes.append(set(LISTA_AVATARES))
-        elif i > 0 and profesor_en(sb["tipo_post"], momento(i)):
+        elif i > 0 and e["tipo"] not in ANCHO_COMPLETO and profesor_en(sb["tipo_post"], momento(i)):
             quienes.append({habla[i]})
         else:
             quienes.append(set())
@@ -173,6 +177,7 @@ def construir(proyecto):
         else:
             W, left = (648, 384) if LADO[next(iter(quienes[i]))] == "izq" else (648, 48)   # el contenido se pone en el lado contrario al avatar
         ctx = Ctx(i, t0s[i], t1s[i], inicio[ks[i]], fin[ks[i]], PAL[ks[i]], W, AREA_H, p)
+        ctx.proyecto = proyecto
         h, js = ESCENAS[e["tipo"]][0](ctx, dict(e, _habla=habla[i], _lado=LADO[habla[i]]))
         sid = f"S{i}"
         html_esc.append(f'<div class="scene clip" id="{sid}" data-start="{t0s[i]}" data-duration="{round(t1s[i] - t0s[i], 2)}" data-track-index="1" style="left:{left}px;width:{W}px">{h}</div>')
@@ -188,6 +193,7 @@ def construir(proyecto):
 
     # --- subtítulos palabra a palabra ------------------------------------------------------------------------------
     sub_html, sub_js, nch = [], [], 0
+    rc = sb.get("subs") == "recuadro"           # estilo opcional de subtítulos (por defecto: palabra activa subrayada)
     for k in ks:
         ws = PAL[k]
         grupos, cur = [], []
@@ -209,12 +215,16 @@ def construir(proyecto):
             a = arranques[gi]
             b = arranques[gi + 1] if gi + 1 < len(grupos) else round(max(fin[k] + 0.12, a + MIN_BLOQUE), 2)
             spans = "".join(f'<span class="w" id="w{nch}_{j}">{ws[i]["t"]}<i class="u" id="u{nch}_{j}"></i></span> ' for j, i in enumerate(g))
-            sub_html.append(f'<div class="sub clip" id="c{nch}" data-start="{a}" data-duration="{round(b - a, 2)}" data-track-index="6">{spans}</div>')
+            sub_html.append(f'<div class="sub clip{" rc" if rc else ""}" id="c{nch}" data-start="{a}" data-duration="{round(b - a, 2)}" data-track-index="6">{spans}</div>')
             sub_js.append(fromTo(f"#c{nch}", {"opacity": 0, "y": 16, "scale": .97}, {"opacity": 1, "y": 0, "scale": 1, "duration": .14, "ease": "power3.out"}, a))
             EV.append((a, "tick", 0.16))
             for j, i in enumerate(g):
                 t0 = round(inicio[k] + ws[i]["ini"], 3)
                 t1 = round(inicio[k] + ws[g[j + 1]]["ini"], 3) if j + 1 < len(g) else round(inicio[k] + ws[i]["fin"] + 0.05, 3)
+                if rc:                          # recuadro: la palabra activa va en un cuadro de color con letra oscura
+                    sub_js.append(f'tl.set("#w{nch}_{j}",{{opacity:1,color:"#0B1020",backgroundColor:"{p["resalte"]}"}},{t0});'
+                                  f'tl.set("#w{nch}_{j}",{{color:"{p["text"]}",backgroundColor:"rgba(0,0,0,0)"}},{t1});')
+                    continue
                 sub_js.append(f'tl.set("#w{nch}_{j}",{{opacity:1,color:"{p["resalte"]}"}},{t0});tl.fromTo("#u{nch}_{j}",{{scaleX:0}},{{scaleX:1,duration:.14,ease:"power2.out"}},{t0});'
                               f'tl.set("#w{nch}_{j}",{{color:"{p["text"]}"}},{t1});tl.set("#u{nch}_{j}",{{opacity:0}},{t1});')
             nch += 1
