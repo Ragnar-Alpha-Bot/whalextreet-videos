@@ -107,6 +107,7 @@ __LISTA_ACCIONES__
   semana con casillas que se marcan (✓ cumplido, ✕ fallo). SOLO para constancia, hábito o aportaciones periódicas; sin cifras que no estén en el post.
 - panel: {"titulo":"máx. 30","busqueda":"máx. 36, opcional","items":[{"n":"máx. 28","valor":"cifra EXACTA del post, máx. 10, con coma decimal y sin puntos de miles (p. ej. «2,4 M»)","sub":"máx. 20","badge":"máx. 8","tono":"acc|up|down|warn","cuando":"palabra"}] (2 a 4)}
   filas con una cifra grande que cuenta hasta su valor y una mini gráfica. SOLO si el post da 2-4 cifras reales comparables; si no hay cifras reales, no la uses.
+- OFERTA (cierre «Comenta X y sígueme»): si el POST trae un campo «oferta», TODO el vídeo se construye para llevar a ella: gancho brutal, valor real en las escenas intermedias y, al final, el cierre lo pone el código (no escribas el cta con oferta ni inventes recursos ni palabras clave). Si el POST no trae «oferta», no prometas enviar nada.
 - cierre «compartir» (campo extra de la escena cta): {"tipo":"cta","compartir":"ese amigo que …, máx. 40","cuando_respuesta":"palabra"}: maqueta de chat «Envíaselo a ese amigo que…». Úsalo en vídeos de comparación o de error común
   que alguien reconocería en un conocido; la «voz» del cta debe decirlo («Envíaselo a ese amigo que… y síguenos en WhaleXtreet»). En el resto de vídeos, el cta normal.
 - captura: NO la uses (necesita una imagen que tú no puedes aportar).
@@ -140,13 +141,41 @@ def _prompt(post, errores=None, anterior=None):
     p = {"formato_del_post": post.get("format"), "plataformas": post.get("platforms"), "texto_del_post": post.get("parts")}
     if post.get("chart"):
         p["datos_reales"] = post["chart"]
+    oferta = post.get("oferta") if isinstance(post.get("oferta"), dict) and post["oferta"].get("keyword") else None
+    if oferta:
+        p["oferta"] = {"palabra_clave": str(oferta["keyword"]).upper(), "recurso": oferta.get("name")}
     txt = ("POST APROBADO:\n" + json.dumps(p, ensure_ascii=False, indent=1) + "\n\n" + sugerencia_3d(post)
+           + (f"\n\nOFERTA REAL DE ESTE VÍDEO: al final se ofrece «{oferta.get('name')}» a quien comente «{str(oferta['keyword']).upper()}» y siga la cuenta. "
+              "Construye el vídeo para llegar a ella: gancho BRUTAL, valor real y concreto en las escenas intermedias (lo que da ese recurso, solo con los hechos del post) "
+              "y deja el hueco para el cierre. El cierre («Comenta X y sígueme…») lo pone el código; no lo escribas ni inventes otros recursos."
+              if oferta else "")
            + "\n\nMETÁFORAS SUGERIDAS PARA ESTE VÍDEO (úsalas si encajan con la voz; si otras encajan mejor, elige otras de la lista): "
            + ", ".join(sugeridos("\n".join(post.get("parts") or []))))
     if errores:
         txt += ("\n\nTU RESPUESTA ANTERIOR NO ERA VÁLIDA:\n" + json.dumps(anterior, ensure_ascii=False)[:6000]
                 + "\n\nERRORES A CORREGIR:\n - " + "\n - ".join(errores) + "\n\nDevuelve el JSON completo corregido.")
     return txt
+
+
+def resumen_oferta(nombre):
+    """«la guía en PDF para instalar las 11 skills…» -> «la guía en PDF» (lo que se dice y se ve en el cierre; máx. 40 caracteres)."""
+    corto = " ".join(str(nombre).split()).split(" para ")[0].strip()
+    if len(corto) > 40:
+        corto = corto[:40].rsplit(" ", 1)[0]
+    return corto
+
+
+def cierre(post, de_la_ia):
+    """El cta final. Con oferta REAL en el post: «Comenta X y sígueme y te envío Y por privado» (palabra y recurso salen del post, nunca de la IA).
+    Sin oferta: la IA solo puede proponer «compartir» («Envíaselo a ese amigo que…»); el texto de la voz lo pone el código. Si no, el cierre de siempre."""
+    oferta = post.get("oferta") if isinstance(post.get("oferta"), dict) else None
+    if oferta and oferta.get("keyword") and oferta.get("name"):
+        return {"tipo": "cta", "oferta": {"palabra": str(oferta["keyword"]).upper(), "que": resumen_oferta(oferta["name"])}}
+    c = de_la_ia.get("compartir") if isinstance(de_la_ia, dict) else None
+    if isinstance(c, str) and c.strip():
+        c = " ".join(c.split())[:40].rstrip(" ,.")
+        return {"tipo": "cta", "compartir": c, "voz": f"Envíaselo a {c}, y síguenos en WhaleXtreet."}
+    return {"tipo": "cta"}
 
 
 def crear(post, cliente=None, intentos=3):
@@ -173,9 +202,9 @@ def crear(post, cliente=None, intentos=3):
             sb["tema"] = "educativo"
         esc = sb.get("escenas")
         if isinstance(esc, list) and esc and isinstance(esc[-1], dict) and esc[-1].get("tipo") != "cta":
-            esc.append({"tipo": "cta"})            # el cierre es obligatorio y siempre igual: lo pone el código
+            esc.append(cierre(post, {}))           # el cierre es obligatorio: lo pone el código
         elif isinstance(esc, list) and esc and isinstance(esc[-1], dict):
-            esc[-1] = {"tipo": "cta"}              # el cta lo decide la marca, no la IA
+            esc[-1] = cierre(post, esc[-1])        # el cta lo decide la marca (y la oferta del post), no la IA
         try:
             sb = validar(sb)
             problemas = fidelidad.comprobar(sb, fuente, post.get("chart"))

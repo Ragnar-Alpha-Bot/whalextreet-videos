@@ -39,6 +39,9 @@ def main(post, render=True, cliente=None):
         mp4 = sorted((proyecto / "renders").glob("*.mp4"), key=lambda f: f.stat().st_mtime)[-1]
         primera = (post.get("parts") or [""])[0].strip().replace("\n", " ")
         pie = f"🎬 Vídeo listo del post aprobado · 9:16 · para subir a TikTok, Instagram y Shorts.\n\n«{primera[:160]}»"
+        if isinstance(post.get("oferta"), dict) and post["oferta"].get("keyword"):
+            o = post["oferta"]
+            pie += f"\n\n🎁 CON OFERTA: quien comente «{str(o['keyword']).upper()}» y te siga, recibe por privado {o.get('name')}. Acuérdate de enviarla."
         telegram_envio.enviar_video(mp4, pie)
         print("Vídeo enviado a Telegram.")
         return proyecto, mp4
