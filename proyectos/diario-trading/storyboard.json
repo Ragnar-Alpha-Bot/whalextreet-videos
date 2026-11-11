@@ -1,0 +1,28 @@
+{
+  "tema": "educativo",
+  "tipo_post": "hilo",
+  "avatar": "profesor",
+  "etiqueta": "TRADING · DIARIO",
+  "ilustrativo": false,
+  "escenas": [
+    {"tipo": "gancho", "angulo": "error", "habla": "profesor",
+     "voz": "Si no apuntas tus operaciones, no sabes por qué ganas ni por qué pierdes.",
+     "texto": "SIN DIARIO, VAS A CIEGAS", "resalte": "CIEGAS", "kicker": "DIARIO DE TRADING", "subtexto": "La plantilla de una página, totalmente gratis",
+     "motivo": "ruleta", "icono": "ninguno", "grafico": "ninguno"},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "lupa", "titulo": "LO QUE LA MEMORIA OLVIDA",
+     "voz": "Un diario te enseña lo que la memoria olvida: qué operaciones seguían tu plan y cuáles eran puro impulso."},
+    {"tipo": "pasos", "habla": "profesor", "fase": "CÓMO USARLO", "titulo": "3 MOMENTOS",
+     "voz": "Se usa en tres momentos. Antes de entrar, apuntas el motivo, la entrada y el stop. Al salir, el resultado y qué sentías. Y cada semana, revisas si seguiste tu plan.",
+     "items": [{"n": "Antes de entrar", "etiqueta": "MOTIVO Y STOP", "icono": "diana", "cuando": "entrar"},
+               {"n": "Al salir", "etiqueta": "RESULTADO Y EMOCIÓN", "icono": "check", "cuando": "salir"},
+               {"n": "Cada semana", "etiqueta": "REVISA TU PLAN", "icono": "reloj", "cuando": "semana"}]},
+    {"tipo": "tarjetas", "habla": "profesor", "titulo": "QUÉ MEDIR",
+     "voz": "Y mide tres cosas: tu porcentaje de aciertos, tu resultado en R, que es la ganancia entre lo que arriesgabas, y tu expectativa, lo que ganas de media por operación.",
+     "items": [{"etiqueta": "% DE ACIERTOS", "valor": "Ganadas", "nota": "Ganadoras entre el total", "tono": "up", "cuando": "aciertos"},
+               {"etiqueta": "RESULTADO EN R", "valor": "R", "nota": "Ganancia entre lo arriesgado", "tono": "acc", "cuando": "resultado"},
+               {"etiqueta": "EXPECTATIVA", "valor": "Media", "nota": "Lo que ganas por operación", "tono": "warn", "cuando": "expectativa"}]},
+    {"tipo": "metafora", "habla": "profesor", "motivo": "caja_fuerte", "titulo": "PLANTILLA COMPLETA", "sello": "GRATIS", "cuando_sello": "gratis",
+     "voz": "La plantilla de una página está en una guía de WhaleXtreet, y te la doy totalmente gratis."},
+    {"tipo": "cta", "habla": "profesor", "oferta": {"palabra": "DIARIO", "que": "la plantilla en PDF"}}
+  ]
+}

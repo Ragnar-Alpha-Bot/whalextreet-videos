@@ -170,7 +170,8 @@ def cierre(post, de_la_ia):
     Sin oferta: la IA solo puede proponer «compartir» («Envíaselo a ese amigo que…»); el texto de la voz lo pone el código. Si no, el cierre de siempre."""
     oferta = post.get("oferta") if isinstance(post.get("oferta"), dict) else None
     if oferta and oferta.get("keyword") and oferta.get("name"):
-        return {"tipo": "cta", "oferta": {"palabra": str(oferta["keyword"]).upper(), "que": resumen_oferta(oferta["name"])}}
+        corto = oferta.get("short") if isinstance(oferta.get("short"), str) and 3 <= len(oferta["short"].strip()) <= 40 else None
+        return {"tipo": "cta", "oferta": {"palabra": str(oferta["keyword"]).upper(), "que": corto.strip() if corto else resumen_oferta(oferta["name"])}}
     c = de_la_ia.get("compartir") if isinstance(de_la_ia, dict) else None
     if isinstance(c, str) and c.strip():
         c = " ".join(c.split())[:40].rstrip(" ,.")
