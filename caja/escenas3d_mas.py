@@ -86,7 +86,7 @@ def e_donut3d(c, d):
         t = c.T(x.get("cuando"), 0.1 + 0.6 * k / max(len(seg) - 1, 1))
         datos["seg"].append({"n": x["n"], "v": x["v"], "t": t, "pct": es(x["v"] / tot * 100, 0) + " %"})
         c.snd(t, f"blip:{k}", .42)
-    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start;margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>'
+    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.fs(34)};align-self:flex-start;margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>'
             f'{canvas}</div>' + _modulo(BASE, DONUT, w, h, ident, datos))
     return html, []
 
@@ -105,8 +105,8 @@ def e_esfera3d(c, d):
     et = d.get("etiquetas", [])
     datos = {"t0": c.t0 + .05, "etiquetas": [{"txt": x, "t": c.T(None, 0.2 + 0.5 * k / max(len(et) - 1, 1))} for k, x in enumerate(et)]}
     sub = d.get("subtitulo")
-    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start">{esc(d["titulo"])}</div>{canvas}'
-            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.px(48)};text-align:center;color:var(--acc2);margin-top:{c.px(6)}">{esc(sub)}</div>' if sub else "")
+    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.fs(34)};align-self:flex-start">{esc(d["titulo"])}</div>{canvas}'
+            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.fs(48)};text-align:center;color:var(--acc2);margin-top:{c.px(6)}">{esc(sub)}</div>' if sub else "")
             + '</div>' + _modulo(BASE, ESFERA, w, h, ident, datos))
     js = [fromTo(f"#{c.pf}sub", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, c.t0 + .7)] if sub else []
     c.snd(c.t0 + .1, "whoosh", .4)
@@ -129,7 +129,7 @@ def e_velas3d(c, d):
     datos = {"t0": c.t0 + .1, "dur": c.dur, "paso": round(paso, 3), "tendencia": d.get("tendencia", "lateral")}
     for k in range(0, 16, 3):
         c.snd(c.t0 + .35 + k * paso, "tick", .25)
-    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start;margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>'
+    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.fs(34)};align-self:flex-start;margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>'
             f'{canvas}</div>' + _modulo(BASE, VELAS, w, h, ident, datos))
     return html, []
 

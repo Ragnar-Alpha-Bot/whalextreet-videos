@@ -110,7 +110,7 @@ def e_barras3d(c, d):
         datos["items"].append({"n": x["n"], "v": x["v"], "t": t, "txt": es(x["v"], 1 if x["v"] != int(x["v"]) else 0) + unidad})
         c.snd(t, "swipe", .22)
         c.snd(t + .5, f"blip:{k}", .42)
-    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start;margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>'
+    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.fs(34)};align-self:flex-start;margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>'
             f'{canvas}</div>' + _modulo(BASE, BARRAS, w, h, ident, datos))
     return html, []
 
@@ -126,8 +126,8 @@ def e_moneda3d(c, d):
     w, h, canvas = _canvas(c, ident, 700)
     datos = {"simbolo": d["simbolo"], "t0": c.t0 + .05}
     sub = d.get("subtitulo")
-    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start">{esc(d["titulo"])}</div>{canvas}'
-            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.px(48)};text-align:center;color:var(--acc2);margin-top:{c.px(6)}">{esc(sub)}</div>' if sub else "")
+    html = (f'<div class="col" style="justify-content:center;align-items:center"><div class="lab" style="font-size:{c.fs(34)};align-self:flex-start">{esc(d["titulo"])}</div>{canvas}'
+            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.fs(48)};text-align:center;color:var(--acc2);margin-top:{c.px(6)}">{esc(sub)}</div>' if sub else "")
             + '</div>' + _modulo(BASE, MONEDA, w, h, ident, datos))
     js = [fromTo(f"#{c.pf}sub", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, c.t0 + .7)] if sub else []
     c.snd(c.t0 + .1, "pop", .45)

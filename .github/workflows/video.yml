@@ -59,6 +59,9 @@ jobs:
           python tests/test_versus.py
           python tests/test_escenas3d_nicho.py
           python tests/test_oferta_cta.py
+          python tests/test_grafico_pro.py
+          python tests/test_qa.py
+          python tests/test_radar.py
           python tests/test_cobertura_numeros.py
 
       - name: Generar el vídeo (voz D, subtítulos, montaje y render)

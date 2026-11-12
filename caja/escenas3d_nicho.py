@@ -242,9 +242,9 @@ def _escena(c, d, cuerpo, datos, alto_px=760, derecha=None):
     ident = f"{c.pf}cv"
     w, h, canvas = _canvas(c, ident, alto_px)
     sub = d.get("subtitulo")
-    cab = (f'<div style="display:flex;justify-content:space-between;align-items:baseline"><div class="lab" style="font-size:{c.px(34)}">{esc(d["titulo"])}</div>{derecha or ""}</div>')
+    cab = (f'<div style="display:flex;justify-content:space-between;align-items:baseline"><div class="lab" style="font-size:{c.fs(34)}">{esc(d["titulo"])}</div>{derecha or ""}</div>')
     html = (f'<div class="col" style="justify-content:center;align-items:center">{cab}{canvas}'
-            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.px(48)};text-align:center;color:var(--acc2);margin-top:{c.px(6)}">{esc(sub)}</div>' if sub else "")
+            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.fs(48)};text-align:center;color:var(--acc2);margin-top:{c.px(6)}">{esc(sub)}</div>' if sub else "")
             + '</div>' + _modulo(BASE, cuerpo, w, h, ident, datos))
     js = [fromTo(f"#{c.pf}sub", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, c.t0 + .8)] if sub else []
     return html, js
@@ -277,7 +277,7 @@ def e_linea3d(c, d):
     dur2 = max(1.6, min(c.dur * .6, 4.0))
     datos = {"pts": [round((v - lo) / rng, 4) for v in pts], "sube": pts[-1] >= pts[0], "txtFin": fin, "eti": d.get("etiquetas"), "t0": c.t0 + .1, "dur2": round(dur2, 2)}
     col = "var(--up)" if pts[-1] >= pts[0] else "var(--down)"
-    html, js = _escena(c, d, LINEA, datos, derecha=f'<div style="font-weight:700;font-size:{c.px(64)};color:{col}">{esc(fin)}</div>')
+    html, js = _escena(c, d, LINEA, datos, derecha=f'<div style="font-weight:700;font-size:{c.fs(64)};color:{col}">{esc(fin)}</div>')
     c.snd(c.t0 + .1, "swipe", .4)
     c.snd(c.t0 + .1 + dur2, "ding:1", .4)
     return html, js

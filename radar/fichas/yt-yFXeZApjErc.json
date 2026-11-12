@@ -1,0 +1,66 @@
+{
+  "id": "yt-yFXeZApjErc",
+  "plataforma": "youtube_shorts",
+  "url": "https://www.youtube.com/watch?v=yFXeZApjErc",
+  "idioma": "en",
+  "titulo_original": "Here are the only 4 Index Funds You Need For Life",
+  "metricas": {
+    "vistas": 2800000
+  },
+  "consultado": "2026-11-12",
+  "duracion_s": 59,
+  "evidencia": "transcripcion",
+  "gancho_original": "Here are the only four index funds that you need to buy and hold for life.",
+  "formula": {
+    "tipo_gancho": "lista_numerada",
+    "tema": "lista de los pocos fondos indexados que cubren casi todo: qué es cada uno y cuánto ha rendido",
+    "promesa": "una lista corta y cerrada: solo cuatro y ya está",
+    "estructura": [
+      {
+        "seg": "0-4",
+        "beat": "gancho: promete una lista cerrada de pocos fondos"
+      },
+      {
+        "seg": "4-20",
+        "beat": "primero: qué es, qué cubre y su rentabilidad media anual desde que existe"
+      },
+      {
+        "seg": "20-35",
+        "beat": "segundo: qué es, para qué sirve y su pega (menos crecimiento por pagar dividendos)"
+      },
+      {
+        "seg": "35-50",
+        "beat": "tercero: qué es y cuánto ha superado su media histórica"
+      },
+      {
+        "seg": "50-59",
+        "beat": "cuarto: más crecimiento, más volatilidad. Sin cierre con petición"
+      }
+    ],
+    "cierre": "termina en el último punto, sin petición",
+    "visual": "el nombre de cada fondo con su cifra, uno detrás de otro"
+  },
+  "por_que_funciona": "La lista cerrada («solo cuatro») promete orden y ahorra pensar; cada punto trae una cifra y una pega, así que parece honesta. Ojo: la promesa «los únicos que necesitas de por vida» es un consejo personalizado que nosotros no damos.",
+  "adaptar": {
+    "tema_es": "los ETFs temáticos que más han subido en un año, a qué tema pertenece cada uno y por qué un ranking no es una recomendación",
+    "idea_gancho_es": "Lista cerrada con datos reales: los cinco ETFs que más han subido en un año y, a la vez, la pega que casi nadie cuenta (tres son el mismo tema y cayeron el último mes).",
+    "datos_reales_necesarios": [
+      "rentabilidad total a 1 año de cada ETF",
+      "rentabilidad del último mes",
+      "los valores que más pesan de cada uno",
+      "fecha y fuente"
+    ],
+    "cuidado": [
+      "nunca decir «los únicos que necesitas» ni «para toda la vida»",
+      "no recomendar comprar",
+      "la rentabilidad pasada no garantiza la futura"
+    ],
+    "formato_marca": "datos",
+    "oferta_sugerida": "FONDOS"
+  },
+  "estado": "adaptada",
+  "adaptaciones": [
+    "top5-etfs"
+  ],
+  "nota": "El vídeo top5-etfs ya sigue esta fórmula (se hizo antes que la ficha)."
+}

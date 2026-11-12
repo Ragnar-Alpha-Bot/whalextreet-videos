@@ -60,6 +60,15 @@ ESTRUCTURA
   Gráficos: «pulso» (anillos que laten, genérico), «caida» / «subida» (línea que se dibuja, solo para ilustrar una dirección, sin cifras),
   «cifra» (número gigante que cuenta, SOLO si el post da esa cifra): añade "cifra":{"valor":número,"decimales":0-2,"prefijo":"","sufijo":"%"}.
 
+RADAR (si el POST trae un campo «radar»): es la adaptación de un short que ya ha funcionado en otro idioma. Sigue su FÓRMULA (el tipo de gancho, la idea y la estructura que da el texto del post), pero escríbelo todo de nuevo en español de España, con nuestra voz y con las cifras reales del post. NO traduzcas frases: reescribe. NO uses cifras, nombres ni afirmaciones del vídeo original: solo las del bloque «DATOS REALES». Ni «necesitas», ni «para toda la vida», ni recomendaciones de compra.
+
+RETENCIÓN (pauta de la skill yt-script, para todos los vídeos): el espectador decide en los primeros segundos y vuelve a decidir en cada escena.
+- El gancho hace TRES trabajos a la vez: promete algo concreto, abre una pregunta que solo se cierra viendo el vídeo y deja ver que hay recompensa.
+- Escena 2: en una frase di qué vas a enseñar y empieza ya. PROHIBIDO presentarte, saludar, «antes de empezar», «en este vídeo», pedir seguir, suscribirse o dar «me gusta».
+- Bucle abierto: en la escena 2 o 3 anticipa algo que llega después («y el último punto es el que casi nadie mira») y cúmplelo.
+- Una idea por escena; lo que se ve cambia en cada escena (no repitas el mismo tipo dos veces seguidas).
+- Antes del cierre, una frase que diga que ya has entregado lo prometido. El cierre pide UNA sola cosa.
+
 ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la que aparece ese elemento)
 - titulo: {"titulo":"máx. 48","subtitulo":"máx. 70, opcional","etiqueta":"máx. 24, opcional"}
 - numero: {"valor":número,"decimales":0-3,"prefijo":"","sufijo":"%","etiqueta":"máx. 44","detalle":"máx. 50, opcional","delta":número opcional,"cuando":"palabra"}
@@ -73,6 +82,8 @@ ESCENAS DISPONIBLES (todas con "voz"; «cuando» = una palabra de la voz en la q
 - animal3d: {"animal":"toro|oso","titulo":"máx. 44","subtitulo":"máx. 60, opcional"} un TORO (mercado alcista, optimismo) u OSO (mercado bajista, caídas) 3D galopando con la cámara girando. SOLO si el post habla de mercado alcista o bajista; sin datos ni cifras.
 - lingotes3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional"} pila de lingotes de oro que cae lingote a lingote, con monedas. Para ahorro, oro, patrimonio o valor refugio; sin cifras.
 - linea3d: igual que «grafico» (titulo, puntos, unidad, etiquetas; sin anotaciones) pero en 3D (cinta brillante con área y cámara que gira). Úsala para la evolución de un dato REAL del post (2 a 40 puntos); misma regla de cifras que «grafico» (si es un ejemplo, "ilustrativo": true y «(ilustrativo)» en el título).
+- grafico_pro: {"titulo":"máx. 44","modo":"area|linea|velas","puntos":[2 a 260 números],"velas":[{"o":..,"h":..,"l":..,"c":..}] (2 a 150, solo con modo velas),"etiquetas":["inicio","fin"],"unidad":"","zoom":true|false,"anotaciones":[{"i":posición,"texto":"máx. 28","cuando":"palabra"}] (0 a 3)}
+  gráfico profesional (estilo TradingView) con la serie REAL del post que se va dibujando, con zoom y anotaciones. SOLO si el post trae una serie real de datos (datos_reales) con al menos 8 puntos o velas; las cifras visibles (anotaciones, etiquetas) deben estar en el post o en sus datos. Si no hay serie real, usa «grafico».
 - escudo3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional"} escudo 3D con un visto bueno y anillos que giran. Para proteger el capital, stop loss, gestión del riesgo; sin cifras.
 - ciudad3d: {"titulo":"máx. 44","subtitulo":"máx. 60, opcional"} ciudad de rascacielos que crece mientras la cámara avanza por la avenida. Para economía, crecimiento o mercados en general; es una ilustración, sin datos.
 - donut:{"titulo":"máx. 44","segmentos":[{"n":"máx. 22","v":número>0,"cuando":"palabra"}] (2 a 5)}
@@ -141,6 +152,8 @@ def _prompt(post, errores=None, anterior=None):
     p = {"formato_del_post": post.get("format"), "plataformas": post.get("platforms"), "texto_del_post": post.get("parts")}
     if post.get("chart"):
         p["datos_reales"] = post["chart"]
+    if isinstance(post.get("radar"), dict):
+        p["radar"] = {k: post["radar"].get(k) for k in ("tipo_gancho", "adaptar")}   # solo la fórmula: nada de cifras ni frases del original
     oferta = post.get("oferta") if isinstance(post.get("oferta"), dict) and post["oferta"].get("keyword") else None
     if oferta:
         p["oferta"] = {"palabra_clave": str(oferta["keyword"]).upper(), "recurso": oferta.get("name")}
@@ -177,6 +190,19 @@ def cierre(post, de_la_ia):
         c = " ".join(c.split())[:40].rstrip(" ,.")
         return {"tipo": "cta", "compartir": c, "voz": f"Envíaselo a {c}, y síguenos en WhaleXtreet."}
     return {"tipo": "cta"}
+
+
+INTROS_PROHIBIDOS = ("hola", "bienvenid", "en este vídeo", "en este video", "antes de empezar", "hoy vamos", "suscríbete", "suscribete", "dale a like", "no olvides")
+
+
+def problemas_retencion(sb):
+    """Retención (yt-script): la escena 2 y siguientes no abren con saludo, presentación ni petición de suscripción."""
+    out = []
+    for i, e in enumerate(sb.get("escenas", [])[1:-1], start=2):
+        voz = str(e.get("voz") or "").lower().lstrip(" ¡¿«\"'")
+        if voz.startswith(INTROS_PROHIBIDOS):
+            out.append(f"la escena {i} empieza con un saludo o una introducción («{voz[:25]}…»): empieza directamente con lo que enseñas")
+    return out
 
 
 MAX_PALABRAS_OFERTA = 125   # ~45 s hablados: casi nadie llega al final de un vídeo largo, y ahí está el «Comenta X»
@@ -228,7 +254,7 @@ def crear(post, cliente=None, intentos=3):
             esc[-1] = cierre(post, esc[-1])        # el cta lo decide la marca (y la oferta del post), no la IA
         try:
             sb = validar(sb)
-            problemas = fidelidad.comprobar(sb, fuente, post.get("chart")) + problemas_oferta(sb, post)
+            problemas = fidelidad.comprobar(sb, fuente, post.get("chart")) + problemas_oferta(sb, post) + problemas_retencion(sb)
         except ValueError as e:
             problemas = [l.strip(" -") for l in str(e).splitlines()[1:]] or [str(e)]
         if not problemas:

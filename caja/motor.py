@@ -32,13 +32,13 @@ GAP, LEAD, TAIL = 0.35, 0.05, 2.8              # la voz del gancho arranca a los
 MIN_BLOQUE = 0.2                     # duración mínima de un bloque de subtítulos (s)
 H = GAP / 2
 AREA_TOP, AREA_H = 470, 1010                  # zona segura: TikTok/Instagram/Shorts tapan la parte de abajo
-HUD_HTML = ('<div id="hud"><div id="suelo"></div><div id="vineta"></div><div id="scan"></div><div id="barrido"></div>'
+HUD_HTML = ('<div id="hud"><div id="suelo" data-layout-ignore></div><div id="vineta"></div><div id="scan"></div><div id="barrido"></div>'
             '<i class="esq e1"></i><i class="esq e2"></i><i class="esq e3"></i><i class="esq e4"></i></div>\n')   # fondo de panel: rejilla en perspectiva, marcos y escaneo (color del tema)
 HUD_JS = ('tl.fromTo("#suelo",{backgroundPositionY:0},{backgroundPositionY:"%%TOTAL%%px",duration:%%TOTAL%%,ease:"none"},0);\n'
           'tl.fromTo("#barrido",{y:0},{y:1930,duration:6,ease:"none",repeat:Math.ceil(%%TOTAL%%/6)},0);\n'
           'tl.fromTo(".esq",{opacity:0,scale:.6},{opacity:.7,scale:1,duration:.6,ease:"back.out(2)",stagger:.08},.1);\n')
 ANGULO = [10, 4, 22, 14, 18, 8, 16, 12]
-ANCHO_COMPLETO = ("terminal", "captura", "versus", "panel", "animal3d", "lingotes3d", "linea3d", "escudo3d", "ciudad3d")       # escenas que necesitan todo el ancho para leerse: en ellas no sale el avatar (la voz sigue)
+ANCHO_COMPLETO = ("terminal", "captura", "versus", "panel", "animal3d", "lingotes3d", "linea3d", "escudo3d", "ciudad3d", "grafico_pro")       # escenas que necesitan todo el ancho para leerse: en ellas no sale el avatar (la voz sigue)
 
 CSS = """
 @font-face { font-family:"InterW"; src:url("assets/Inter-Bold.otf"); font-weight:700; }
@@ -66,7 +66,7 @@ html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg);
 #vineta { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 55%, rgba(4,7,16,.55) 100%); }
 #top { position:absolute; left:64px; right:64px; top:110px; display:flex; align-items:center; justify-content:space-between; z-index:20; }
 #top img { height:54px; }
-#pill { font-family:"PlexW",monospace; font-weight:700; font-size:26px; letter-spacing:.14em; color:var(--acc); border:2px solid var(--acc); padding:10px 22px; border-radius:999px; }
+#pill { font-family:"PlexW",monospace; font-weight:700; font-size:28px; letter-spacing:.14em; color:var(--acc); border:2px solid var(--acc); padding:10px 22px; border-radius:999px; }
 .sub { position:absolute; left:50px; right:50px; top:232px; height:220px; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:0 18px; text-align:center; font-weight:700; font-size:80px; line-height:1.08; letter-spacing:-.02em; z-index:30; text-shadow:0 4px 30px rgba(0,0,0,.7); }
 .w { position:relative; display:inline-block; opacity:.38; color:var(--text); }
 .u { position:absolute; left:0; right:0; bottom:-4px; height:9px; border-radius:5px; background:var(--resalte); transform-origin:left center; transform:scaleX(0); }
@@ -88,7 +88,7 @@ html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg);
 .av { position:absolute; top:566px; width:366px; height:640px; z-index:15; opacity:0; }
 .av.izq { left:-6px; } .av.der { left:720px; }
 .av svg { width:366px; height:640px; display:block; overflow:visible; }
-#foot { position:absolute; left:40px; right:40px; top:1510px; font-family:"PlexW",monospace; font-size:27px; line-height:1.35; color:rgba(178,190,209,.8); text-align:center; z-index:20; }
+#foot { position:absolute; left:40px; right:40px; top:1510px; font-family:"PlexW",monospace; font-size:28px; line-height:1.35; color:rgba(178,190,209,.8); text-align:center; z-index:20; }
 #flash { position:absolute; inset:0; background:#fff; opacity:0; z-index:50; pointer-events:none; }
 """
 

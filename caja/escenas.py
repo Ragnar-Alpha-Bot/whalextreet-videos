@@ -34,6 +34,9 @@ def norm(s):
     return re.sub(r"[^a-z0-9]", "", "".join(c for c in s if unicodedata.category(c) != "Mn"))
 
 
+LETRA_MIN = 28          # px de un vídeo de 1080 de ancho: el 2,6 % del lado corto, lo que un móvil lee sin esfuerzo
+
+
 class Ctx:
     """Datos de una escena: tiempos, tamaño disponible, paleta y palabras de su locución."""
 
@@ -47,6 +50,10 @@ class Ctx:
 
     def px(self, n):
         return f"{round(n * self.u)}px"
+
+    def fs(self, n):
+        """Tamaño de LETRA: como px(), pero nunca por debajo de LETRA_MIN (lo mínimo que se lee bien en un móvil; ver caja/qa.py). En la columna estrecha de las escenas con avatar, px() la dejaba en ~18 px."""
+        return f"{max(round(n * self.u), LETRA_MIN)}px"
 
     def n(self, v):
         return round(v * self.u)
@@ -75,7 +82,7 @@ def to(sel, b, t):
 
 
 def chip(c, texto, idn, tamano=30, tono="acc"):
-    return (f'<span class="chip h" id="{idn}" style="font-size:{c.px(tamano)};--c:var(--{tono})">{esc(texto)}</span>')
+    return (f'<span class="chip h" id="{idn}" style="font-size:{c.fs(tamano)};--c:var(--{tono})">{esc(texto)}</span>')
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -123,9 +130,9 @@ def e_titulo(c, d):
     sub = d.get("subtitulo")
     html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(36)}">'
             + (chip(c, d["etiqueta"], c.pf + "chip") if d.get("etiqueta") else "")
-            + f'<div class="big" style="font-size:{c.px(fs)}">{spans}</div>'
+            + f'<div class="big" style="font-size:{c.fs(fs)}">{spans}</div>'
             + f'<div id="{c.pf}ln" class="linea" style="width:{c.px(280)}"></div>'
-            + (f'<div class="nota h" id="{c.pf}sub" style="font-size:{c.px(46)}">{esc(sub)}</div>' if sub else "") + '</div>')
+            + (f'<div class="nota h" id="{c.pf}sub" style="font-size:{c.fs(46)}">{esc(sub)}</div>' if sub else "") + '</div>')
     js, t0 = [], c.t0
     if d.get("etiqueta"):
         js.append(fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, t0 + .2))
@@ -168,10 +175,10 @@ def e_numero(c, d):
     fs = min(300, 1480 / max(len(final), 1))
     ide = f"{c.pf}num"
     html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(24)}">'
-            + (f'<div class="lab h" id="{c.pf}lab" style="font-size:{c.px(34)}">{esc(d["etiqueta"])}</div>' if d.get("etiqueta") else "")
-            + f'<div class="big" id="{ide}" style="font-size:{c.px(fs)};color:var(--acc);line-height:1">{esc(pre + es(v0, dec) + suf)}</div>'
-            + (f'<div class="pildora h" id="{c.pf}det" style="font-size:{c.px(40)}">{esc(d["detalle"])}</div>' if d.get("detalle") else "")
-            + (f'<div class="chip h" id="{c.pf}dl" style="font-size:{c.px(44)};--c:var(--{"up" if d["delta"] >= 0 else "down"})">'
+            + (f'<div class="lab h" id="{c.pf}lab" style="font-size:{c.fs(34)}">{esc(d["etiqueta"])}</div>' if d.get("etiqueta") else "")
+            + f'<div class="big" id="{ide}" style="font-size:{c.fs(fs)};color:var(--acc);line-height:1">{esc(pre + es(v0, dec) + suf)}</div>'
+            + (f'<div class="pildora h" id="{c.pf}det" style="font-size:{c.fs(40)}">{esc(d["detalle"])}</div>' if d.get("detalle") else "")
+            + (f'<div class="chip h" id="{c.pf}dl" style="font-size:{c.fs(44)};--c:var(--{"up" if d["delta"] >= 0 else "down"})">'
                f'{"▲ +" if d["delta"] >= 0 else "▼ −"}{es(abs(d["delta"]), 1)} {esc(d.get("delta_unidad", "%"))}</div>' if "delta" in d else "") + '</div>')
     t = c.T(d.get("cuando"), 0.18)
     dur = 1.5
@@ -244,7 +251,7 @@ def e_grafico(c, d):
         above = cy > VH * 0.45
         ty = cy - c.n(92) if above else cy + c.n(30)
         pins += (f'<div class="pin h" id="{c.pf}pin{k}" style="left:{cx - c.n(11):.0f}px;top:{cy - c.n(11):.0f}px;width:{c.n(22)}px;height:{c.n(22)}px"></div>'
-                 f'<div class="pildora h" id="{c.pf}an{k}" style="position:absolute;left:{left:.0f}px;top:{ty:.0f}px;font-size:{c.px(32)};padding:{c.px(8)} {c.px(20)}">{esc(a["texto"])}</div>')
+                 f'<div class="pildora h" id="{c.pf}an{k}" style="position:absolute;left:{left:.0f}px;top:{ty:.0f}px;font-size:{c.fs(32)};padding:{c.px(8)} {c.px(20)}">{esc(a["texto"])}</div>')
         ta = c.T(a.get("cuando"), 0.55 + 0.12 * k)
         pin_js += [fromTo(f"#{c.pf}pin{k}", {"opacity": 0, "scale": 0}, {"opacity": 1, "scale": 1, "duration": .35, "ease": "back.out(3)"}, ta),
                    fromTo(f"#{c.pf}an{k}", {"opacity": 0, "y": 12}, {"opacity": 1, "y": 0, "duration": .35, "ease": "power3.out"}, ta + .12)]
@@ -252,15 +259,15 @@ def e_grafico(c, d):
     et = d.get("etiquetas")
     html = (f'<div class="col" style="justify-content:center;gap:{c.px(20)}">'
             f'<div style="display:flex;justify-content:space-between;align-items:baseline">'
-            f'<div class="lab" style="font-size:{c.px(34)}">{esc(d["titulo"])}</div>'
-            f'<div class="h" id="{c.pf}val" style="font-weight:700;font-size:{c.px(64)};color:{col}">{esc(es(pts[-1], 1 if abs(pts[-1]) < 100 and pts[-1] != int(pts[-1]) else 0))}{esc(unidad)}</div></div>'
+            f'<div class="lab" style="font-size:{c.fs(34)}">{esc(d["titulo"])}</div>'
+            f'<div class="h" id="{c.pf}val" style="font-weight:700;font-size:{c.fs(64)};color:{col}">{esc(es(pts[-1], 1 if abs(pts[-1]) < 100 and pts[-1] != int(pts[-1]) else 0))}{esc(unidad)}</div></div>'
             f'<div style="position:relative;width:{VW}px;height:{VH}px">'
             f'<svg viewBox="0 0 {VW} {VH}" width="{VW}" height="{VH}" style="overflow:visible">{grid}'
             f'<path id="{c.pf}ar" d="{area}" fill="{col}" opacity="0"/>'
             f'<path id="{c.pf}ln" d="{path}" fill="none" stroke="{col}" stroke-width="{c.n(10)}" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>'
             f'<circle id="{c.pf}dot" cx="{X(n - 1):.1f}" cy="{Y(pts[-1]):.1f}" r="{c.n(15)}" fill="{col}" opacity="0"/></svg>{pins}</div>'
-            + (f'<div style="display:flex;justify-content:space-between" class="lab"><span style="font-size:{c.px(28)}">{esc(et[0])}</span><span style="font-size:{c.px(28)}">{esc(et[1])}</span></div>' if et else "")
-            + (f'<div class="chip h" id="{c.pf}chg" style="font-size:{c.px(44)};--c:{col};align-self:center">{cambio}</div>' if cambio else "") + '</div>')
+            + (f'<div style="display:flex;justify-content:space-between" class="lab"><span style="font-size:{c.fs(28)}">{esc(et[0])}</span><span style="font-size:{c.fs(28)}">{esc(et[1])}</span></div>' if et else "")
+            + (f'<div class="chip h" id="{c.pf}chg" style="font-size:{c.fs(44)};--c:{col};align-self:center">{cambio}</div>' if cambio else "") + '</div>')
     t = c.t0 + .55
     dur = min(2.2, max(1.2, c.dur * .45))
     js = [fromTo(f"#{c.pf}ln", {"attr": {"stroke-dashoffset": 1}}, {"attr": {"stroke-dashoffset": 0}, "duration": dur, "ease": "power1.inOut"}, t),
@@ -302,11 +309,11 @@ def e_barras(c, d):
     rows = ""
     for k, x in enumerate(it):
         colr = "var(--acc)" if k == dest else "var(--acc2)"
-        rows += (f'<div class="h" id="{c.pf}r{k}" style="height:{c.px(rh)}"><div class="lab" style="font-size:{c.px(32)};color:var(--text);letter-spacing:.02em">{esc(x["n"])}</div>'
+        rows += (f'<div class="h" id="{c.pf}r{k}" style="height:{c.px(rh)}"><div class="lab" style="font-size:{c.fs(32)};color:var(--text);letter-spacing:.02em">{esc(x["n"])}</div>'
                  f'<div style="display:flex;align-items:center;gap:{c.px(20)};margin-top:{c.px(10)}"><div class="pista" style="flex:1;height:{c.px(46)}">'
                  f'<div id="{c.pf}b{k}" style="height:100%;width:0;border-radius:{c.px(23)};background:{colr};opacity:{1 if k == dest else .7}"></div></div>'
-                 f'<div class="h" id="{c.pf}v{k}" style="font-weight:700;font-size:{c.px(44)};min-width:{c.px(130)};text-align:right;color:{colr}">{esc(es(x["v"], 1 if x["v"] != int(x["v"]) else 0))}{esc(unidad)}</div></div></div>')
-    html = (f'<div class="col" style="justify-content:center;gap:{c.px(14)}"><div class="lab" style="font-size:{c.px(34)};margin-bottom:{c.px(16)}">{esc(d["titulo"])}</div>{rows}</div>')
+                 f'<div class="h" id="{c.pf}v{k}" style="font-weight:700;font-size:{c.fs(44)};min-width:{c.px(130)};text-align:right;color:{colr}">{esc(es(x["v"], 1 if x["v"] != int(x["v"]) else 0))}{esc(unidad)}</div></div></div>')
+    html = (f'<div class="col" style="justify-content:center;gap:{c.px(14)}"><div class="lab" style="font-size:{c.fs(34)};margin-bottom:{c.px(16)}">{esc(d["titulo"])}</div>{rows}</div>')
     js = []
     c.snd(c.t0 + .2, "card", .4)
     for k, x in enumerate(it):
@@ -346,7 +353,7 @@ def e_donut(c, d):
         ln = max(C * frac - 4, 1)
         circ += (f'<circle id="{c.pf}c{k}" cx="200" cy="200" r="{R}" fill="none" stroke="{cols[k]}" stroke-width="64" stroke-dasharray="0 {C:.1f}" '
                  f'transform="rotate({-90 + ang * 360:.2f} 200 200)"/>')
-        leg += (f'<div class="h" id="{c.pf}g{k}" style="display:flex;align-items:center;gap:{c.px(18)};font-weight:700;font-size:{c.px(44)};margin-top:{c.px(12)}">'
+        leg += (f'<div class="h" id="{c.pf}g{k}" style="display:flex;align-items:center;gap:{c.px(18)};font-weight:700;font-size:{c.fs(44)};margin-top:{c.px(12)}">'
                 f'<span style="width:{c.px(30)};height:{c.px(30)};border-radius:50%;background:{cols[k]};flex:none"></span><span style="flex:1">{esc(x["n"])}</span>'
                 f'<span style="color:{cols[k]}">{es(frac * 100, 0)} %</span></div>')
         t = c.T(x.get("cuando"), 0.1 + 0.6 * k / max(len(seg) - 1, 1))
@@ -354,12 +361,12 @@ def e_donut(c, d):
                fromTo(f"#{c.pf}g{k}", {"opacity": 0, "x": 40}, {"opacity": 1, "x": 0, "duration": .35, "ease": "power3.out"}, t + .1)]
         c.snd(t, f"blip:{k}", .42)
         ang += frac
-    html = (f'<div class="col" style="align-items:center;justify-content:center;gap:{c.px(18)}"><div class="lab" style="font-size:{c.px(34)};align-self:flex-start">{esc(d["titulo"])}</div>'
+    html = (f'<div class="col" style="align-items:center;justify-content:center;gap:{c.px(18)}"><div class="lab" style="font-size:{c.fs(34)};align-self:flex-start">{esc(d["titulo"])}</div>'
             f'<div style="position:relative;width:{size:.0f}px;height:{size:.0f}px"><svg viewBox="0 0 400 400" width="{size:.0f}" height="{size:.0f}">'
             f'<circle cx="200" cy="200" r="{R}" fill="none" stroke="var(--raised)" stroke-width="64"/>{circ}</svg>'
             f'<div class="h" id="{c.pf}ct" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">'
-            f'<div style="font-weight:700;font-size:{c.px(96)};line-height:1;color:{cols[mayor]}">{es(seg[mayor]["v"] / tot * 100, 0)} %</div>'
-            f'<div class="lab" style="font-size:{c.px(26)};margin-top:{c.px(8)}">{esc(seg[mayor]["n"])}</div></div></div>'
+            f'<div style="font-weight:700;font-size:{c.fs(96)};line-height:1;color:{cols[mayor]}">{es(seg[mayor]["v"] / tot * 100, 0)} %</div>'
+            f'<div class="lab" style="font-size:{c.fs(26)};margin-top:{c.px(8)}">{esc(seg[mayor]["n"])}</div></div></div>'
             f'<div style="width:100%">{leg}</div></div>')
     tf = c.t0 + c.dur * .72
     js.append(fromTo(f"#{c.pf}ct", {"opacity": 0, "scale": .7}, {"opacity": 1, "scale": 1, "duration": .45, "ease": "back.out(2.4)"}, tf))
@@ -383,10 +390,10 @@ def v_lista(d, err):
 def e_lista(c, d):
     it = [x if isinstance(x, dict) else {"t": x} for x in d["items"]]
     n = len(it)
-    rows = "".join(f'<div class="fila h" id="{c.pf}r{k}" style="font-size:{c.px(54)};height:{c.px(122)};gap:{c.px(24)}">'
-                   f'<div class="ck" id="{c.pf}ck{k}" style="width:{c.px(68)};height:{c.px(68)};font-size:{c.px(44)}">✓</div>{esc(x["t"])}</div>' for k, x in enumerate(it))
+    rows = "".join(f'<div class="fila h" id="{c.pf}r{k}" style="font-size:{c.fs(54)};height:{c.px(122)};gap:{c.px(24)}">'
+                   f'<div class="ck" id="{c.pf}ck{k}" style="width:{c.px(68)};height:{c.px(68)};font-size:{c.fs(44)}">✓</div>{esc(x["t"])}</div>' for k, x in enumerate(it))
     html = (f'<div class="col" style="justify-content:center;gap:{c.px(18)}">'
-            + (f'<div class="lab" style="font-size:{c.px(34)};margin-bottom:{c.px(10)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + rows + '</div>')
+            + (f'<div class="lab" style="font-size:{c.fs(34)};margin-bottom:{c.px(10)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + rows + '</div>')
     js = []
     c.snd(c.t0 + .2, "card", .35)
     for k, x in enumerate(it):
@@ -421,11 +428,11 @@ def e_tarjetas(c, d):
     for k, x in enumerate(it):
         tono = x.get("tono", "acc")
         cards += (f'<div class="tarjeta h" id="{c.pf}t{k}" style="height:{c.px(ch)};padding:{c.px(24)} {c.px(34)}">'
-                  f'<div class="lab" style="font-size:{c.px(28)}">{esc(x["etiqueta"])}</div>'
-                  f'<div style="font-weight:700;font-size:{c.px(min(120, ch * .46))};letter-spacing:-.03em;line-height:1.05;color:var(--{tono})">{esc(x["valor"])}</div>'
-                  + (f'<div class="nota" style="font-size:{c.px(32)};margin-top:{c.px(4)}">{esc(x["nota"])}</div>' if x.get("nota") else "") + '</div>')
+                  f'<div class="lab" style="font-size:{c.fs(28)}">{esc(x["etiqueta"])}</div>'
+                  f'<div style="font-weight:700;font-size:{c.fs(min(120, ch * .46))};letter-spacing:-.03em;line-height:1.05;color:var(--{tono})">{esc(x["valor"])}</div>'
+                  + (f'<div class="nota" style="font-size:{c.fs(32)};margin-top:{c.px(4)}">{esc(x["nota"])}</div>' if x.get("nota") else "") + '</div>')
     html = (f'<div class="col" style="justify-content:center;gap:{c.px(20)}">'
-            + (f'<div class="lab" style="font-size:{c.px(34)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + cards + '</div>')
+            + (f'<div class="lab" style="font-size:{c.fs(34)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + cards + '</div>')
     js = []
     for k, x in enumerate(it):
         t = c.T(x.get("cuando"), 0.1 + 0.6 * k / max(n - 1, 1))
@@ -453,11 +460,11 @@ def e_pregunta(c, d):
     op = [x if isinstance(x, dict) else {"t": x} for x in d["opciones"]]
     n = len(op)
     letras = "ABC"
-    opts = "".join(f'<div class="opcion h" id="{c.pf}o{k}" style="font-size:{c.px(62)};gap:{c.px(28)};padding:{c.px(26)} {c.px(32)}">'
-                   f'<b style="width:{c.px(110)};height:{c.px(110)};font-size:{c.px(64)};background:var(--{"acc" if k % 2 == 0 else "acc2"})">{letras[k]}</b>{esc(x["t"])}</div>' for k, x in enumerate(op))
+    opts = "".join(f'<div class="opcion h" id="{c.pf}o{k}" style="font-size:{c.fs(62)};gap:{c.px(28)};padding:{c.px(26)} {c.px(32)}">'
+                   f'<b style="width:{c.px(110)};height:{c.px(110)};font-size:{c.fs(64)};background:var(--{"acc" if k % 2 == 0 else "acc2"})">{letras[k]}</b>{esc(x["t"])}</div>' for k, x in enumerate(op))
     html = (f'<div class="col" style="justify-content:center;align-items:flex-start;gap:{c.px(26)}">{chip(c, "AHORA TÚ", c.pf + "chip", 32)}'
-            f'<div class="big h" id="{c.pf}q" style="font-size:{c.px(88 if len(d["pregunta"]) < 40 else 74)}">{esc(d["pregunta"])}</div>{opts}'
-            f'<div class="lab h" id="{c.pf}pie" style="font-size:{c.px(34)};color:var(--acc)">{esc(d.get("pie", "RESPONDE EN LOS COMENTARIOS"))}</div></div>')
+            f'<div class="big h" id="{c.pf}q" style="font-size:{c.fs(88 if len(d["pregunta"]) < 40 else 74)}">{esc(d["pregunta"])}</div>{opts}'
+            f'<div class="lab h" id="{c.pf}pie" style="font-size:{c.fs(34)};color:var(--acc)">{esc(d.get("pie", "RESPONDE EN LOS COMENTARIOS"))}</div></div>')
     js = [fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, c.t0 + .2),
           fromTo(f"#{c.pf}q", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .5, "ease": "power3.out"}, c.t0 + .35)]
     c.snd(c.t0 + .2, "pop:0", .45)
@@ -622,7 +629,7 @@ def e_gancho(c, d):
         col = "var(--down)" if cf["valor"] < 0 else "var(--up)"
         final = pre + es(cf["valor"], dec) + suf
         fsz = min(240, 1500 / max(len(final), 1))
-        gr_html = f'<div id="{pf}cifra" class="big" style="font-size:{c.px(fsz)};line-height:1;color:{col};text-shadow:0 0 {c.px(40)} {col}">{esc(pre + es(0, dec) + suf)}</div>'
+        gr_html = f'<div id="{pf}cifra" class="big" style="font-size:{c.fs(fsz)};line-height:1;color:{col};text-shadow:0 0 {c.px(40)} {col}">{esc(pre + es(0, dec) + suf)}</div>'
         gr_js = [f'const {pf}o={{v:0}};tl.to({pf}o,{{v:{cf["valor"]},duration:.7,ease:"power3.out",onUpdate(){{document.getElementById("{pf}cifra").textContent={J(pre)}+fm({pf}o.v,{dec})+{J(suf)}}}}},0.02);',
                  fromTo(f"#{pf}cifra", {"scale": 1.5}, {"scale": 1, "duration": .35, "ease": "power4.out"}, 0)]
         for k in range(10):
@@ -634,10 +641,10 @@ def e_gancho(c, d):
         gr_html = escenas_meta.canvas(ident, c.W, c.n(altura_motivo_gancho(ws, fs, d))) + escenas_meta.modulo(ident, motivo, c.t0 + .02, {"escala": 1.3})
         escenas_meta.sonido_entrada(c, motivo, .05)
     # --- estructura: kicker, gráfico, texto enorme, subtexto ---
-    kicker = (f'<span class="chip" id="{pf}kick" style="font-size:{c.px(34)};--c:var(--acc)">{esc(d["kicker"])}</span>' if d.get("kicker") else "")
-    sub = (f'<div id="{pf}sub" class="nota" style="font-size:{c.px(50)};max-width:{c.px(860)}">{esc(d["subtexto"])}</div>' if d.get("subtexto") else "")
+    kicker = (f'<span class="chip" id="{pf}kick" style="font-size:{c.fs(34)};--c:var(--acc)">{esc(d["kicker"])}</span>' if d.get("kicker") else "")
+    sub = (f'<div id="{pf}sub" class="nota" style="font-size:{c.fs(50)};max-width:{c.px(860)}">{esc(d["subtexto"])}</div>' if d.get("subtexto") else "")
     html = (f'<div id="{pf}in" style="height:100%"><div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(30)}">'
-            f'{kicker}{gr_html}<div id="{pf}tt" class="big" style="font-size:{c.px(fs)};line-height:1.0;text-transform:uppercase;text-shadow:0 6px 40px rgba(0,0,0,.6)">{spans}</div>{sub}</div></div>')
+            f'{kicker}{gr_html}<div id="{pf}tt" class="big" style="font-size:{c.fs(fs)};line-height:1.0;text-transform:uppercase;text-shadow:0 6px 40px rgba(0,0,0,.6)">{spans}</div>{sub}</div></div>')
     acc = c.p["acc"]
     js = [fromTo("#flash", {"opacity": .6, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .1, "ease": "none"}, 0),           # doble destello: blanco…
           fromTo("#flash", {"opacity": .42, "backgroundColor": acc}, {"opacity": 0, "duration": .3, "ease": "power2.out", "immediateRender": False}, .1),   # …y de color
@@ -701,14 +708,14 @@ def e_cta(c, d):
     texto = d.get("texto") or cfg["cta_texto"]
     redes = d.get("redes") or cfg["redes"]
     usuario, web = d.get("usuario") or cfg.get("usuario"), d.get("web") or cfg.get("web")
-    pills = "".join(f'<span class="pildora h" id="{c.pf}r{j}" style="font-size:{c.px(40)};margin:{c.px(8)}">{esc(x)}</span>' for j, x in enumerate(redes))
+    pills = "".join(f'<span class="pildora h" id="{c.pf}r{j}" style="font-size:{c.fs(40)};margin:{c.px(8)}">{esc(x)}</span>' for j, x in enumerate(redes))
     html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(26)}">'
             f'<img class="h" id="{c.pf}logo" src="assets/isotipo-cierre.png" alt="" style="width:{c.px(330)}"/>'
             f'{chip(c, "SÍGUENOS", c.pf + "chip", 40)}'
-            f'<div class="big h" id="{c.pf}tx" style="font-size:{c.px(84)};padding:0 {c.px(20)}">{esc(texto)}</div>'
+            f'<div class="big h" id="{c.pf}tx" style="font-size:{c.fs(84)};padding:0 {c.px(20)}">{esc(texto)}</div>'
             f'<div style="display:flex;flex-wrap:wrap;justify-content:center">{pills}</div>'
-            + (f'<div class="big h" id="{c.pf}us" style="font-size:{c.px(64)};color:var(--acc)">{esc(usuario)}</div>' if usuario else "")
-            + (f'<div class="nota h" id="{c.pf}web" style="font-size:{c.px(42)}">{esc(web)}</div>' if web else "") + '</div>')
+            + (f'<div class="big h" id="{c.pf}us" style="font-size:{c.fs(64)};color:var(--acc)">{esc(usuario)}</div>' if usuario else "")
+            + (f'<div class="nota h" id="{c.pf}web" style="font-size:{c.fs(42)}">{esc(web)}</div>' if web else "") + '</div>')
     t = c.t0
     js = [fromTo(f"#{c.pf}logo", {"opacity": 0, "scale": .7}, {"opacity": 1, "scale": 1, "duration": .6, "ease": "back.out(1.8)"}, t + .1),
           fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, t + .45),
@@ -751,12 +758,12 @@ def e_dialogo(c, d):
     html = (f'<div style="position:relative;height:100%">'
             f'<div id="{c.pf}bub" class="h" style="position:absolute;top:0;{lado}:0;width:{c.px(840)};background:var(--surface);border:{c.px(5)} solid {color};'
             f'border-radius:{c.px(50)};padding:{c.px(30)} {c.px(44)} {c.px(38)}">'
-            + (f'<span class="chip" style="font-size:{c.px(30)};--c:{color}">{etiqueta}</span>' if etiqueta else "")
-            + f'<div class="big" style="font-size:{c.px(fs)};margin-top:{c.px(14)}">{esc(texto)}</div>'
+            + (f'<span class="chip" style="font-size:{c.fs(30)};--c:{color}">{etiqueta}</span>' if etiqueta else "")
+            + f'<div class="big" style="font-size:{c.fs(fs)};margin-top:{c.px(14)}">{esc(texto)}</div>'
             f'<div style="position:absolute;bottom:-{c.px(28)};{lado}:{c.px(110)};width:0;height:0;border-left:{c.px(28)} solid transparent;'
             f'border-right:{c.px(28)} solid transparent;border-top:{c.px(32)} solid {color}"></div></div>'
             + (f'<div id="{c.pf}sym" class="h" style="position:absolute;left:{c.px(342)};top:{c.px(540)};width:{c.px(300)};text-align:center;'
-               f'font-weight:700;font-size:{c.px(230)};line-height:1;color:{color}">{simbolo}</div>' if simbolo else "") + '</div>')
+               f'font-weight:700;font-size:{c.fs(230)};line-height:1;color:{color}">{simbolo}</div>' if simbolo else "") + '</div>')
     js = [fromTo(f"#{c.pf}bub", {"opacity": 0, "scale": .86, "y": -24, "transformOrigin": sombra}, {"opacity": 1, "scale": 1, "y": 0, "duration": .45, "ease": "back.out(2)"}, c.t0 + .2)]
     if simbolo:
         js.append(fromTo(f"#{c.pf}sym", {"opacity": 0, "scale": .3}, {"opacity": .9, "scale": 1, "duration": .5, "ease": "back.out(3)"}, c.t0 + .45))
@@ -776,3 +783,4 @@ import escenas_meta  # noqa: E402,F401  (registra la escena «metafora» y el «
 import escenas_ui  # noqa: E402,F401  (registra «pasos» y «checklist»)
 import escenas_recursos  # noqa: E402,F401  (registra «terminal», «ranking» y «captura»: recursos que se usan solo cuando el tema lo pide)
 import escenas_versus  # noqa: E402,F401  (registra «versus» con muñecos, «movil», «calendario» y «panel»; el cierre «compartir» se pide desde e_cta)
+import escenas_grafico  # noqa: E402,F401  (registra «grafico_pro»: gráfico de línea, área o velas con datos reales, TradingView Lightweight Charts)

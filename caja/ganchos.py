@@ -79,6 +79,40 @@ REGLAS Y RETOS (TikTok: administra tu sueldo así, 15,5 M; reto de los 100 depó
 53. «Así repartiría 1 000 € si empezara de cero (ejemplo).»
 54. «¿Pagas impuestos al invertir? Esto es lo que casi nadie revisa.»
 55. «Administra tu sueldo así a partir de hoy: [regla].»
+CURIOSIDAD (familia de ganchos «lo que nadie cuenta»; ideas de una lista de 48 ganchos de un creador de contenido, adaptadas a finanzas y a datos reales)
+56. «Lo que nadie te contó de [tema financiero real].»
+57. «El detalle incómodo de [producto o concepto] que casi nadie lee.»
+58. «Esto parece obvio… hasta que ves [dato real].»
+59. «Si solo te llevas una cosa de [tema], que sea esta.»
+60. «Lo que ojalá supiera todo el mundo antes de su primer euro invertido.»
+MIEDO / PÉRDIDA CONCRETA
+61. «Si no haces esto, pierdes [algo concreto y real] cada [periodo].»
+62. «Dos errores que arruinan [resultado] sin que te des cuenta.»
+63. «Nunca uses [atajo]… a menos que [condición].»
+64. «Esta señal de alerta explica por qué [problema real].»
+65. «Lo barato de hoy te sale caro después: [ejemplo con cifra real].»
+66. «Estás a un hábito de [consecuencia], y no lo ves.»
+AUTORIDAD (sin experiencia personal: la marca no tiene «yo lo logré», habla de datos y de gente disciplinada)
+67. «Lo que hacen los inversores disciplinados y casi nadie copia.»
+68. «Después de [N años de datos reales], esto es lo único que importa.»
+69. «Si tuvieras que aprender una sola cosa de [tema], sería esta.»
+EMPATÍA
+70. «Si te da vergüenza preguntar [duda común de inversión], esto es para ti.»
+71. «Nadie te enseñó esto en el colegio, y no es tu culpa.»
+72. «Si estás cansado de [frustración concreta, p. ej. vender en pánico], mira esto.»
+73. «Si eres [público concreto], esto te ahorra [tiempo o dinero reales].»
+SORPRESA
+74. «El truco más subestimado para [ahorrar / invertir mejor].»
+75. «Nadie habla de [variable: comisiones, impuestos], pero explica [resultado real].»
+76. «Cambia una sola cosa, [acción mínima], y mira qué pasa con [cifra real o ilustrativa].»
+77. «Lo más simple es lo que mejor funciona: [ejemplo con datos reales].»
+POLÉMICA CON FUNDAMENTO
+78. «[Creencia popular] está mal. Y aquí va el porqué (con datos).»
+79. «[Lo que todos hacen] no sirve… a menos que [condición].»
+80. «Deja de [hábito común]. Te explico por qué.»
+81. «Lo que te enseñaron de [tema] ya caducó: esto es lo que dicen los datos.»
+82. ««[Consejo que todos repiten]» es un mal consejo para [situación concreta].»
+NO USES NUNCA frases en primera persona de experiencia propia («yo lo logré», «lo aprendí cobrando caro mis errores», «yo dejé de hacerlo y me va mejor») ni porcentajes de gente («el 95 % hace…», «el 99 % lo hace así») que no estén en el encargo: la marca no tiene esa experiencia ni esos datos.
 CÓMO SE ESCRIBE UN GANCHO BRUTAL (obligatorio): habla de TI (el espectador) y de SU dinero; pon en juego una pérdida, una ganancia, un ahorro o una decisión; \
 una sola idea, concreta y con tensión; sin saludos ni rodeos; deja una pregunta abierta que solo se cierra viendo el resto; cumple lo que prometes. \
 El gancho es OBLIGATORIO y es lo más importante del contenido: si no hace parar el scroll en 2 segundos, reescríbelo."""

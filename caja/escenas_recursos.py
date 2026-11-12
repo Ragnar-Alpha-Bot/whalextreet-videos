@@ -61,13 +61,13 @@ def e_terminal(c, d):
     cuerpo = ""
     for k, l in enumerate(ls):
         p, pc, tc = pref[l["tipo"]]
-        cuerpo += (f'<div class="h" id="{c.pf}l{k}" style="display:flex;align-items:center;height:{c.px(lh)};font-family:PlexW,monospace;font-weight:700;font-size:{c.px(fs)};color:{tc}">'
+        cuerpo += (f'<div class="h" id="{c.pf}l{k}" style="display:flex;align-items:center;height:{c.px(lh)};font-family:PlexW,monospace;font-weight:700;font-size:{c.fs(fs)};color:{tc}">'
                    f'<span style="display:inline-block;width:1.7ch;color:{pc};font-family:InterW,sans-serif">{p}</span>'
                    f'<span id="{c.pf}t{k}" style="display:inline-block;overflow:hidden;white-space:pre;width:0ch;vertical-align:bottom">{_plano(l["t"])}</span>'
                    f'<span id="{c.pf}c{k}" style="display:inline-block;width:.6ch;height:1.1em;margin-left:.25ch;background:var(--acc);opacity:0"></span></div>')
     barra = (f'<div style="display:flex;align-items:center;gap:{c.px(14)};height:{c.px(82)};padding:0 {c.px(30)};border-bottom:2px solid var(--border)">'
              + "".join(f'<i style="width:{c.px(22)};height:{c.px(22)};border-radius:50%;background:var(--{t})"></i>' for t in ("down", "warn", "up"))
-             + f'<span class="lab" style="margin-left:{c.px(18)};font-size:{c.px(26)}">{_plano(d.get("titulo") or "Terminal")}</span></div>')
+             + f'<span class="lab" style="margin-left:{c.px(18)};font-size:{c.fs(26)}">{_plano(d.get("titulo") or "Terminal")}</span></div>')
     html = (f'<div class="col" style="justify-content:center"><div id="{c.pf}win" class="h" style="background:var(--surface);border:{c.px(3)} solid var(--border);'
             f'border-radius:{c.px(30)};overflow:hidden;box-shadow:0 0 {c.px(46)} color-mix(in srgb,var(--acc) 30%,transparent)">'
             f'{barra}<div style="padding:{c.px(26)} {c.px(34)} {c.px(34)}">{cuerpo}</div></div></div>')
@@ -133,10 +133,10 @@ def e_ranking(c, d):
         filas += (f'<div id="{c.pf}r{k}" class="h" style="display:flex;align-items:center;gap:{c.px(26)};height:{c.px(alto)};padding:0 {c.px(34)};'
                   f'background:var(--surface);border:{c.px(4 if primero else 3)} solid var({"--acc" if primero else "--border"});border-radius:{c.px(30)};'
                   + (f'box-shadow:0 0 {c.px(36)} color-mix(in srgb,var(--acc) 40%,transparent)' if primero else "") + '">'
-                  f'<div id="{c.pf}v{k}" style="flex:none;width:{c.px(318)};font-weight:700;white-space:nowrap;font-size:{c.px(min(112, alto * .52, 300 / (.6 * max(3, len(x['valor'])))))};letter-spacing:-.03em;line-height:1;color:var(--{tono})">{esc(x["valor"])}</div>'
-                  f'<div style="flex:1;min-width:0"><div class="big" style="font-size:{c.px(44 if len(x["t"]) <= 30 else 38)};line-height:1.1">{esc(x["t"])}</div>'
-                  + (f'<div class="lab" style="font-size:{c.px(25)};margin-top:{c.px(8)}">{esc(x["sub"])}</div>' if x.get("sub") else "") + '</div></div>')
-    cab = f'<div id="{c.pf}hd" class="lab h" style="font-size:{c.px(34)};margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>' if d.get("titulo") else ""
+                  f'<div id="{c.pf}v{k}" style="flex:none;width:{c.px(318)};font-weight:700;white-space:nowrap;font-size:{c.fs(min(112, alto * .52, 300 / (.6 * max(3, len(x['valor'])))))};letter-spacing:-.03em;line-height:1;color:var(--{tono})">{esc(x["valor"])}</div>'
+                  f'<div style="flex:1;min-width:0"><div class="big" style="font-size:{c.fs(44 if len(x["t"]) <= 30 else 38)};line-height:1.1">{esc(x["t"])}</div>'
+                  + (f'<div class="lab" style="font-size:{c.fs(25)};margin-top:{c.px(8)}">{esc(x["sub"])}</div>' if x.get("sub") else "") + '</div></div>')
+    cab = f'<div id="{c.pf}hd" class="lab h" style="font-size:{c.fs(34)};margin-bottom:{c.px(8)}">{esc(d["titulo"])}</div>' if d.get("titulo") else ""
     html = f'<div class="col" style="justify-content:center;gap:{c.px(24)}">{cab}{filas}</div>'
     js = []
     if cab:
@@ -171,8 +171,8 @@ def e_captura(c, d):
     if carpeta is not None and not (Path(carpeta) / "assets" / d["imagen"]).exists():
         raise ValueError(f"escena {c.i + 1} (captura): falta el archivo assets/{d['imagen']} en el proyecto")
     r = d.get("resalte")
-    cab = f'<div id="{c.pf}hd" class="lab h" style="font-size:{c.px(34)};margin-bottom:{c.px(14)}">{esc(d["titulo"])}</div>' if d.get("titulo") else ""
-    pie = f'<div id="{c.pf}pie" class="nota h" style="font-size:{c.px(34)};text-align:center;margin-top:{c.px(18)}">{esc(d["pie"])}</div>' if d.get("pie") else ""
+    cab = f'<div id="{c.pf}hd" class="lab h" style="font-size:{c.fs(34)};margin-bottom:{c.px(14)}">{esc(d["titulo"])}</div>' if d.get("titulo") else ""
+    pie = f'<div id="{c.pf}pie" class="nota h" style="font-size:{c.fs(34)};text-align:center;margin-top:{c.px(18)}">{esc(d["pie"])}</div>' if d.get("pie") else ""
     caja = ""
     if r:
         caja = (f'<div id="{c.pf}rs" style="position:absolute;left:{r["x"]}%;top:{r["y"]}%;width:{r["w"]}%;height:{r["h"]}%;border:{c.px(6)} solid var(--acc);border-radius:{c.px(10)};'

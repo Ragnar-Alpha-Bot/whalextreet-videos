@@ -1,0 +1,57 @@
+{
+  "id": "yt-AOM2zGm30hU",
+  "plataforma": "youtube_shorts",
+  "url": "https://www.youtube.com/watch?v=AOM2zGm30hU",
+  "idioma": "en",
+  "titulo_original": "ETFs vs. Stocks EXPLAINED In 30 Seconds #finance",
+  "metricas": {
+    "vistas": 468000
+  },
+  "consultado": "2026-11-12",
+  "duracion_s": 29,
+  "evidencia": "transcripcion",
+  "gancho_original": "ETFs or stocks, which one's right for you? Let's break it down.",
+  "formula": {
+    "tipo_gancho": "pregunta_directa",
+    "tema": "ETF frente a acciones sueltas: riesgo, diversificación y crecimiento",
+    "promesa": "una comparación en treinta segundos con un veredicto de una línea",
+    "estructura": [
+      {
+        "seg": "0-3",
+        "beat": "pregunta dividida en dos opciones y promesa de desglosarlo"
+      },
+      {
+        "seg": "3-12",
+        "beat": "acciones: tienes un trozo de una sola empresa y todo el riesgo depende de ella"
+      },
+      {
+        "seg": "12-22",
+        "beat": "ETF: una cesta de muchas empresas, diversificación al instante, crecimiento potencialmente menor"
+      },
+      {
+        "seg": "22-29",
+        "beat": "veredicto en una frase: acciones para grandes vaivenes, ETFs para equilibrio"
+      }
+    ],
+    "cierre": "frase final corta que resume, sin petición",
+    "visual": "dos bloques que se comparan"
+  },
+  "por_que_funciona": "Dos opciones, un criterio por opción y un veredicto memorizable que cabe en una frase. Muy corto.",
+  "adaptar": {
+    "tema_es": "una empresa frente a una cesta de muchas: cuántos valores tiene un ETF y cómo se mueve cada tipo, con datos reales",
+    "idea_gancho_es": "¿Una empresa o toda la cesta? Los datos reales de cuántos valores tiene un ETF mundial frente a uno temático.",
+    "datos_reales_necesarios": [
+      "nº de valores de un ETF mundial y de uno temático",
+      "peso de las diez primeras posiciones de cada uno",
+      "fecha y fuente"
+    ],
+    "cuidado": [
+      "no decir cuál es «mejor»: es un veredicto sobre el riesgo, no una recomendación",
+      "rentabilidad pasada no garantiza la futura"
+    ],
+    "formato_marca": "comparativa",
+    "oferta_sugerida": "FICHA"
+  },
+  "estado": "nueva",
+  "adaptaciones": []
+}
