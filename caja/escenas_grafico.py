@@ -138,12 +138,12 @@ def e_grafico_pro(c, d):
     et = d.get("etiquetas")
     col = "var(--up)" if ultimo >= primero else "var(--down)"
     html = (f'<div class="col" style="justify-content:center;align-items:center">'
-            f'<div style="display:flex;justify-content:space-between;align-items:baseline;align-self:stretch"><div class="lab" style="font-size:{c.px(34)}">{esc(d["titulo"])}</div>'
-            f'<div id="{c.pf}fin" class="h" style="font-weight:700;font-size:{c.px(60)};color:{col}">{esc(fmt(ultimo))}</div></div>'
+            f'<div style="display:flex;justify-content:space-between;align-items:baseline;align-self:stretch"><div class="lab" style="font-size:{c.fs(34)}">{esc(d["titulo"])}</div>'
+            f'<div id="{c.pf}fin" class="h" style="font-weight:700;font-size:{c.fs(60)};color:{col}">{esc(fmt(ultimo))}</div></div>'
             f'<div style="position:relative;width:{w}px;height:{h}px">'
             f'<div id="{lw}" data-layout-ignore style="position:absolute;left:0;top:0;width:{w}px;height:{h}px;opacity:0;pointer-events:none"></div>{canvas}</div>'
-            + (f'<div style="display:flex;justify-content:space-between;align-self:stretch;font-size:{c.px(30)};color:var(--muted);font-weight:600"><span>{esc(et[0])}</span><span>{esc(et[1])}</span></div>' if et else "")
-            + f'<div style="align-self:stretch;margin-top:{c.px(10)};font-size:{c.px(28)};color:var(--muted);font-weight:600">Gráfico: TradingView Lightweight Charts™ · tradingview.com</div></div>'
+            + (f'<div style="display:flex;justify-content:space-between;align-self:stretch;font-size:{c.fs(30)};color:var(--muted);font-weight:600"><span>{esc(et[0])}</span><span>{esc(et[1])}</span></div>' if et else "")
+            + f'<div style="align-self:stretch;margin-top:{c.px(10)};font-size:{c.fs(28)};color:var(--muted);font-weight:600">Gráfico: TradingView Lightweight Charts™ · tradingview.com</div></div>'
             + '<script src="./assets/lightweight-charts.standalone.production.js"></script>'
             + '<script type="module">' + LW.replace("__CV__", ident).replace("__LW__", lw).replace("__W__", str(w)).replace("__H__", str(h))
             .replace("__DATOS__", json.dumps(datos, ensure_ascii=False)) + "</script>")

@@ -58,8 +58,8 @@ def e_pasos(c, d):
     cab = ""
     if d.get("fase") or d.get("titulo"):
         cab = (f'<div id="{c.pf}fase" class="h" style="display:flex;align-items:center;gap:{c.px(18)};margin-bottom:{c.px(12)}">'
-               + (f'<span class="chip" style="font-size:{c.px(30)};--c:var(--acc)">{esc(d["fase"])}</span>' if d.get("fase") else "")
-               + (f'<span class="lab" style="font-size:{c.px(32)}">{esc(d["titulo"])}</span>' if d.get("titulo") else "") + '</div>')
+               + (f'<span class="chip" style="font-size:{c.fs(30)};--c:var(--acc)">{esc(d["fase"])}</span>' if d.get("fase") else "")
+               + (f'<span class="lab" style="font-size:{c.fs(32)}">{esc(d["titulo"])}</span>' if d.get("titulo") else "") + '</div>')
     tarj = ""
     for k, x in enumerate(it):
         ico = x.get("icono") or ORDEN_ICONOS[k % len(ORDEN_ICONOS)]
@@ -68,11 +68,11 @@ def e_pasos(c, d):
                  f'border:{c.px(4)} solid var(--acc);border-radius:{c.px(26)};'
                  f'background:linear-gradient(100deg,color-mix(in srgb,var(--acc) 16%,var(--surface)),var(--surface) 70%);'
                  f'box-shadow:0 0 {c.px(34)} color-mix(in srgb,var(--acc) 50%,transparent), inset 0 0 {c.px(30)} color-mix(in srgb,var(--acc) 14%,transparent)">'
-                 f'<div style="flex:none;width:{c.px(104)};text-align:center;font-family:PlexW,monospace;font-weight:700;font-size:{c.px(76)};line-height:1;color:var(--acc);'
+                 f'<div style="flex:none;width:{c.px(104)};text-align:center;font-family:PlexW,monospace;font-weight:700;font-size:{c.fs(76)};line-height:1;color:var(--acc);'
                  f'text-shadow:0 0 {c.px(22)} var(--acc)">{k + 1:02d}</div>'
                  f'<div style="flex:1;min-width:0">'
-                 + (f'<div class="lab" style="font-size:{c.px(26)};margin-bottom:{c.px(6)};color:var(--acc2)">{esc(et)}</div>' if et else "")
-                 + f'<div class="big" style="font-size:{c.px(58 if len(x["n"]) <= 16 else 48)};line-height:1.05;text-transform:uppercase">{esc(x["n"])}</div>'
+                 + (f'<div class="lab" style="font-size:{c.fs(26)};margin-bottom:{c.px(6)};color:var(--acc2)">{esc(et)}</div>' if et else "")
+                 + f'<div class="big" style="font-size:{c.fs(58 if len(x["n"]) <= 16 else 48)};line-height:1.05;text-transform:uppercase">{esc(x["n"])}</div>'
                  f'<div id="{c.pf}u{k}" style="height:{c.px(7)};width:{c.px(190)};border-radius:{c.px(4)};background:var(--resalte);margin-top:{c.px(10)};transform-origin:left center;transform:scaleX(0);'
                  f'box-shadow:0 0 {c.px(14)} var(--resalte)"></div></div>'
                  f'<div style="flex:none;color:var(--acc);filter:drop-shadow(0 0 {c.px(10)} var(--acc))">{_icono(ico, c.n(96))}</div></div>')
@@ -117,12 +117,12 @@ def e_checklist(c, d):
                   f'display:flex;align-items:center;justify-content:center">'
                   f'<svg viewBox="0 0 100 100" width="{c.n(alto * .5)}" height="{c.n(alto * .5)}" fill="none" stroke="var(--up)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">'
                   f'<path id="{c.pf}t{k}" d="M16 54 L40 78 L86 24" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" style="filter:drop-shadow(0 0 6px var(--up))"/></svg></div>'
-                  f'<div class="big" style="font-size:{c.px(48 if len(x["t"]) <= 26 else 40)};line-height:1.1">{esc(x["t"])}</div></div>')
+                  f'<div class="big" style="font-size:{c.fs(48 if len(x["t"]) <= 26 else 40)};line-height:1.1">{esc(x["t"])}</div></div>')
     cont = "".join(f'<span id="{c.pf}n{j}" style="position:absolute;right:0;top:0;opacity:{1 if j == 0 else 0}">{j}/{n}</span>' for j in range(n + 1))
     cab = (f'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:{c.px(10)}">'
-           f'<div id="{c.pf}hd" class="h"><div class="chip" style="font-size:{c.px(28)};--c:var(--up)">{esc(d.get("etiqueta") or "CHECKLIST")}</div>'
-           f'<div class="big" style="font-size:{c.px(58)};margin-top:{c.px(12)}">{esc(d["titulo"])}</div></div>'
-           f'<div style="position:relative;width:{c.px(190)};height:{c.px(90)};font-family:PlexW,monospace;font-weight:700;font-size:{c.px(76)};color:var(--up);'
+           f'<div id="{c.pf}hd" class="h"><div class="chip" style="font-size:{c.fs(28)};--c:var(--up)">{esc(d.get("etiqueta") or "CHECKLIST")}</div>'
+           f'<div class="big" style="font-size:{c.fs(58)};margin-top:{c.px(12)}">{esc(d["titulo"])}</div></div>'
+           f'<div style="position:relative;width:{c.px(190)};height:{c.px(90)};font-family:PlexW,monospace;font-weight:700;font-size:{c.fs(76)};color:var(--up);'
            f'text-shadow:0 0 {c.px(18)} var(--up)">{cont}</div></div>')
     barra = (f'<div style="height:{c.px(16)};border-radius:{c.px(8)};background:var(--raised);margin-top:{c.px(8)};overflow:hidden">'
              f'<div id="{c.pf}pg" style="height:100%;width:100%;transform-origin:left center;transform:scaleX(0);background:var(--up);box-shadow:0 0 {c.px(16)} var(--up)"></div></div>')

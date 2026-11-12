@@ -155,11 +155,11 @@ def e_metafora(c, d):
     tit, sub = d.get("titulo"), d.get("subtitulo")
     alto = c.n(960) - (c.n(110) if tit else 0) - (c.n(90) if sub else 0)
     html = ('<div class="col" style="justify-content:center;align-items:center">'
-            + (f'<div class="lab h" id="{c.pf}tit" style="font-size:{c.px(36)};align-self:flex-start;margin-bottom:{c.px(10)}">{esc(tit)}</div>' if tit else "")
+            + (f'<div class="lab h" id="{c.pf}tit" style="font-size:{c.fs(36)};align-self:flex-start;margin-bottom:{c.px(10)}">{esc(tit)}</div>' if tit else "")
             + canvas(ident, c.W, alto)
-            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.px(52)};text-align:center;color:var(--acc2);margin-top:{c.px(8)}">{esc(sub)}</div>' if sub else "")
+            + (f'<div class="h" id="{c.pf}sub" style="font-weight:700;font-size:{c.fs(52)};text-align:center;color:var(--acc2);margin-top:{c.px(8)}">{esc(sub)}</div>' if sub else "")
             + (f'<div class="h" id="{c.pf}sello" style="position:absolute;right:{c.px(6)};top:{c.px(150)};padding:{c.px(6)} {c.px(26)};border:{c.px(8)} double var(--resalte);'
-               f'border-radius:{c.px(16)};color:var(--resalte);font-family:PlexW,monospace;font-weight:700;font-size:{c.px(76)};letter-spacing:.08em;'
+               f'border-radius:{c.px(16)};color:var(--resalte);font-family:PlexW,monospace;font-weight:700;font-size:{c.fs(76)};letter-spacing:.08em;'
                f'text-transform:uppercase;background:rgba(4,7,16,.55);transform:rotate(-9deg)">{esc(d["sello"])}</div>' if d.get("sello") else "")
             + '</div>' + modulo(ident, d["motivo"], c.t0 + .02, {"escala": 1.2 if c.W >= 900 else 1.0}))
     js = []
