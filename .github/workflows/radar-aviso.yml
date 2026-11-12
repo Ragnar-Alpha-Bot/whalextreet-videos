@@ -1,0 +1,31 @@
+name: Aviso del radar semanal
+
+# La tarea semanal del radar (en el PC) sube a la rama «radar-semanal» el informe de la semana; este workflow lo manda a tu Telegram.
+# También se puede lanzar a mano desde Actions. Claves: secretos TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID (nunca en el código).
+on:
+  push:
+    branches: [radar-semanal]
+    paths: ["radar/candidatos/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  aviso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install requests
+      - name: Pruebas del radar
+        run: |
+          python tests/test_radar_buscar.py
+      - name: Enviar el aviso a Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python caja/radar_aviso.py

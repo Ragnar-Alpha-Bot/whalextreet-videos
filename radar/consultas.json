@@ -1,0 +1,19 @@
+{
+  "umbral_vistas": 1000000,
+  "nota": "Búsquedas semanales. Cada consulta de YouTube Shorts (type: shorts, SIN filtros de orden ni fecha) o de TikTok (search-videos, sort_by most-liked) cuesta unos 2 créditos. Los resultados se filtran por visualizaciones con caja/radar_buscar.py.",
+  "youtube_shorts": [
+    "ETF explained", "best ETFs to buy", "index funds for beginners", "fondos indexados explicado", "mejores ETFs", "fondo indexado o ETF",
+    "AI stocks ETF", "semiconductor ETF", "emerging markets ETF", "gold and silver investing", "ETFs de oro y plata", "ETF inteligencia artificial", "ETFs mercados emergentes", "uranium energy investing",
+    "stocks to buy now", "best growth stocks", "Nvidia stock", "Tesla stock", "AMD stock", "acciones americanas en auge", "mejores acciones para invertir",
+    "bitcoin explained", "crypto for beginners", "bitcoin análisis", "criptomonedas para principiantes", "altcoins to watch",
+    "day trading strategy", "technical analysis for beginners", "candlestick patterns", "análisis técnico para principiantes", "trading para principiantes", "stop loss explained",
+    "stock market news today", "why stocks are falling", "mercado hoy bolsa", "por qué cae la bolsa", "earnings stock reaction",
+    "compound interest explained", "interés compuesto", "how to save money", "cómo ahorrar dinero", "regla 50 30 20", "emergency fund",
+    "investing mistakes", "beginner investor mistakes", "errores al invertir", "consejos de inversión", "investing advice for beginners"
+  ],
+  "tiktok": [
+    "ETF investing", "index funds", "fondos indexados", "AI stocks", "stocks to buy", "acciones para invertir", "bitcoin", "crypto beginners", "criptomonedas",
+    "day trading", "technical analysis", "análisis técnico", "stock market today", "bolsa hoy", "compound interest", "interés compuesto", "saving money", "ahorrar dinero",
+    "investing mistakes", "errores al invertir"
+  ]
+}
