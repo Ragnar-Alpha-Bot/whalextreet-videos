@@ -54,7 +54,7 @@ assert val(dict(OK, compartir="ese amigo")), "no se pueden mezclar oferta y comp
 
 # --- vídeo completo: la voz del cierre sale sola -------------------------------------------------------------------------------------------------
 base = {"tema": "bolsa", "escenas": [{"tipo": "gancho", "voz": "Once ayudantes de trading dentro de Claude, gratis.", "texto": "11 AYUDANTES DE TRADING", "motivo": "pared_pantallas"},
-                                      {"tipo": "metafora", "voz": "Cada uno hace una sola tarea.", "motivo": "engranajes"}, dict(OK)]}
+                                      {"tipo": "metafora", "voz": "Cada uno hace una sola tarea. Al final te dejo la guía gratis.", "motivo": "engranajes"}, dict(OK)]}
 sb = validar(base)
 voz = sb["escenas"][-1]["voz"]
 assert voz == "Comenta Claude y sígueme en WhaleXtreet, y te envío la guía en PDF por privado.", voz
@@ -75,7 +75,7 @@ def cliente_falso(sistema, prompt):
     assert ("OFERTA REAL DE ESTE VÍDEO" in prompt) == ("oferta" in prompt and "palabra_clave" in prompt)
     return {"tema": "bolsa", "escenas": [
         {"tipo": "gancho", "angulo": "secreto", "voz": "Once ayudantes de trading dentro de Claude, y gratis.", "texto": "11 AYUDANTES", "resalte": "11", "motivo": "pared_pantallas"},
-        {"tipo": "metafora", "voz": "Uno escanea gráficos y otro fija tu stop antes de entrar.", "motivo": "engranajes"},
+        {"tipo": "metafora", "voz": "Uno escanea gráficos y otro fija tu stop antes de entrar. Al final te dejo la guía gratis.", "motivo": "engranajes"},
         {"tipo": "metafora", "voz": "Nada se ejecuta sin que tú digas que sí.", "motivo": "escudo"},
         {"tipo": "cta", "oferta": {"palabra": "INVENTADA", "que": "un regalo que no existe"}, "voz": "Comenta INVENTADA y te regalo un coche."}]}
 
@@ -97,4 +97,15 @@ def cliente_compartir(sistema, prompt):
 
 sb3 = storyboard_ia.crear(SIN_OFERTA, cliente_compartir)
 assert sb3["escenas"][-1]["compartir"] == "ese amigo que compra por impulso" and "síguenos en WhaleXtreet" in sb3["escenas"][-1]["voz"], sb3["escenas"][-1]
+# --- con oferta: vídeo corto y aviso temprano (casi nadie llega al cierre de un vídeo largo) ---------------------------------------
+def sbv(voces):
+    return {"escenas": [{"tipo": "gancho", "voz": v} for v in voces] + [{"tipo": "cta"}]}
+
+bien = sbv(["Perder dinero cuesta caro.", "Al final te dejo la guía totalmente gratis.", "Primero, lo básico."])
+assert storyboard_ia.problemas_oferta(bien, POST) == [], "aviso correcto"
+sin_aviso = storyboard_ia.problemas_oferta(sbv(["Hola a todos.", "Te cuento algo.", "Y más cosas."]), POST)
+assert len(sin_aviso) == 1 and "al final" in sin_aviso[0]
+largo = storyboard_ia.problemas_oferta(sbv(["Al final te dejo la guía gratis."] + ["palabra " * 30] * 5), POST)
+assert any("máximo" in p for p in largo), "demasiado largo para un vídeo con oferta"
+assert storyboard_ia.problemas_oferta(sbv(["Hola."] * 3), SIN_OFERTA) == [], "sin oferta no se exige nada (puede durar 60-70 s)"
 print("OK: cierre con oferta («Comenta X y sígueme»)")
