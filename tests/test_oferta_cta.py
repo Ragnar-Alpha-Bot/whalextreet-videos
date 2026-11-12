@@ -108,4 +108,9 @@ assert len(sin_aviso) == 1 and "al final" in sin_aviso[0]
 largo = storyboard_ia.problemas_oferta(sbv(["Al final te dejo la guía gratis."] + ["palabra " * 30] * 5), POST)
 assert any("máximo" in p for p in largo), "demasiado largo para un vídeo con oferta"
 assert storyboard_ia.problemas_oferta(sbv(["Hola."] * 3), SIN_OFERTA) == [], "sin oferta no se exige nada (puede durar 60-70 s)"
+# --- retención (yt-script): nada de introducciones después del gancho ------------------------------------------------------------
+assert storyboard_ia.problemas_retencion(sbv(["Gancho.", "Te enseño cómo elegir un ETF.", "Después, la comisión."])) == []
+malo = storyboard_ia.problemas_retencion(sbv(["Gancho.", "Hola, bienvenidos al canal.", "Antes de empezar, suscríbete."]))
+assert len(malo) == 2 and "escena 2" in malo[0] and "escena 3" in malo[1], malo
+assert "RETENCIÓN" in storyboard_ia.SISTEMA and "TRES trabajos" in storyboard_ia.SISTEMA
 print("OK: cierre con oferta («Comenta X y sígueme»)")

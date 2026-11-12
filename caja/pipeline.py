@@ -42,7 +42,7 @@ def borrar_cache_de_lineas(lin, hab, claves):
             vozcache.ruta(RAIZ / "voz_cache", vozcache.clave(frase, pid)).unlink(missing_ok=True)
 
 
-def main(proyecto, render=True, forzar=False):
+def main(proyecto, render=True, forzar=False, revisar=True):
     proyecto = Path(proyecto).resolve()
     sb = validar(json.loads((proyecto / "storyboard.json").read_text(encoding="utf-8")))
     lin = lineas(sb)
@@ -77,6 +77,12 @@ def main(proyecto, render=True, forzar=False):
     print("4/5 montaje")
     from motor import construir
     resumen = construir(proyecto)
+    if revisar:                                    # revisión automática: textos cortados o solapados, contraste, errores de la página (no bloquea; ver caja/qa.py)
+        try:
+            import qa
+            print(qa.revisar(proyecto)[0], flush=True)
+        except Exception as e:  # noqa: BLE001
+            print(f"Aviso: no se pudo hacer la revisión automática ({e.__class__.__name__}).", flush=True)
     if render:
         print("5/5 render con HyperFrames…")
         subprocess.run(["npx", "--yes", "hyperframes@0.9.25", "render"], cwd=proyecto, check=True, shell=(sys.platform == "win32"))
@@ -87,9 +93,15 @@ def main(proyecto, render=True, forzar=False):
         import portada
         print("Portada (primer fotograma = gancho):", portada.poner_portada(mp4))
         print("VÍDEO:", mp4)
+        if revisar:
+            try:
+                import qa
+                print("Hoja de fotogramas:", qa.hoja(proyecto))
+            except Exception as e:  # noqa: BLE001
+                print(f"Aviso: no se pudo crear la hoja de fotogramas ({e.__class__.__name__}).", flush=True)
     return resumen
 
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    main(args[0], render="--sin-render" not in sys.argv, forzar="--forzar" in sys.argv)
+    main(args[0], render="--sin-render" not in sys.argv, forzar="--forzar" in sys.argv, revisar="--sin-qa" not in sys.argv)

@@ -1,0 +1,64 @@
+{
+  "id": "tt-7697033270348827917",
+  "plataforma": "tiktok",
+  "url": "https://www.tiktok.com/@calltoleap/video/7697033270348827917",
+  "idioma": "en",
+  "titulo_original": "Your 401(k) might be costing you more than you think",
+  "metricas": {
+    "vistas": 370221,
+    "likes": 26671,
+    "guardados": 15497,
+    "compartidos": 7167,
+    "comentarios": 768
+  },
+  "consultado": "2026-11-12",
+  "duracion_s": 159,
+  "evidencia": "descripcion",
+  "gancho_original": "Your 401(k) might be costing you more than you think.",
+  "formula": {
+    "tipo_gancho": "error_costoso",
+    "tema": "las comisiones de un plan de inversión: pequeñas diferencias que se acumulan durante décadas",
+    "promesa": "revelar un coste oculto que casi nadie mira y que se puede reducir",
+    "estructura": [
+      {
+        "seg": "0-5",
+        "beat": "afirmación que señala un coste oculto en algo que ya tienes"
+      },
+      {
+        "seg": "5-30",
+        "beat": "la gente mira cuánto aporta, pero no cuánto paga en comisiones"
+      },
+      {
+        "seg": "30-60",
+        "beat": "durante décadas, una diferencia pequeña pesa mucho en lo que acabas teniendo"
+      },
+      {
+        "seg": "60-90",
+        "beat": "la buena noticia: se puede reducir revisando las comisiones"
+      }
+    ],
+    "cierre": "cómo revisar las comisiones y una petición de contacto",
+    "visual": "comparación de dos porcentajes de comisión y su efecto con los años"
+  },
+  "por_que_funciona": "Pérdida oculta + «casi nadie lo mira» (asimetría) + solución al final. Solo consta la descripción (vídeo largo de unos dos minutos y medio). Es del nicho del plan de pensiones de EE. UU.; la idea se traslada bien a cualquier fondo.",
+  "adaptar": {
+    "tema_es": "cuánto cuesta de verdad la comisión anual de un fondo o ETF, con ejemplos reales de comisión",
+    "idea_gancho_es": "Tu fondo puede costarte más de lo que crees: con comisiones reales de ETFs y su efecto calculado con los años (hipotético).",
+    "datos_reales_necesarios": [
+      "comisión anual real de varios ETFs",
+      "ejemplo calculado (hipotético) del efecto a largo plazo",
+      "fecha y fuente"
+    ],
+    "cuidado": [
+      "el cálculo a largo plazo es hipotético",
+      "no recomendar un producto",
+      "no mencionar el plan de pensiones de EE. UU. de la fuente (no existe en España)"
+    ],
+    "formato_marca": "datos",
+    "oferta_sugerida": "FICHA"
+  },
+  "estado": "adaptada",
+  "adaptaciones": [
+    "radar-comisiones"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "yt-5m3u9snCpvk",
+  "plataforma": "youtube_shorts",
+  "url": "https://www.youtube.com/watch?v=5m3u9snCpvk",
+  "idioma": "en",
+  "titulo_original": "Index funds vs ETFs - Explained",
+  "metricas": {
+    "vistas": 943000
+  },
+  "consultado": "2026-11-12",
+  "duracion_s": 52,
+  "evidencia": "transcripcion",
+  "gancho_original": "What's the difference between index funds and ETFs?",
+  "formula": {
+    "tipo_gancho": "pregunta_directa",
+    "tema": "diferencia entre un fondo indexado y un ETF",
+    "promesa": "una duda muy buscada, respondida con una regla sencilla",
+    "estructura": [
+      {
+        "seg": "0-4",
+        "beat": "la pregunta directa que mucha gente se hace"
+      },
+      {
+        "seg": "4-17",
+        "beat": "qué es un fondo indexado con un ejemplo de lo que sube y baja con su índice"
+      },
+      {
+        "seg": "17-35",
+        "beat": "las dos formas: fondo (una orden al día) y ETF (en bolsa, a cualquier hora)"
+      },
+      {
+        "seg": "35-52",
+        "beat": "para el inversor a largo plazo rinden igual; una nota sobre dónde es fácil comprar cada uno"
+      }
+    ],
+    "cierre": "una conclusión práctica, sin petición",
+    "visual": "dos columnas que comparan cómo se compra cada uno"
+  },
+  "por_que_funciona": "Responde una búsqueda muy habitual (SEO de pregunta) con una comparación de dos opciones y una conclusión útil. Ojo: su nota sobre Europa no es cierta en España, donde los fondos indexados son fáciles de contratar; hay que verificarla antes de repetirla.",
+  "adaptar": {
+    "tema_es": "fondo indexado frente a ETF para alguien en España: cómo se compra cada uno y qué cambia",
+    "idea_gancho_es": "La duda de siempre en España: ¿fondo indexado o ETF? Misma idea por dentro, distinta forma de comprarlo.",
+    "datos_reales_necesarios": [
+      "comisión anual de un ejemplo de cada tipo",
+      "cómo se contrata cada uno en España (hechos comprobados)",
+      "fecha y fuente"
+    ],
+    "cuidado": [
+      "no afirmar nada sobre disponibilidad en España sin comprobarlo",
+      "no recomendar un producto concreto"
+    ],
+    "formato_marca": "comparativa",
+    "oferta_sugerida": "FICHA"
+  },
+  "estado": "nueva",
+  "adaptaciones": []
+}

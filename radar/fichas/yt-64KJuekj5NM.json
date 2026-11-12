@@ -1,0 +1,60 @@
+{
+  "id": "yt-64KJuekj5NM",
+  "plataforma": "youtube_shorts",
+  "url": "https://www.youtube.com/watch?v=64KJuekj5NM",
+  "idioma": "en",
+  "titulo_original": "What Is an Index Fund?",
+  "metricas": {
+    "vistas": 17000000
+  },
+  "consultado": "2026-11-12",
+  "duracion_s": 32,
+  "evidencia": "transcripcion",
+  "gancho_original": "If you invested $100 into Google a year ago, you'd have about $148 today.",
+  "formula": {
+    "tipo_gancho": "contraste_cifras",
+    "tema": "qué es un fondo indexado: por qué repartir el dinero entre muchas empresas",
+    "promesa": "entender en medio minuto por qué un fondo indexado reduce la apuesta a una sola empresa",
+    "estructura": [
+      {
+        "seg": "0-8",
+        "beat": "gancho con dos empresas conocidas y lo que habrían hecho cien dólares en un año: una gana, otra pierde"
+      },
+      {
+        "seg": "8-14",
+        "beat": "giro: es difícil adivinar quién sube; ¿y si repartes el dinero entre cientos de empresas?"
+      },
+      {
+        "seg": "14-26",
+        "beat": "definición simple: un fondo indexado ata tu resultado al mercado entero, no a una sola empresa"
+      },
+      {
+        "seg": "26-32",
+        "beat": "cierre: dónde se compra y petición de seguir al canal"
+      }
+    ],
+    "cierre": "dónde se compran estos fondos y una petición de seguir la cuenta",
+    "visual": "cifras grandes en pantalla con el nombre de cada empresa, y después un reparto en muchas piezas"
+  },
+  "por_que_funciona": "Empieza por el resultado con cifras concretas y contrasta dos casos reales; abre una pregunta (¿quién sube?) y la cierra con una idea simple. Dura medio minuto.",
+  "adaptar": {
+    "tema_es": "fondo indexado frente a elegir una sola empresa, con datos reales de empresas conocidas y de un fondo mundial",
+    "idea_gancho_es": "Cien euros en una sola empresa pueden convertirse en mucho más o en mucho menos en un año; con datos reales de la que más subió y la que más cayó entre las empresas grandes revisadas, y un fondo mundial como referencia.",
+    "datos_reales_necesarios": [
+      "variación a 1 año de varias empresas grandes (la mejor y la peor)",
+      "variación a 1 año de un fondo mundial",
+      "fecha y fuente de los datos"
+    ],
+    "cuidado": [
+      "no recomendar comprar ninguna empresa ni fondo",
+      "decir que es lo que ha pasado, no lo que pasará",
+      "los ejemplos salen de empresas revisadas, no de una selección que prometa nada"
+    ],
+    "formato_marca": "datos",
+    "oferta_sugerida": "FICHA"
+  },
+  "estado": "adaptada",
+  "adaptaciones": [
+    "radar-100-euros"
+  ]
+}

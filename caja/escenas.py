@@ -776,3 +776,4 @@ import escenas_meta  # noqa: E402,F401  (registra la escena «metafora» y el «
 import escenas_ui  # noqa: E402,F401  (registra «pasos» y «checklist»)
 import escenas_recursos  # noqa: E402,F401  (registra «terminal», «ranking» y «captura»: recursos que se usan solo cuando el tema lo pide)
 import escenas_versus  # noqa: E402,F401  (registra «versus» con muñecos, «movil», «calendario» y «panel»; el cierre «compartir» se pide desde e_cta)
+import escenas_grafico  # noqa: E402,F401  (registra «grafico_pro»: gráfico de línea, área o velas con datos reales, TradingView Lightweight Charts)

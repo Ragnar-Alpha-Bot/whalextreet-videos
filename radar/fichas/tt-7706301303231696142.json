@@ -1,0 +1,61 @@
+{
+  "id": "tt-7706301303231696142",
+  "plataforma": "tiktok",
+  "url": "https://www.tiktok.com/@milestaxandfinance/video/7706301303231696142",
+  "idioma": "en",
+  "titulo_original": "Start a Roth IRA when you don't have a lot of money",
+  "metricas": {
+    "vistas": 730844,
+    "likes": 79906,
+    "guardados": 32503,
+    "compartidos": 6627,
+    "comentarios": 2179
+  },
+  "consultado": "2026-11-12",
+  "duracion_s": 38,
+  "evidencia": "descripcion",
+  "gancho_original": "Want to know how to start a Roth IRA when you don't have a lot of money?",
+  "formula": {
+    "tipo_gancho": "regla_simple",
+    "tema": "empezar a invertir con muy poco dinero: el hábito importa más que la cantidad",
+    "promesa": "quitar la excusa de «no tengo suficiente» con una cantidad ridícula pero constante",
+    "estructura": [
+      {
+        "seg": "0-5",
+        "beat": "pregunta que toca la excusa de no tener dinero"
+      },
+      {
+        "seg": "5-18",
+        "beat": "regla: invertir una cantidad muy pequeña cada semana es infinitamente mejor que no invertir nada"
+      },
+      {
+        "seg": "18-30",
+        "beat": "el hábito pesa más que el importe; se mete en un fondo indexado"
+      },
+      {
+        "seg": "30-38",
+        "beat": "cierre con invitación a empezar ya"
+      }
+    ],
+    "cierre": "invitación a empezar hoy y guardar el vídeo",
+    "visual": "importe pequeño y recurrente en pantalla"
+  },
+  "por_que_funciona": "Muchísimos guardados (32 mil) y compartidos: es práctico y reduce la barrera de entrada. Solo consta la descripción del vídeo, no el audio: la fórmula del gancho es una hipótesis sacada del texto.",
+  "adaptar": {
+    "tema_es": "empezar a ahorrar e invertir con muy poco al mes, con la cuenta del interés compuesto",
+    "idea_gancho_es": "¿No tienes mucho dinero? Con una cantidad pequeña al mes ya construyes el hábito; con cifras de ejemplo calculadas.",
+    "datos_reales_necesarios": [
+      "la cuenta calculada (hipotética) de una aportación pequeña mensual a 10, 20 y 30 años",
+      "supuestos explícitos de rentabilidad"
+    ],
+    "cuidado": [
+      "los resultados son hipotéticos con rentabilidad constante",
+      "sin promesas de ganancia",
+      "no mencionar productos de otro país (Roth IRA)"
+    ],
+    "formato_marca": "datos",
+    "oferta_sugerida": "INTERES"
+  },
+  "estado": "nueva",
+  "adaptaciones": []
+}
