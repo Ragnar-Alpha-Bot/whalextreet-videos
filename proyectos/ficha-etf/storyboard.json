@@ -1,0 +1,112 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "checklist",
+  "avatar": "profesor",
+  "etiqueta": "ETFs · LA FICHA",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "error",
+      "habla": "profesor",
+      "voz": "Dos ETFs con nombre parecido pueden ser totalmente distintos por dentro.",
+      "texto": "DOS ETFs, DOS MUNDOS",
+      "resalte": "MUNDOS",
+      "kicker": "ANTES DE COMPRAR",
+      "subtexto": "5 datos de su ficha, en un minuto",
+      "motivo": "lupa",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "caja_fuerte",
+      "titulo": "LA GUÍA EN PDF",
+      "voz": "Al final te dejo la guía en PDF con los cinco datos, gratis. Empiezo por el que más duele: la comisión.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "LA COMISIÓN, CADA AÑO",
+      "voz": "En diez mil euros, un ETF del cero coma cero tres por ciento cuesta unos tres euros al año. Uno del cero coma cincuenta y nueve, unos cincuenta y nueve. Cada año.",
+      "items": [
+        {
+          "etiqueta": "VOO · COMISIÓN",
+          "valor": "0,03 %",
+          "nota": "≈ 3 € al año por 10.000 €",
+          "tono": "up",
+          "cuando": "cuesta"
+        },
+        {
+          "etiqueta": "EWY · COMISIÓN",
+          "valor": "0,59 %",
+          "nota": "≈ 59 € al año por 10.000 €",
+          "tono": "warn",
+          "cuando": "cincuenta"
+        }
+      ]
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "CUÁNTAS EMPRESAS TIENE",
+      "voz": "Luego, cuántas empresas tiene. Uno de ellos, más de diez mil. Otro, solo veintiséis, y sus diez primeras suman el sesenta y nueve por ciento.",
+      "items": [
+        {
+          "etiqueta": "VT · VALORES",
+          "valor": "10.242",
+          "nota": "casi toda la bolsa mundial",
+          "tono": "up",
+          "cuando": "Uno"
+        },
+        {
+          "etiqueta": "SMH · VALORES",
+          "valor": "26",
+          "nota": "las 10 primeras suman el 69 %",
+          "tono": "warn",
+          "cuando": "veintiséis"
+        }
+      ]
+    },
+    {
+      "tipo": "checklist",
+      "habla": "profesor",
+      "titulo": "LA FICHA EN 5 PREGUNTAS",
+      "etiqueta": "ANTES DE ELEGIR UN ETF",
+      "voz": "Resumen: qué índice replica, cuánto cuesta, cuántas empresas tiene, qué pesa más y cómo cayó, no solo cuánto subió.",
+      "items": [
+        {
+          "t": "¿Qué índice replica?",
+          "cuando": "índice"
+        },
+        {
+          "t": "¿Cuánto cuesta al año?",
+          "cuando": "cuesta"
+        },
+        {
+          "t": "¿Cuántas empresas tiene?",
+          "cuando": "empresas"
+        },
+        {
+          "t": "¿Qué es lo que más pesa?",
+          "cuando": "pesa"
+        },
+        {
+          "t": "¿Cómo se comportó al caer?",
+          "cuando": "cayó"
+        }
+      ]
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "FICHA",
+        "que": "la guía en PDF"
+      }
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+ "fuente": "stockanalysis.com (estadísticas de cada empresa), consultado el 13-nov-2026",
+ "acciones": {
+  "NVDA": {
+   "nombre": "NVIDIA",
+   "valor_bolsa_billones": 4.01,
+   "cambio_52_semanas_pct": -13.96,
+   "per": 21.01,
+   "beneficio_neto_mil_millones": 192.88,
+   "margen_pct": 63.66,
+   "valor_si_por_15_billones": 60.15
+  },
+  "AVGO": {
+   "nombre": "Broadcom",
+   "valor_bolsa_billones": 1.74,
+   "cambio_52_semanas_pct": 3.52,
+   "per": 46.51,
+   "beneficio_neto_mil_millones": 38.27,
+   "margen_pct": 42.94,
+   "valor_si_por_15_billones": 26.1
+  },
+  "MRVL": {
+   "nombre": "Marvell",
+   "valor_bolsa_mil_millones": 144.39,
+   "cambio_52_semanas_pct": 84.09,
+   "per": 55.25,
+   "beneficio_neto_mil_millones": 2.64,
+   "margen_pct": 27.93,
+   "valor_si_por_15_billones": 2.17
+  },
+  "TSM": {
+   "nombre": "TSMC",
+   "valor_bolsa_billones": 1.85,
+   "cambio_52_semanas_pct": 39.26,
+   "per": 27.35,
+   "beneficio_neto_mil_millones": 79.31,
+   "margen_pct": 51.12,
+   "valor_si_por_15_billones": 27.75
+  },
+  "MU": {
+   "nombre": "Micron",
+   "valor_bolsa_mil_millones": 903.37,
+   "cambio_52_semanas_pct": 231.15,
+   "per": 10.74,
+   "beneficio_neto_mil_millones": 84.97,
+   "margen_pct": 63.8,
+   "valor_si_por_15_billones": 13.55
+  },
+  "VRT": {
+   "nombre": "Vertiv",
+   "valor_bolsa_mil_millones": 80.72,
+   "cambio_52_semanas_pct": 17.09,
+   "per": 39.19,
+   "beneficio_neto_mil_millones": 2.1,
+   "margen_pct": 15.99,
+   "valor_si_por_15_billones": 1.21
+  },
+  "PLTR": {
+   "nombre": "Palantir",
+   "valor_bolsa_mil_millones": 413.42,
+   "cambio_52_semanas_pct": -10.15,
+   "per": 120.87,
+   "beneficio_neto_mil_millones": 3.67,
+   "margen_pct": 50.34,
+   "valor_si_por_15_billones": 6.2
+  },
+  "GOOGL": {
+   "nombre": "Alphabet",
+   "valor_bolsa_billones": 3.67,
+   "cambio_52_semanas_pct": 2.54,
+   "per": 15.59,
+   "beneficio_neto_mil_millones": 235.69,
+   "margen_pct": 50.03,
+   "valor_si_por_15_billones": 55.05
+  }
+ },
+ "nota_calculo": "valor_si_por_15_billones = valor en bolsa x 15 (escenario hipotético, no una previsión)"
+}

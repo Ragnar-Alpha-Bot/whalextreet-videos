@@ -5,19 +5,75 @@
   "etiqueta": "BOLSA · CHECKLIST",
   "ilustrativo": false,
   "escenas": [
-    {"tipo": "gancho", "angulo": "verdad", "habla": "profesor",
-     "voz": "Comprar una acción lleva diez segundos; pensarla bien, diez preguntas.",
-     "texto": "10 PREGUNTAS ANTES DE COMPRAR", "resalte": "PREGUNTAS", "kicker": "CHECKLIST GRATIS", "subtexto": "Una guía de una página, totalmente gratis",
-     "motivo": "lupa", "icono": "ninguno", "grafico": "ninguno"},
-    {"tipo": "metafora", "habla": "profesor", "motivo": "semaforo", "titulo": "FRENA EL IMPULSO",
-     "voz": "Una checklist así sirve para frenar el impulso: te obliga a pensar por qué compras antes de pulsar el botón."},
-    {"tipo": "checklist", "habla": "profesor", "titulo": "ANTES DE COMPRAR", "etiqueta": "TUS PREGUNTAS",
-     "voz": "Por ejemplo: ¿entiendes cómo gana dinero la empresa? ¿Qué harías si cayera un treinta por ciento? ¿Cuánto pesa en tu cartera? ¿Tienes un plan de salida? ¿Has mirado su deuda? ¿Y compras por análisis o por miedo a quedarte fuera?",
-     "items": [{"t": "¿Entiendo cómo gana dinero?", "cuando": "gana"}, {"t": "¿Qué haría si cae un 30 %?", "cuando": "treinta"},
-               {"t": "¿Cuánto pesa en mi cartera?", "cuando": "pesa"}, {"t": "¿Tengo un plan de salida?", "cuando": "salida"},
-               {"t": "¿He mirado su deuda?", "cuando": "deuda"}, {"t": "¿Compro por análisis o por FOMO?", "cuando": "miedo"}]},
-    {"tipo": "metafora", "habla": "profesor", "motivo": "caja_fuerte", "titulo": "LA GUÍA COMPLETA", "sello": "GRATIS", "cuando_sello": "gratis",
-     "voz": "Las diez están en una guía de una página, hecha por WhaleXtreet, y te la doy totalmente gratis."},
-    {"tipo": "cta", "habla": "profesor", "oferta": {"palabra": "CHECKLIST", "que": "la checklist en PDF"}}
+    {
+      "tipo": "gancho",
+      "angulo": "verdad",
+      "habla": "profesor",
+      "voz": "Comprar una acción lleva diez segundos; pensarla bien, diez preguntas.",
+      "texto": "10 PREGUNTAS ANTES DE COMPRAR",
+      "resalte": "PREGUNTAS",
+      "kicker": "CHECKLIST GRATIS",
+      "subtexto": "Una guía de una página, totalmente gratis",
+      "motivo": "lupa",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "semaforo",
+      "titulo": "FRENA EL IMPULSO",
+      "voz": "Al final te dejo la checklist de diez preguntas, totalmente gratis. Sirve para frenar el impulso: te obliga a pensar por qué compras antes de pulsar el botón."
+    },
+    {
+      "tipo": "checklist",
+      "habla": "profesor",
+      "titulo": "ANTES DE COMPRAR",
+      "etiqueta": "TUS PREGUNTAS",
+      "voz": "Por ejemplo: ¿entiendes cómo gana dinero la empresa? ¿Qué harías si cayera un treinta por ciento? ¿Cuánto pesa en tu cartera? ¿Tienes un plan de salida? ¿Has mirado su deuda? ¿Y compras por análisis o por miedo a quedarte fuera?",
+      "items": [
+        {
+          "t": "¿Entiendo cómo gana dinero?",
+          "cuando": "gana"
+        },
+        {
+          "t": "¿Qué haría si cae un 30 %?",
+          "cuando": "treinta"
+        },
+        {
+          "t": "¿Cuánto pesa en mi cartera?",
+          "cuando": "pesa"
+        },
+        {
+          "t": "¿Tengo un plan de salida?",
+          "cuando": "salida"
+        },
+        {
+          "t": "¿He mirado su deuda?",
+          "cuando": "deuda"
+        },
+        {
+          "t": "¿Compro por análisis o por FOMO?",
+          "cuando": "miedo"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "caja_fuerte",
+      "titulo": "LA GUÍA COMPLETA",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis",
+      "voz": "Las diez están en una guía de una página, hecha por WhaleXtreet, y te la doy totalmente gratis."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "CHECKLIST",
+        "que": "la checklist en PDF"
+      }
+    }
   ]
 }

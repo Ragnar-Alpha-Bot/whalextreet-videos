@@ -113,4 +113,13 @@ assert storyboard_ia.problemas_retencion(sbv(["Gancho.", "Te enseño cómo elegi
 malo = storyboard_ia.problemas_retencion(sbv(["Gancho.", "Hola, bienvenidos al canal.", "Antes de empezar, suscríbete."]))
 assert len(malo) == 2 and "escena 2" in malo[0] and "escena 3" in malo[1], malo
 assert "RETENCIÓN" in storyboard_ia.SISTEMA and "TRES trabajos" in storyboard_ia.SISTEMA
+# --- cierre «Comenta <algo> y sígueme» SIN recurso (series por partes, vídeos de análisis) ----------------------------------------------------------------
+assert not val({"comenta": {"que": "cuál ya tienes", "sigue": "para la parte dos"}})
+assert val({"comenta": {"que": "x"}}), "«que» necesita 3 caracteres como mínimo"
+assert val({"comenta": {"que": "cuál ya tienes"}, "oferta": {"palabra": "FICHA", "que": "la guía en PDF"}}), "no se mezcla con una oferta"
+h, _ = ESCENAS["cta"][0](ctx(), {"comenta": {"que": "cuál ya tienes", "sigue": "para la parte dos"}})
+assert "CUÁL YA TIENES" in h and "sígueme" in h and "para la parte dos" in h and "te envío" not in h, "sin recurso: no promete enviar nada"
+sbc = validar({"tema": "bolsa", "escenas": [{"tipo": "gancho", "voz": "NVIDIA diseña chips, pero no los fabrica. ¿Quién lo hace?", "texto": "¿QUIÉN LOS FABRICA?"},
+                                          {"tipo": "titulo", "titulo": "Parte uno de tres", "voz": "Primera parte."}, {"tipo": "cta", "comenta": {"que": "cuál ya tienes", "sigue": "para la parte dos"}}]})
+assert lineas(sbc)["l3"] == "Comenta cuál ya tienes y sígueme en WhaleXtreet para la parte dos."
 print("OK: cierre con oferta («Comenta X y sígueme»)")

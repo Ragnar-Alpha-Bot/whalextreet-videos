@@ -1,0 +1,160 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "IA · PARTE 2 DE 3",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "urgencia",
+      "habla": "profesor",
+      "voz": "Acciones de la IA con potencial de multiplicarse por quince. Parte dos.",
+      "texto": "ACCIONES DE IA CON POTENCIAL X15",
+      "resalte": "X15",
+      "kicker": "IA · PARTE 2 DE 3",
+      "subtexto": "Serie de 3 vídeos · 8 acciones de la cadena de la IA",
+      "motivo": "red_nodos",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "matriz",
+      "titulo": "¿QUIÉN FABRICA LOS CHIPS?",
+      "voz": "NVIDIA diseña sus chips de IA, pero no los fabrica. ¿Quién lo hace?"
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "TSMC · TSM",
+      "voz": "TSMC, en Taiwán, es la fábrica: fabrica los chips que otras empresas diseñan, entre ellas NVIDIA. Vale uno coma ochenta y cinco billones, y su acción ha subido un treinta y nueve por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "Fábrica",
+          "nota": "fabrica chips de otros",
+          "tono": "acc",
+          "cuando": "fábrica"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "1,85 B $",
+          "nota": "billones de dólares",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "+39,3 %",
+          "nota": "precio de la acción",
+          "tono": "up",
+          "cuando": "subido"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "cubo_agujero",
+      "titulo": "POCOS PUEDEN HACERLO",
+      "voz": "Un chip avanzado cuesta fortunas y años de trabajo. Por eso pocas empresas en el mundo pueden fabricarlo, y eso la convierte en una pieza clave."
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "MICRON · MU",
+      "voz": "Micron fabrica memoria. Los chips de IA necesitan memoria muy rápida pegada a ellos, la HBM; sin ella, esperan los datos y se frenan. Vale novecientos mil millones, y su acción ha subido un doscientos treinta y uno por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "Memoria",
+          "nota": "HBM: memoria muy rápida",
+          "tono": "acc",
+          "cuando": "memoria"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "903,4 mil M",
+          "nota": "miles de millones de $",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "+231,2 %",
+          "nota": "precio de la acción",
+          "tono": "up",
+          "cuando": "subido"
+        }
+      ]
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "VERTIV · VRT",
+      "voz": "Vertiv vende energía y refrigeración para centros de datos. Los chips de IA gastan mucha luz y se calientan: sin enfriarlos, no funcionan. Vale ochenta mil millones, y su acción ha subido un diecisiete por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "Energía",
+          "nota": "y refrigeración para centros de datos",
+          "tono": "acc",
+          "cuando": "energía"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "80,7 mil M",
+          "nota": "miles de millones de $",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "+17,1 %",
+          "nota": "precio de la acción",
+          "tono": "up",
+          "cuando": "subido"
+        }
+      ]
+    },
+    {
+      "tipo": "ranking",
+      "habla": "profesor",
+      "titulo": "SI SE MULTIPLICARAN POR 15",
+      "voz": "Y el por quince en estas tres: TSMC tendría que valer casi veintiocho billones; Micron, trece y medio; Vertiv, uno coma dos. Cuanto más pequeña, menos dinero hace falta. Esto no es una recomendación.",
+      "items": [
+        {
+          "valor": "27,8 B $",
+          "t": "TSMC",
+          "sub": "ahora vale 1,85 B $",
+          "tono": "warn",
+          "cuando": "TSMC"
+        },
+        {
+          "valor": "13,6 B $",
+          "t": "Micron",
+          "sub": "ahora vale 0,90 B $",
+          "tono": "warn",
+          "cuando": "Micron"
+        },
+        {
+          "valor": "1,21 B $",
+          "t": "Vertiv",
+          "sub": "ahora vale 0,08 B $",
+          "tono": "acc",
+          "cuando": "Vertiv"
+        }
+      ]
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "comenta": {
+        "que": "cuál te sorprende más",
+        "sigue": "para ver la parte tres"
+      }
+    }
+  ]
+}

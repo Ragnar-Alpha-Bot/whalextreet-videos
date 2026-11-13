@@ -1,0 +1,189 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "IA · PARTE 3 DE 3",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "urgencia",
+      "habla": "profesor",
+      "voz": "Acciones de la IA con potencial de multiplicarse por quince. Parte tres.",
+      "texto": "ACCIONES DE IA CON POTENCIAL X15",
+      "resalte": "X15",
+      "kicker": "IA · PARTE 3 DE 3",
+      "subtexto": "Última parte de la serie de 3 vídeos",
+      "motivo": "red_nodos",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "ticker",
+      "titulo": "¿QUIÉN VENDE LA IA?",
+      "voz": "Los chips ya los conoces. ¿Quién gana dinero con el software de IA?"
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "PALANTIR · PLTR",
+      "voz": "Palantir crea software que une los datos de una empresa o un gobierno y usa IA para decidir. Vale cuatrocientos trece mil millones, y su acción ha bajado un diez por ciento en un año.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "Software",
+          "nota": "datos + IA para decidir",
+          "tono": "acc",
+          "cuando": "software"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "413,4 mil M",
+          "nota": "miles de millones de $",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "−10,2 %",
+          "nota": "precio de la acción",
+          "tono": "down",
+          "cuando": "bajado"
+        }
+      ]
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "ALPHABET · GOOGL",
+      "voz": "Alphabet, la dueña de Google, hace de todo en IA: chips propios, investigación, nube y productos para millones de personas. Vale tres coma sesenta y siete billones, y su acción ha subido un dos y medio por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "De todo",
+          "nota": "chips, nube, investigación",
+          "tono": "acc",
+          "cuando": "todo"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "3,67 B $",
+          "nota": "billones de dólares",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "+2,5 %",
+          "nota": "precio de la acción",
+          "tono": "up",
+          "cuando": "subido"
+        }
+      ]
+    },
+    {
+      "tipo": "ranking",
+      "habla": "profesor",
+      "titulo": "LAS 8 EN UN AÑO (precio)",
+      "voz": "En un año: Micron, doscientos treinta y uno por ciento. Marvell, ochenta y cuatro. TSMC, treinta y nueve. Vertiv, diecisiete. Broadcom y Alphabet, casi nada. Y NVIDIA y Palantir, en negativo.",
+      "items": [
+        {
+          "valor": "+231,2 %",
+          "t": "Micron",
+          "sub": "la que más ha subido",
+          "tono": "up",
+          "cuando": "Micron"
+        },
+        {
+          "valor": "+84,1 %",
+          "t": "Marvell",
+          "sub": "de las pequeñas",
+          "tono": "up",
+          "cuando": "Marvell"
+        },
+        {
+          "valor": "+39,3 %",
+          "t": "TSMC",
+          "sub": "la fábrica",
+          "tono": "acc",
+          "cuando": "TSMC"
+        },
+        {
+          "valor": "+17,1 %",
+          "t": "Vertiv",
+          "sub": "energía y frío",
+          "tono": "acc",
+          "cuando": "Vertiv"
+        }
+      ]
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "PRECIO ÷ BENEFICIO ANUAL",
+      "voz": "Y fíjate en el precio. Palantir cotiza a ciento veintiuna veces su beneficio anual; Marvell, a cincuenta y cinco; NVIDIA, a veintiuna. Una gran empresa puede ser mala inversión si ya está cara.",
+      "items": [
+        {
+          "etiqueta": "PALANTIR",
+          "valor": "120,9x",
+          "nota": "veces su beneficio anual",
+          "tono": "warn",
+          "cuando": "Palantir"
+        },
+        {
+          "etiqueta": "MARVELL",
+          "valor": "55,3x",
+          "nota": "veces su beneficio anual",
+          "tono": "acc",
+          "cuando": "Marvell"
+        },
+        {
+          "etiqueta": "NVIDIA",
+          "valor": "21,0x",
+          "nota": "veces su beneficio anual",
+          "tono": "up",
+          "cuando": "NVIDIA"
+        }
+      ]
+    },
+    {
+      "tipo": "ranking",
+      "habla": "profesor",
+      "titulo": "SI SE MULTIPLICARAN POR 15",
+      "voz": "El hilo habla de multiplicar por quince en el mejor escenario. Alphabet tendría que valer cincuenta y cinco billones; Palantir, seis: más que NVIDIA hoy. Nadie lo puede garantizar: es lo que ha pasado, no lo que pasará.",
+      "items": [
+        {
+          "valor": "55,1 B $",
+          "t": "Alphabet",
+          "sub": "ahora vale 3,67 B $",
+          "tono": "warn",
+          "cuando": "Alphabet"
+        },
+        {
+          "valor": "6,20 B $",
+          "t": "Palantir",
+          "sub": "ahora vale 0,41 B $",
+          "tono": "warn",
+          "cuando": "Palantir"
+        },
+        {
+          "valor": "4,01 B $",
+          "t": "NVIDIA hoy",
+          "sub": "lo que vale NVIDIA ahora",
+          "tono": "acc",
+          "cuando": "NVIDIA"
+        }
+      ]
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "comenta": {
+        "que": "cuál te interesa más",
+        "sigue": "para más análisis de empresas"
+      }
+    }
+  ]
+}

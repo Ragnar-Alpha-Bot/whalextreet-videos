@@ -39,7 +39,7 @@
   "por_que_funciona": "Empieza por el resultado con cifras concretas y contrasta dos casos reales; abre una pregunta (¿quién sube?) y la cierra con una idea simple. Dura medio minuto.",
   "adaptar": {
     "tema_es": "fondo indexado frente a elegir una sola empresa, con datos reales de empresas conocidas y de un fondo mundial",
-    "idea_gancho_es": "Cien euros en una sola empresa pueden convertirse en mucho más o en mucho menos en un año; con datos reales de la que más subió y la que más cayó entre las empresas grandes revisadas, y un fondo mundial como referencia.",
+    "idea_gancho_es": "Cien euros en una empresa conocida hace un año valen hoy mucho más (o mucho menos): se dice el nombre de la empresa y el resultado real, y se deja una pregunta abierta sobre la otra empresa. Después se explica qué es un ETF o fondo indexado.",
     "datos_reales_necesarios": [
       "variación a 1 año de varias empresas grandes (la mejor y la peor)",
       "variación a 1 año de un fondo mundial",
@@ -48,7 +48,8 @@
     "cuidado": [
       "no recomendar comprar ninguna empresa ni fondo",
       "decir que es lo que ha pasado, no lo que pasará",
-      "los ejemplos salen de empresas revisadas, no de una selección que prometa nada"
+      "los ejemplos salen de empresas revisadas, no de una selección que prometa nada",
+      "el gancho tiene que entenderse solo: nombre de la empresa, qué pasó con los cien euros y una pregunta abierta; nunca solo cifras sueltas"
     ],
     "formato_marca": "datos",
     "oferta_sugerida": "FICHA"

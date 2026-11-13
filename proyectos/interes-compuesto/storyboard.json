@@ -1,0 +1,87 @@
+{
+  "tema": "educativo",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "AHORRO · INTERÉS",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "verdad",
+      "habla": "profesor",
+      "voz": "Ahorras cien euros al mes: pones doce mil y acabas con más de diecisiete mil.",
+      "texto": "100 € AL MES → 17.308 €",
+      "resalte": "17.308",
+      "kicker": "BOLA DE NIEVE",
+      "subtexto": "Ejemplo hipotético al 7 % anual, durante 10 años",
+      "motivo": "hucha",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "arbol_monedas",
+      "titulo": "LA CALCULADORA EN PDF",
+      "voz": "Al final te dejo la calculadora en PDF, gratis. Primero, la bola de nieve.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "100 € AL MES AL 7 %",
+      "voz": "El primer año pones mil doscientos y ganas treinta y nueve. A cinco años, siete mil ciento cincuenta y nueve. A diez, diecisiete mil trescientos ocho.",
+      "items": [
+        {
+          "etiqueta": "AÑO 1",
+          "valor": "1.239 €",
+          "nota": "pones 1.200 €",
+          "tono": "acc",
+          "cuando": "primer"
+        },
+        {
+          "etiqueta": "AÑO 5",
+          "valor": "7.159 €",
+          "nota": "pones 6.000 €",
+          "tono": "acc",
+          "cuando": "cinco"
+        },
+        {
+          "etiqueta": "AÑO 10",
+          "valor": "17.308 €",
+          "nota": "pones 12.000 €",
+          "tono": "up",
+          "cuando": "diez"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "bola_nieve",
+      "titulo": "UNA BOLA DE NIEVE",
+      "voz": "Es una bola de nieve: los intereses también generan intereses, y cada año pesan más."
+    },
+    {
+      "tipo": "numero",
+      "habla": "profesor",
+      "valor": 34617,
+      "decimales": 0,
+      "prefijo": "",
+      "sufijo": " €",
+      "etiqueta": "CON 200 € AL MES · 10 AÑOS",
+      "detalle": "pones 24.000 €",
+      "cuando": "doscientos",
+      "voz": "Con doscientos euros al mes, unos treinta y cuatro mil seiscientos. Es un ejemplo hipotético al siete por ciento: no es una previsión."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "INTERES",
+        "que": "la calculadora en PDF"
+      }
+    }
+  ]
+}

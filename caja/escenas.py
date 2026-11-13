@@ -692,12 +692,21 @@ def v_cta(d, err):
             err("«oferta» necesita «palabra» (3-12 letras o cifras en mayúsculas, fácil de decir) y «que» (qué se envía, 3-40 caracteres, p. ej. «la guía en PDF»)")
         if d.get("compartir"):
             err("un cierre no puede llevar a la vez «oferta» y «compartir»")
+    cm = d.get("comenta")                         # cierre «Comenta <algo> y sígueme» SIN recurso que enviar (invita a opinar y a seguir; p. ej. series por partes)
+    if cm is not None:
+        if not (isinstance(cm, dict) and isinstance(cm.get("que"), str) and 3 <= len(cm["que"]) <= 30 and (cm.get("sigue") is None or (isinstance(cm["sigue"], str) and 3 <= len(cm["sigue"]) <= 40))):
+            err("«comenta» necesita «que» (lo que se pide comentar, 3-30 caracteres, p. ej. «cuál ya tienes») y, opcional, «sigue» (3-40, p. ej. «para la parte dos»)")
+        if d.get("oferta") or d.get("compartir"):
+            err("un cierre no puede llevar a la vez «comenta» y «oferta» o «compartir»")
     r = d.get("redes")
     if r is not None and not (isinstance(r, list) and 1 <= len(r) <= 4 and all(isinstance(x, str) and 0 < len(x) <= 16 for x in r)):
         err("«redes» debe ser una lista de 1 a 4 nombres cortos")
 
 
 def e_cta(c, d):
+    if d.get("comenta"):
+        from escenas_versus import e_comenta_libre
+        return e_comenta_libre(c, d)
     if d.get("oferta"):
         from escenas_versus import e_comenta
         return e_comenta(c, d)

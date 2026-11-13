@@ -1,0 +1,88 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "ETFs · TOP 5",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "verdad",
+      "habla": "profesor",
+      "voz": "Los cinco ETFs que más suben, y tres de ellos son lo mismo.",
+      "texto": "TOP 5 ETFs QUE MÁS SUBEN",
+      "resalte": "MÁS",
+      "kicker": "ETFs · DATOS REALES",
+      "subtexto": "Rentabilidad a 1 año · datos a 12 de noviembre de 2026",
+      "motivo": "cohete",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "caja_fuerte",
+      "titulo": "EL RANKING EN PDF",
+      "voz": "Al final te dejo el ranking completo en PDF, totalmente gratis. Primero, lo que dicen los datos.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "barras",
+      "habla": "profesor",
+      "titulo": "RENTABILIDAD A 1 AÑO (%)",
+      "unidad": "%",
+      "destacar": 0,
+      "voz": "Primero, chips, más cincuenta y ocho por ciento. Segundo, Corea del Sur, cincuenta y seis. Tercero, energía, cuarenta y cinco. Cuarto, otra vez chips, cuarenta y tres. Quinto, salud, veintisiete.",
+      "items": [
+        {
+          "n": "SOXX · chips",
+          "v": 58.0,
+          "cuando": "Primero"
+        },
+        {
+          "n": "EWY · Corea",
+          "v": 56.0,
+          "cuando": "Segundo"
+        },
+        {
+          "n": "XLE · energía",
+          "v": 44.8,
+          "cuando": "Tercero"
+        },
+        {
+          "n": "SMH · chips",
+          "v": 42.8,
+          "cuando": "Cuarto"
+        },
+        {
+          "n": "XLV · salud",
+          "v": 26.7,
+          "cuando": "Quinto"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "montana_rusa",
+      "titulo": "3 DE 5 VIVEN DE LOS CHIPS",
+      "voz": "Ojo: tres de los cinco viven de los chips; Corea pone casi la mitad en Samsung y SK hynix. Y los tres cayeron entre un diecisiete y un dieciocho por ciento el último mes."
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "globo_mundo",
+      "titulo": "TODO EL MUNDO: +12 %",
+      "voz": "Mientras, la bolsa mundial, con más de diez mil empresas, subió un doce por ciento. Esto no es una recomendación: es lo que ha pasado, no lo que pasará."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "FONDOS",
+        "que": "el top 5 en PDF"
+      }
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "ETFs · 100 €",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "pregunta",
+      "habla": "profesor",
+      "voz": "Cien euros en AMD hace un año: hoy, doscientos cuarenta y seis. ¿Y en Nike?",
+      "texto": "100 € EN AMD → 246 €",
+      "resalte": "246",
+      "kicker": "HACE UN AÑO",
+      "subtexto": "Cien euros invertidos en una sola empresa · datos reales",
+      "motivo": "dados",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "ranking",
+      "habla": "profesor",
+      "titulo": "100 € HACE UN AÑO",
+      "voz": "AMD subió un ciento cuarenta y seis. Un fondo mundial, con más de diez mil empresas, subió un diez. Y Nike cayó un cuarenta.",
+      "items": [
+        {
+          "valor": "+146,4 %",
+          "t": "AMD",
+          "sub": "la que más subió de 16",
+          "tono": "up",
+          "cuando": "AMD"
+        },
+        {
+          "valor": "+10,3 %",
+          "t": "Fondo mundial",
+          "sub": "más de 10.000 valores",
+          "tono": "acc",
+          "cuando": "fondo"
+        },
+        {
+          "valor": "−40,2 %",
+          "t": "Nike",
+          "sub": "la que más cayó de 16",
+          "tono": "down",
+          "cuando": "Nike"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "diversificar",
+      "titulo": "UN ETF = UNA CESTA",
+      "voz": "Un ETF, o fondo indexado, es una cesta con miles de empresas dentro. Al final te dejo la guía en PDF, totalmente gratis.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "escudo",
+      "titulo": "LO QUE HA PASADO, NO LO QUE PASARÁ",
+      "voz": "Así, tu dinero no depende de una sola empresa. Esto no es una recomendación: es lo que ha pasado, no lo que pasará."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "FICHA",
+        "que": "la guía en PDF"
+      }
+    }
+  ]
+}
