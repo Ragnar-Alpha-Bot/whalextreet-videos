@@ -1,0 +1,94 @@
+{
+  "tema": "cripto",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "CRIPTO · PROTÉGELAS",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "urgencia",
+      "habla": "profesor",
+      "voz": "Si alguien te pide la frase semilla de tus criptomonedas, es una estafa.",
+      "texto": "¿TE PIDEN TU FRASE SEMILLA?",
+      "resalte": "SEMILLA",
+      "kicker": "CRIPTO",
+      "subtexto": "Nadie legítimo la pide",
+      "motivo": "candado",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "anzuelo",
+      "titulo": "LA GUÍA EN PDF",
+      "voz": "Al final te dejo gratis la guía en PDF con cinco pasos para protegerlas.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "lista",
+      "habla": "profesor",
+      "titulo": "EL PROBLEMA",
+      "voz": "El problema: guardar la frase semilla en una foto, en las notas del móvil o en la nube, y pulsar enlaces de mensajes privados.",
+      "items": [
+        {
+          "t": "Semilla en una foto",
+          "cuando": "foto"
+        },
+        {
+          "t": "Semilla en la nube",
+          "cuando": "nube"
+        },
+        {
+          "t": "Enlaces de mensajes privados",
+          "cuando": "enlaces"
+        }
+      ]
+    },
+    {
+      "tipo": "lista",
+      "habla": "profesor",
+      "titulo": "LA SOLUCIÓN: 5 PASOS",
+      "voz": "La solución, cinco pasos. Semilla en papel o metal, sin conexión. Verificación en dos pasos con app. Una hardware wallet oficial. Desconfiar del phishing. Y copia de seguridad, probando la recuperación.",
+      "items": [
+        {
+          "t": "Semilla en papel o metal",
+          "cuando": "papel"
+        },
+        {
+          "t": "Verificación en dos pasos",
+          "cuando": "dos"
+        },
+        {
+          "t": "Hardware wallet oficial",
+          "cuando": "hardware"
+        },
+        {
+          "t": "Desconfía del phishing",
+          "cuando": "phishing"
+        },
+        {
+          "t": "Copia y prueba de recuperación",
+          "cuando": "copia"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "escudo",
+      "titulo": "NADIE DUPLICA TU DINERO",
+      "voz": "Y quien prometa duplicar tus criptomonedas, es una estafa. Las criptomonedas son de alto riesgo."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "SEGURO",
+        "que": "la guía en PDF"
+      }
+    }
+  ]
+}
