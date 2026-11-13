@@ -1,0 +1,78 @@
+{
+  "tema": "educativo",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "AHORRO · TU META",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "verdad",
+      "habla": "profesor",
+      "voz": "Saber en cuántos meses llegas a tu meta es una simple división.",
+      "texto": "TU META, EN UNA DIVISIÓN",
+      "resalte": "DIVISIÓN",
+      "kicker": "AHORRO",
+      "subtexto": "Meta ÷ ahorro mensual = meses",
+      "motivo": "hucha",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "pilas_monedas",
+      "titulo": "LA PLANTILLA EN PDF",
+      "voz": "Al final te dejo la plantilla en PDF, totalmente gratis, con una tabla ya hecha.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "numero",
+      "habla": "profesor",
+      "valor": 20,
+      "decimales": 0,
+      "prefijo": "",
+      "sufijo": " meses",
+      "etiqueta": "PARA LLEGAR A 3.000 €",
+      "detalle": "con 150 € al mes · sin intereses",
+      "cuando": "veinte",
+      "voz": "Quieres tres mil euros y puedes apartar ciento cincuenta al mes: tres mil entre ciento cincuenta son veinte meses."
+    },
+    {
+      "tipo": "lista",
+      "habla": "profesor",
+      "titulo": "CÓMO CUMPLIRLO",
+      "voz": "Para cumplirlo, págate primero, con una transferencia automática el día que cobras. Y una cuenta aparte por cada meta, para no mezclarla con el gasto.",
+      "items": [
+        {
+          "t": "Págate primero",
+          "cuando": "primero"
+        },
+        {
+          "t": "Transferencia automática",
+          "cuando": "automática"
+        },
+        {
+          "t": "Una cuenta por meta",
+          "cuando": "aparte"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "escudo",
+      "titulo": "ANTES DE INVERTIR: UN COLCHÓN",
+      "voz": "Y antes de invertir, mucha gente se apunta a tener un colchón de tres a seis meses de gastos."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "AHORRO",
+        "que": "la plantilla en PDF"
+      }
+    }
+  ]
+}

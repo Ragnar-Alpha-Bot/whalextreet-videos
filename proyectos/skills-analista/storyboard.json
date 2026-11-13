@@ -1,0 +1,92 @@
+{
+  "tema": "educativo",
+  "tipo_post": "hilo",
+  "avatar": "profesor",
+  "etiqueta": "CLAUDE · 5 SKILLS",
+  "subs": "recuadro",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "secreto",
+      "habla": "profesor",
+      "voz": "Cinco skills gratuitas de Claude para ordenar tu inversión, sin pagar APIs.",
+      "texto": "5 SKILLS GRATIS DE CLAUDE",
+      "resalte": "GRATIS",
+      "kicker": "SKILLS · INVERSIÓN",
+      "subtexto": "Repositorio abierto (licencia MIT) · sin APIs de pago",
+      "motivo": "radar",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "caja_fuerte",
+      "titulo": "LA GUÍA EN PDF",
+      "voz": "Al final te dejo la guía en PDF con los pasos para instalarlas, totalmente gratis.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "checklist",
+      "habla": "profesor",
+      "titulo": "LAS 5 SKILLS DE INICIO",
+      "etiqueta": "SIN APIS DE PAGO",
+      "voz": "Miden la amplitud del mercado y cuántas acciones están en tendencia alcista. Calculan el tamaño de la posición, guardan tu diario de decisiones y revisan después si acertaste por la razón correcta.",
+      "items": [
+        {
+          "t": "Amplitud del mercado",
+          "cuando": "amplitud"
+        },
+        {
+          "t": "Tendencia alcista",
+          "cuando": "tendencia"
+        },
+        {
+          "t": "Tamaño de la posición",
+          "cuando": "tamaño"
+        },
+        {
+          "t": "Diario de decisiones",
+          "cuando": "diario"
+        },
+        {
+          "t": "Revisión posterior",
+          "cuando": "revisan"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "engranajes",
+      "titulo": "ORDENAN TU PROCESO",
+      "voz": "No dan órdenes ni señales de compra: ordenan tu proceso. Son de código abierto, con licencia MIT, y puedes revisarlas antes de instalarlas."
+    },
+    {
+      "tipo": "lista",
+      "habla": "profesor",
+      "titulo": "DOS FORMAS DE INSTALAR",
+      "voz": "Se instalan en la web de Claude subiendo el archivo, o en Claude Code copiando la carpeta. Todo está en la guía.",
+      "items": [
+        {
+          "t": "Web de Claude: sube el archivo",
+          "cuando": "web"
+        },
+        {
+          "t": "Claude Code: copia la carpeta",
+          "cuando": "carpeta"
+        }
+      ]
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "ANALISTA",
+        "que": "la guía en PDF"
+      }
+    }
+  ]
+}

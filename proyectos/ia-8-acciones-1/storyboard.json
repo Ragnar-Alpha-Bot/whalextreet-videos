@@ -1,0 +1,153 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "IA · PARTE 1 DE 3",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "urgencia",
+      "habla": "profesor",
+      "voz": "Dicen que estas ocho acciones pueden multiplicarse por quince. Hagamos la cuenta.",
+      "texto": "¿X15 EN 8 ACCIONES?",
+      "resalte": "X15",
+      "kicker": "IA · PARTE 1 DE 3",
+      "subtexto": "Serie de 3 vídeos · qué hace cada una",
+      "motivo": "red_nodos",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "engranajes",
+      "titulo": "UN CUELLO DE BOTELLA",
+      "voz": "El hilo habla de cuellos de botella: piezas de la cadena de la IA sin las que todo se frena. Empezamos por los chips."
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "NVIDIA · NVDA",
+      "voz": "NVIDIA diseña las GPU, chips que hacen millones de cálculos a la vez: ahí se entrenan la mayoría de modelos de IA. Vale cuatro billones de dólares, y en un año su acción ha bajado un catorce por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "GPUs",
+          "nota": "chips para entrenar IA",
+          "tono": "acc",
+          "cuando": "diseña"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "4,01 B $",
+          "nota": "billones de dólares",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "−14,0 %",
+          "nota": "precio de la acción",
+          "tono": "down",
+          "cuando": "bajado"
+        }
+      ]
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "BROADCOM · AVGO",
+      "voz": "Broadcom diseña chips a medida para las grandes empresas de la nube, y chips de red que conectan miles de GPU entre sí. Vale uno coma siete billones, y en un año ha subido un tres y medio por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "A medida",
+          "nota": "chips para la nube y de red",
+          "tono": "acc",
+          "cuando": "medida"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "1,74 B $",
+          "nota": "billones de dólares",
+          "tono": "acc",
+          "cuando": "Vale"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "+3,5 %",
+          "nota": "precio de la acción",
+          "tono": "up",
+          "cuando": "subido"
+        }
+      ]
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "MARVELL · MRVL",
+      "voz": "Marvell hace chips a medida y conexiones ópticas, cables de luz que mueven datos entre servidores. Es mucho más pequeña, ciento cuarenta y cuatro mil millones, pero su acción ha subido un ochenta y cuatro por ciento.",
+      "items": [
+        {
+          "etiqueta": "QUÉ HACE",
+          "valor": "Chips y luz",
+          "nota": "conexiones ópticas",
+          "tono": "acc",
+          "cuando": "conexiones"
+        },
+        {
+          "etiqueta": "VALE EN BOLSA",
+          "valor": "144,4 mil M",
+          "nota": "miles de millones de $",
+          "tono": "acc",
+          "cuando": "pequeña"
+        },
+        {
+          "etiqueta": "EN UN AÑO",
+          "valor": "+84,1 %",
+          "nota": "precio de la acción",
+          "tono": "up",
+          "cuando": "subido"
+        }
+      ]
+    },
+    {
+      "tipo": "ranking",
+      "habla": "profesor",
+      "titulo": "SI SE MULTIPLICARAN POR 15",
+      "voz": "Hagamos la cuenta del por quince. NVIDIA tendría que valer sesenta billones; Broadcom, veintiséis; Marvell, dos coma dos: más que Broadcom hoy. Es un escenario optimista, no una predicción ni una recomendación.",
+      "items": [
+        {
+          "valor": "60,2 B $",
+          "t": "NVIDIA",
+          "sub": "ahora vale 4,01 B $",
+          "tono": "warn",
+          "cuando": "NVIDIA"
+        },
+        {
+          "valor": "26,1 B $",
+          "t": "Broadcom",
+          "sub": "ahora vale 1,74 B $",
+          "tono": "warn",
+          "cuando": "Broadcom"
+        },
+        {
+          "valor": "2,17 B $",
+          "t": "Marvell",
+          "sub": "ahora vale 0,14 B $",
+          "tono": "acc",
+          "cuando": "Marvell"
+        }
+      ]
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "comenta": {
+        "que": "cuál ya tienes",
+        "sigue": "para ver la parte dos"
+      }
+    }
+  ]
+}

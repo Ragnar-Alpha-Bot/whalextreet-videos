@@ -1,0 +1,100 @@
+{
+  "tema": "bolsa",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "ETFs · COMISIONES",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "error",
+      "habla": "profesor",
+      "voz": "Tu fondo puede costarte más de lo que crees, y no lo ves.",
+      "texto": "TU FONDO TE COBRA CADA AÑO",
+      "resalte": "COBRA",
+      "kicker": "COMISIÓN OCULTA",
+      "subtexto": "Casi nadie la mira antes de comprar",
+      "motivo": "billete_se_va",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "caja_fuerte",
+      "titulo": "LA CALCULADORA EN PDF",
+      "voz": "Al final te dejo la calculadora en PDF, totalmente gratis. Primero, cuánto cobra cada fondo.",
+      "sello": "GRATIS",
+      "cuando_sello": "gratis"
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "COMISIÓN ANUAL REAL",
+      "voz": "Uno cobra el cero coma cero tres por ciento, unos tres euros por cada diez mil. Otro, el cero coma treinta y cinco. Y otro, el cero coma cincuenta y nueve.",
+      "items": [
+        {
+          "etiqueta": "VOO · COMISIÓN",
+          "valor": "0,03 %",
+          "nota": "≈ 3 € al año por 10.000 €",
+          "tono": "up",
+          "cuando": "tres"
+        },
+        {
+          "etiqueta": "SMH · COMISIÓN",
+          "valor": "0,35 %",
+          "nota": "≈ 35 € al año por 10.000 €",
+          "tono": "warn",
+          "cuando": "treinta"
+        },
+        {
+          "etiqueta": "EWY · COMISIÓN",
+          "valor": "0,59 %",
+          "nota": "≈ 59 € al año por 10.000 €",
+          "tono": "warn",
+          "cuando": "cincuenta"
+        }
+      ]
+    },
+    {
+      "tipo": "barras",
+      "habla": "profesor",
+      "titulo": "10.000 € A 30 AÑOS (hipotético)",
+      "unidad": " €",
+      "destacar": 0,
+      "voz": "Diez mil euros a treinta años, ejemplo hipotético: unos setenta y cinco mil con el primero, sesenta y nueve con el segundo y sesenta y cuatro con el tercero.",
+      "items": [
+        {
+          "n": "VOO",
+          "v": 75485,
+          "cuando": "primero"
+        },
+        {
+          "n": "SMH",
+          "v": 68996,
+          "cuando": "segundo"
+        },
+        {
+          "n": "EWY",
+          "v": 64487,
+          "cuando": "tercero"
+        }
+      ]
+    },
+    {
+      "tipo": "metafora",
+      "habla": "profesor",
+      "motivo": "lupa",
+      "titulo": "MIRA LA COMISIÓN ANTES DE COMPRAR",
+      "voz": "Por eso, antes de comprar, mira la comisión: se ve en un minuto y se paga cada año."
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "oferta": {
+        "palabra": "INTERES",
+        "que": "la calculadora en PDF"
+      }
+    }
+  ]
+}

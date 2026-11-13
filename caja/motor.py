@@ -32,7 +32,7 @@ GAP, LEAD, TAIL = 0.35, 0.05, 2.8              # la voz del gancho arranca a los
 MIN_BLOQUE = 0.2                     # duración mínima de un bloque de subtítulos (s)
 H = GAP / 2
 AREA_TOP, AREA_H = 470, 1010                  # zona segura: TikTok/Instagram/Shorts tapan la parte de abajo
-HUD_HTML = ('<div id="hud"><div id="suelo" data-layout-ignore></div><div id="vineta"></div><div id="scan"></div><div id="barrido"></div>'
+HUD_HTML = ('<div id="hud"><div id="suelo" data-layout-ignore></div><div id="vineta"></div><div id="scan"></div><div id="barrido" data-layout-ignore></div>'
             '<i class="esq e1"></i><i class="esq e2"></i><i class="esq e3"></i><i class="esq e4"></i></div>\n')   # fondo de panel: rejilla en perspectiva, marcos y escaneo (color del tema)
 HUD_JS = ('tl.fromTo("#suelo",{backgroundPositionY:0},{backgroundPositionY:"%%TOTAL%%px",duration:%%TOTAL%%,ease:"none"},0);\n'
           'tl.fromTo("#barrido",{y:0},{y:1930,duration:6,ease:"none",repeat:Math.ceil(%%TOTAL%%/6)},0);\n'

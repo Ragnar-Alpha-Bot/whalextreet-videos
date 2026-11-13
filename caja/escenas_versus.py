@@ -337,6 +337,40 @@ def e_comenta(c, d):
     return html, js
 
 
+def e_comenta_libre(c, d):
+    """Cierre «COMENTA <algo> y sígueme · <para qué>»: invita a opinar y a seguir la cuenta, sin prometer ningún recurso (series por partes, vídeos de análisis)."""
+    cm = d["comenta"]
+    que = cm["que"].upper()
+    redes = d.get("redes") or marca_redes()["redes"]
+    pills = "".join(f'<span class="pildora h" id="{c.pf}r{j}" style="font-size:{c.fs(34)};margin:{c.px(6)}">{esc(x)}</span>' for j, x in enumerate(redes))
+    fs = min(120, int(860 / (0.62 * max(len(que) + 2, 6))))
+    html = (f'<div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(24)}">'
+            f'<img class="h" id="{c.pf}logo" src="assets/isotipo-cierre.png" alt="" style="width:{c.px(220)}"/>'
+            f'{chip(c, "COMENTA", c.pf + "chip", 44)}'
+            f'<div id="{c.pf}kw" class="big h" style="font-size:{c.fs(fs)};color:var(--acc);padding:{c.px(10)} {c.px(40)};border:{c.px(8)} solid var(--acc);border-radius:{c.px(36)};'
+            f'background:color-mix(in srgb,var(--acc) 12%,#0B1020);text-shadow:0 0 {c.px(30)} var(--acc);box-shadow:0 0 {c.px(50)} color-mix(in srgb,var(--acc) 45%,transparent)">{esc(que)}</div>'
+            f'<div id="{c.pf}sg" class="big h" style="font-size:{c.fs(74)}">y <span style="color:var(--acc)">sígueme</span></div>'
+            + (f'<div id="{c.pf}qe" class="nota h" style="font-size:{c.fs(44)};padding:0 {c.px(16)}">{esc(cm["sigue"])}</div>' if cm.get("sigue") else "")
+            + f'<div style="display:flex;flex-wrap:wrap;justify-content:center">{pills}</div></div>')
+    t = c.t0
+    tk, ts, tq = c.T(cm["que"].split()[0], .12), c.T("sígueme", .42), c.T(cm["sigue"].split()[0] if cm.get("sigue") else None, .7)
+    js = [fromTo(f"#{c.pf}logo", {"opacity": 0, "scale": .7}, {"opacity": 1, "scale": 1, "duration": .5, "ease": "back.out(1.8)"}, t + .1),
+          fromTo(f"#{c.pf}chip", {"opacity": 0, "scale": .6}, {"opacity": 1, "scale": 1, "duration": .4, "ease": "back.out(2.4)"}, t + .4),
+          fromTo(f"#{c.pf}kw", {"opacity": 0, "scale": 1.7}, {"opacity": 1, "scale": 1, "duration": .45, "ease": "back.out(1.7)"}, max(tk, t + .6)),
+          fromTo(f"#{c.pf}sg", {"opacity": 0, "y": 30}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, max(ts, t + 1.0))]
+    if cm.get("sigue"):
+        js.append(fromTo(f"#{c.pf}qe", {"opacity": 0, "y": 24}, {"opacity": 1, "y": 0, "duration": .45, "ease": "power3.out"}, max(tq, t + 1.4)))
+        c.snd(max(tq, t + 1.4), "swipe", .3)
+    c.snd(t + .1, "card", .45)
+    c.snd(t + .4, "ding:1", .4)
+    c.snd(max(tk, t + .6) + .25, "impact", .5)
+    c.snd(max(ts, t + 1.0), "pop:2", .4)
+    for j in range(len(redes)):
+        js.append(fromTo(f"#{c.pf}r{j}", {"opacity": 0, "scale": .5}, {"opacity": 1, "scale": 1, "duration": .35, "ease": "back.out(3)"}, t + 1.8 + .15 * j))
+        c.snd(t + 1.8 + .15 * j, "pop:" + str(j % 4), .4)
+    return html, js
+
+
 ESCENAS["versus"] = (e_versus, v_versus)
 ESCENAS["movil"] = (e_movil, v_movil)
 ESCENAS["calendario"] = (e_calendario, v_calendario)

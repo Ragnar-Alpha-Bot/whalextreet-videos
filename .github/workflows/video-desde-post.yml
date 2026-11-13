@@ -67,6 +67,7 @@ jobs:
           python tests/test_grafico_pro.py
           python tests/test_qa.py
           python tests/test_radar.py
+          python tests/test_serie_ia.py
           python tests/test_cobertura_numeros.py
           python tests/test_post.py
 

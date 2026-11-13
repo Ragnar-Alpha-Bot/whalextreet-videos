@@ -122,6 +122,9 @@ def voz_cta(e, cfg):
     o = e.get("oferta")
     if isinstance(o, dict) and o.get("palabra") and o.get("que"):
         return f"Comenta {str(o['palabra']).title()} y sígueme en WhaleXtreet, y te envío {o['que']} por privado."
+    cm = e.get("comenta")
+    if isinstance(cm, dict) and cm.get("que"):
+        return f"Comenta {cm['que']} y sígueme en WhaleXtreet" + (f" {cm['sigue']}." if cm.get("sigue") else ".")
     return cfg["cta_voz"]
 
 
