@@ -149,6 +149,17 @@ def sugerencia_3d(post):
             "y si no encaja, no uses ninguna. No uses moneda3d, animal3d, lingotes3d, escudo3d ni ciudad3d salvo que sea la sugerida (son figuras decorativas); linea3d solo si el post trae una serie de datos reales.")
 
 
+ESTRUCTURA_SOLUCION = (
+    "ESTRUCTURA GANCHO-PROBLEMA-SOLUCIÓN-PEDIDO (idea de un short de 30 s que funciona; solo la estructura, ningún recurso visual copiado). "
+    "ÚSALA SOLO si el recurso ofrecido resuelve un problema concreto que el espectador tiene (no es obligatoria; si no encaja, ignórala y haz el vídeo normal):\n"
+    " 1) GANCHO (≈3 s): entendible por sí solo, nombra el problema o la promesa realista.\n"
+    " 2) PROBLEMA (≈40 % del vídeo): muestra el error o la dificultad con un caso concreto y datos reales del post, para que el espectador piense «me pasa a mí».\n"
+    " 3) SOLUCIÓN (≈40 %): enseña cómo se resuelve, paso a paso y solo con hechos del post; di cuánto aporta el recurso («esto está resumido en…»).\n"
+    " 4) PEDIDO: lo pone el código («Comenta X y sígueme…»). Deja la última frase como puente natural a él.\n"
+    "Puedes nombrar la fase en voz una vez, de forma natural («el problema es…», «la solución es…»), sin pedir suscripciones antes del cierre."
+)
+
+
 def _prompt(post, errores=None, anterior=None):
     p = {"formato_del_post": post.get("format"), "plataformas": post.get("platforms"), "texto_del_post": post.get("parts")}
     if post.get("chart"):
@@ -161,7 +172,7 @@ def _prompt(post, errores=None, anterior=None):
     txt = ("POST APROBADO:\n" + json.dumps(p, ensure_ascii=False, indent=1) + "\n\n" + sugerencia_3d(post)
            + (f"\n\nOFERTA REAL DE ESTE VÍDEO: al final se ofrece «{oferta.get('name')}» a quien comente «{str(oferta['keyword']).upper()}» y siga la cuenta. "
               "Construye el vídeo para llegar a ella: gancho BRUTAL, valor real y concreto en las escenas intermedias (lo que da ese recurso, solo con los hechos del post) "
-              "y deja el hueco para el cierre. El cierre («Comenta X y sígueme…») lo pone el código; no lo escribas ni inventes otros recursos."
+              "y deja el hueco para el cierre. El cierre («Comenta X y sígueme…») lo pone el código; no lo escribas ni inventes otros recursos.\n" + ESTRUCTURA_SOLUCION
               if oferta else "")
            + "\n\nMETÁFORAS SUGERIDAS PARA ESTE VÍDEO (úsalas si encajan con la voz; si otras encajan mejor, elige otras de la lista): "
            + ", ".join(sugeridos("\n".join(post.get("parts") or []))))
