@@ -37,7 +37,7 @@ def prueba(fallos_whisper):
         pipeline.borrar_cache_de_lineas = lambda lin, hab, claves: n["borrado"].append(claves)
         motor.construir = lambda p: {}
         try:
-            pipeline.main(proyecto, render=False)
+            pipeline.main(proyecto, render=False, revisar=False)   # la revisión visual usa subprocess y falsearía el recuento
             return n, None
         except palabras.VozMala as e:
             return n, e
