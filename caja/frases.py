@@ -3,6 +3,7 @@
 Una voz sintética leyendo 25 palabras de un tirón suena plana y apresurada; en trozos de 4-12 palabras, con una pausa breve entre ellos,
 el ritmo se parece al de una persona (≈148 palabras/min en la referencia del usuario; ≈186 con la frase entera).
 """
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -89,7 +90,10 @@ def con_reintentos(generar, frase, intentos=30):
 def huella_audio(cfg=None):
     """Resumen de los ajustes que cambian el audio de una frase (velocidad, pausas, trozos). Si cambian, la voz ya generada deja de valer."""
     cfg = cfg or config_audio()
-    return json.dumps([cfg["velocidad"], cfg["pausas_s"], cfg["min_palabras_trozo"]], sort_keys=True)
+    raiz = Path(__file__).resolve().parent.parent
+    voces = json.loads((raiz / "marca" / "voces.json").read_text(encoding="utf-8"))
+    perfiles = {q: hashlib.sha1((raiz / "perfiles" / f).read_bytes()).hexdigest()[:10] for q, f in voces.items() if not q.startswith("_")}
+    return json.dumps([cfg["velocidad"], cfg["pausas_s"], cfg["min_palabras_trozo"], perfiles], sort_keys=True)   # el perfil de voz cuenta: si cambia la voz, se rehace
 
 
 def acelerar(audio, sr, velocidad):
