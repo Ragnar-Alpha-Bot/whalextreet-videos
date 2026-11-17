@@ -27,6 +27,7 @@ from paletas import paleta, rgb  # noqa: E402
 from sfx import mezclar  # noqa: E402
 import musica  # noqa: E402
 from frases import config_audio  # noqa: E402
+from gsap_extra import PRELUDE as PRELUDE_GSAP, SCRIPTS as SCRIPTS_GSAP  # noqa: E402   # GSAP con todos sus plugins gratuitos
 
 GAP, LEAD, TAIL = 0.35, 0.05, 2.8              # la voz del gancho arranca a los 0,05 s
 MIN_BLOQUE = 0.2                     # duración mínima de un bloque de subtítulos (s)
@@ -205,7 +206,8 @@ def construir(proyecto):
         if cur:
             grupos.append(cur)
         if len(grupos) > 1 and len(grupos[-1]) == 1:
-            grupos[-2] += grupos.pop()
+            ultimo = grupos.pop()                  # (antes: grupos[-2] += grupos.pop() fallaba con exactamente 2 grupos: «Esto no es una recomendación.»)
+            grupos[-1] += ultimo
         arranques, previo = [], -1.0
         for g in grupos:                       # arranques estrictamente crecientes (una duración 0 dejaría el bloque en pantalla para siempre)
             a_ = max(0.0, round(inicio[k] + ws[g[0]]["ini"] - 0.05, 2), round(previo + MIN_BLOQUE, 2))
@@ -320,6 +322,7 @@ def construir(proyecto):
             f'<div id="flash"></div>\n{audio}\n</div>')
 
     js = ("const fm=(v,d)=>{const neg=v<0;let s=Math.abs(v).toFixed(d);let [a,b]=s.split('.');a=a.replace(/\\B(?=(\\d{3})+(?!\\d))/g,'.');return (neg?'-':'')+(b?a+','+b:a)};\n"
+          + PRELUDE_GSAP +
           "const tl = gsap.timeline({ paused: true });\n"
           f'tl.fromTo("#grid",{{y:0}},{{y:-72,duration:{TOTAL},ease:"none"}},0);\n'
           + HUD_JS.replace("%%TOTAL%%", str(TOTAL)) +
@@ -329,7 +332,7 @@ def construir(proyecto):
           + "\n".join(prof_js) + "\n" + "\n".join(sub_js) + '\nwindow.__timelines["main"] = tl;\ntl.seek(0);\n')
 
     html = ('<!doctype html>\n<html lang="es">\n<head>\n<meta charset="UTF-8" />\n<meta name="viewport" content="width=1080, height=1920" />\n'
-            '<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>\n<style>' + css + '</style>\n</head>\n<body>\n'
+            + SCRIPTS_GSAP + '<style>' + css + '</style>\n</head>\n<body>\n'
             + body + '\n<script>' + js + '</script>\n</body>\n</html>\n')
     (proyecto / "index.html").write_text(html, encoding="utf-8")
     nombre = proyecto.name

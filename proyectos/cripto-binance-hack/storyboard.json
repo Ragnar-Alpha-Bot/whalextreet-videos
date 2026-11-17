@@ -1,0 +1,109 @@
+{
+  "tema": "cripto",
+  "tipo_post": "datos",
+  "avatar": "profesor",
+  "etiqueta": "NOTICIA CRIPTO · BINANCE",
+  "ilustrativo": false,
+  "escenas": [
+    {
+      "tipo": "gancho",
+      "angulo": "urgencia",
+      "habla": "profesor",
+      "voz": "En veinte minutos robaron seis mil trescientos millones de dólares a Binance.",
+      "texto": "HACKEARON BINANCE",
+      "resalte": "BINANCE",
+      "kicker": "MAYOR ROBO CRIPTO",
+      "subtexto": "El FBI lo atribuye a Corea del Norte",
+      "motivo": "alarma",
+      "icono": "ninguno",
+      "grafico": "ninguno"
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "EL ROBO DEL 29 DE OCTUBRE",
+      "voz": "Fue el jueves veintinueve de octubre. Según la firma TRM, sacaron unos seis mil trescientos sesenta millones de dólares en diez cadenas distintas, casi todo en veinte minutos. El récord anterior era el de Bybit: mil cuatrocientos sesenta millones.",
+      "items": [
+        {
+          "etiqueta": "ROBADO",
+          "valor": "6,3 mil M",
+          "nota": "miles de millones de dólares",
+          "tono": "down",
+          "cuando": "millones"
+        },
+        {
+          "etiqueta": "TIEMPO",
+          "valor": "20 min",
+          "nota": "casi todo, en diez cadenas",
+          "tono": "warn",
+          "cuando": "veinte"
+        },
+        {
+          "etiqueta": "RÉCORD ANTERIOR",
+          "valor": "1,46 mil M",
+          "nota": "Bybit, febrero de 2025",
+          "tono": "acc",
+          "cuando": "Bybit"
+        }
+      ]
+    },
+    {
+      "tipo": "titulo",
+      "habla": "profesor",
+      "titulo": "EL PUNTO DÉBIL: UN PORTÁTIL",
+      "subtitulo": "Según Binance y el FBI",
+      "voz": "¿Cómo lo hicieron? Según Binance, entraron por el portátil de un ingeniero. El punto débil no fue la cadena de bloques: fue un ordenador. El FBI señala a Corea del Norte, que lo niega."
+    },
+    {
+      "tipo": "tarjetas",
+      "habla": "profesor",
+      "titulo": "¿Y LOS USUARIOS?",
+      "voz": "¿Y los usuarios? Binance apartó seis mil trescientos cuarenta millones propios para cubrir las pérdidas, y según NPR se congeló más del cuarenta por ciento de lo robado.",
+      "items": [
+        {
+          "etiqueta": "BINANCE CUBRIÓ",
+          "valor": "6,34 mil M",
+          "nota": "con fondos propios",
+          "tono": "up",
+          "cuando": "cubrir"
+        },
+        {
+          "etiqueta": "CONGELADO",
+          "valor": "más del 40 %",
+          "nota": "de lo robado, según NPR",
+          "tono": "acc",
+          "cuando": "congeló"
+        }
+      ]
+    },
+    {
+      "tipo": "lista",
+      "habla": "profesor",
+      "titulo": "LO QUE ENSEÑA ESTE ROBO",
+      "voz": "La lección: en un exchange, la empresa guarda tus criptos. Con una cartera propia las guardas tú, pero entonces la responsabilidad es tuya, y nunca debes compartir tu frase semilla. No es una recomendación, es cómo funciona.",
+      "items": [
+        {
+          "t": "Exchange: la empresa las guarda",
+          "cuando": "exchange"
+        },
+        {
+          "t": "Cartera propia: la clave es tuya",
+          "cuando": "cartera"
+        },
+        {
+          "t": "Nunca compartas tu frase semilla",
+          "cuando": "semilla"
+        }
+      ]
+    },
+    {
+      "tipo": "cta",
+      "habla": "profesor",
+      "comenta": {
+        "que": "si usas exchange o cartera",
+        "sigue": "para más noticias cripto"
+      },
+      "voz": "Comenta si usas exchange o cartera y sígueme en WhaleXtreet para más noticias cripto."
+    }
+  ]
+}
