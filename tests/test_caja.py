@@ -300,7 +300,7 @@ m = conversacion(); m["escenas"][1]["texto"] = "x" * 91; rechaza("el texto del g
 comprobar("quién habla: por defecto el avatar del vídeo; en «ambos», el profesor salvo que se indique",
           guion.hablantes({"avatar": "rubio", "escenas": [{}, {}]}) == ["rubio", "rubio"] and guion.hablantes({"avatar": "ambos", "escenas": [{}, {"habla": "rubio"}]}) == ["profesor", "rubio"])
 voces = json.loads((RAIZ / "marca" / "voces.json").read_text(encoding="utf-8"))
-comprobar("cada avatar tiene su voz y su perfil existe (profesor = D, rubio = C)", voces["profesor"] == "voz_D.pt" and voces["rubio"] == "voz_C.pt" and all((RAIZ / "perfiles" / voces[a]).exists() for a in ("profesor", "rubio")))
+comprobar("cada avatar tiene su voz y su perfil existe (profesor = E, rubio = D)", voces["profesor"] == "voz_E.pt" and voces["rubio"] == "voz_D.pt" and all((RAIZ / "perfiles" / voces[a]).exists() for a in ("profesor", "rubio")))
 with tempfile.TemporaryDirectory() as tmp:
     d = Path(tmp) / "v"
     (d / "assets" / "voz").mkdir(parents=True)

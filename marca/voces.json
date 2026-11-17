@@ -1,5 +1,5 @@
 {
-  "_comentario": "Qué voz clonada usa cada avatar. Los perfiles están en perfiles/. Cada uno habla siempre con la suya.",
-  "profesor": "voz_D.pt",
-  "rubio": "voz_C.pt"
+  "_comentario": "Qué voz clonada usa cada avatar. Los perfiles están en perfiles/. Cada uno habla siempre con la suya. voz_E = narrador principal (17-nov-2026); voz_D = antigua principal, ahora del socio; voz_C retirada.",
+  "profesor": "voz_E.pt",
+  "rubio": "voz_D.pt"
 }
