@@ -189,6 +189,7 @@ def e_numero(c, d):
     js.append(f'const {c.pf}o={{v:{v0}}};tl.to({c.pf}o,{{v:{v},duration:{dur},ease:"power2.out",onUpdate(){{document.getElementById("{ide}").textContent={J(pre)}+fm({c.pf}o.v,{dec})+{J(suf)}}}}},{t});')
     js.append(fromTo(f"#{ide}", {"opacity": 0, "scale": .92}, {"opacity": 1, "scale": 1, "duration": .5, "ease": "back.out(2)"}, max(t - .15, c.t0 + .3)))
     js.append(fromTo(f"#{ide}", {"scale": 1}, {"scale": 1.06, "duration": .14, "yoyo": True, "repeat": 1, "ease": "power2.out", "immediateRender": False}, t + dur))
+    js.append(f'wxSacude("#{ide}",{r2(t + dur + .28)},10);')      # GSAP CustomWiggle: pequeña sacudida de énfasis al llegar a la cifra final
     for k in range(int(dur / .1)):
         c.snd(t + .1 * k, "tick", .16 + .12 * k / (dur / .1))
     c.snd(t + dur, "ding:1", .4)
@@ -429,7 +430,7 @@ def e_tarjetas(c, d):
         tono = x.get("tono", "acc")
         cards += (f'<div class="tarjeta h" id="{c.pf}t{k}" style="height:{c.px(ch)};padding:{c.px(24)} {c.px(34)}">'
                   f'<div class="lab" style="font-size:{c.fs(28)}">{esc(x["etiqueta"])}</div>'
-                  f'<div style="font-weight:700;font-size:{c.fs(min(120, ch * .46))};letter-spacing:-.03em;line-height:1.05;color:var(--{tono})">{esc(x["valor"])}</div>'
+                  f'<div id="{c.pf}v{k}" style="font-weight:700;font-size:{c.fs(min(120, ch * .46))};letter-spacing:-.03em;line-height:1.05;color:var(--{tono})">{esc(x["valor"])}</div>'
                   + (f'<div class="nota" style="font-size:{c.fs(32)};margin-top:{c.px(4)}">{esc(x["nota"])}</div>' if x.get("nota") else "") + '</div>')
     html = (f'<div class="col" style="justify-content:center;gap:{c.px(20)}">'
             + (f'<div class="lab" style="font-size:{c.fs(34)}">{esc(d["titulo"])}</div>' if d.get("titulo") else "") + cards + '</div>')
@@ -439,6 +440,8 @@ def e_tarjetas(c, d):
         js.append(fromTo(f"#{c.pf}t{k}", {"opacity": 0, "y": 70, "scale": .96}, {"opacity": 1, "y": 0, "scale": 1, "duration": .5, "ease": "power3.out"}, t))
         c.snd(t, "card", .5)
         c.snd(t + .25, "pop:" + str((k + 1) % 4), .3)
+        if any(ch_.isdigit() for ch_ in str(x["valor"])):      # GSAP ScrambleText: la cifra se «descifra» hasta su valor final
+            js.append(f'wxDescifra("#{c.pf}v{k}",{r2(t + .1)},.7);')
     return html, js
 
 
@@ -583,6 +586,11 @@ def _palabras(t):
     return out
 
 
+APERTURAS = ("zoom3d", "flash")   # aperturas que rotan solas (las que gustaron al usuario: Binance y la de inflación)
+# Se pueden pedir a mano: «impacto» (la original), «dividida» (no gustó: colores tricolor) y «negro» (no gustó el fondo negro)
+TODAS_APERTURAS = APERTURAS + ("impacto", "dividida", "negro")
+
+
 def e_gancho(c, d):
     t = d["texto"]
     n = len(t)
@@ -593,13 +601,26 @@ def e_gancho(c, d):
     icono = d.get("icono", "alerta")
     graf = d.get("grafico", "pulso")
     motivo = d.get("motivo") if graf != "cifra" else None        # una animación de metáfora apoya el gancho (si hay cifra gigante, manda la cifra)
+    ap = d.get("apertura") or APERTURAS[sum(map(ord, t)) % len(APERTURAS)]   # rotación: cada gancho abre de una forma distinta (se puede forzar con «apertura»)
+    if ap == "negro" and motivo and not d.get("apertura"):       # con animación de metáfora, la apertura automática no es el negro minimalista
+        ap = "zoom3d"
+    if ap == "negro" and graf != "cifra":                         # tipografía minimalista: nada más que el texto
+        graf, motivo = "ninguno", None
     if motivo:
         graf = "ninguno"
     if graf == "pulso" and icono == "ninguno":
         graf = "ninguno"
     fs = _ajustar_fs_gancho(ws, fs, d, graf, motivo, c.W / c.u)
     pf = c.pf
+    def _sp(j, w, resaltar=True):
+        return f'<span id="{pf}w{j}" style="display:inline-block;margin:0 .13em;{"color:var(--acc);" if resaltar and res and norm(w) == res else ""}">{esc(w)}</span>'
     spans = "".join(f'<span id="{pf}w{j}" style="display:inline-block;margin:0 .13em;{"color:var(--acc);" if res and norm(w) == res else ""}">{esc(w)}</span>' for j, w in enumerate(ws))
+    if ap == "dividida" and len(ws) >= 2:                         # pantalla dividida: dos bandas de contraste que entran por lados opuestos
+        mid = (len(ws) + 1) // 2
+        spans = (f'<div id="{pf}d1" style="background:var(--acc);color:#0A0F1E;padding:.06em .3em;text-shadow:none">{"".join(_sp(j, w, False) for j, w in enumerate(ws[:mid]))}</div>'
+                 f'<div id="{pf}d2" style="background:#fff;color:#0A0F1E;padding:.06em .3em;text-shadow:none">{"".join(_sp(j + mid, w, False) for j, w in enumerate(ws[mid:]))}</div>')
+    else:
+        ap = "impacto" if ap == "dividida" else ap
     # --- gráfico llamativo ---
     gr_html, gr_js = "", []
     if graf == "pulso":
@@ -641,17 +662,37 @@ def e_gancho(c, d):
         gr_html = escenas_meta.canvas(ident, c.W, c.n(altura_motivo_gancho(ws, fs, d))) + escenas_meta.modulo(ident, motivo, c.t0 + .02, {"escala": 1.3})
         escenas_meta.sonido_entrada(c, motivo, .05)
     # --- estructura: kicker, gráfico, texto enorme, subtexto ---
+    if ap == "negro":
+        d = {k: v for k, v in d.items() if k != "kicker"}
     kicker = (f'<span class="chip" id="{pf}kick" style="font-size:{c.fs(34)};--c:var(--acc)">{esc(d["kicker"])}</span>' if d.get("kicker") else "")
     sub = (f'<div id="{pf}sub" class="nota" style="font-size:{c.fs(50)};max-width:{c.px(860)}">{esc(d["subtexto"])}</div>' if d.get("subtexto") else "")
-    html = (f'<div id="{pf}in" style="height:100%"><div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(30)}">'
+    fondo = f'<div style="position:absolute;left:-80px;right:-80px;top:-600px;bottom:-1200px;background:#000;z-index:0"></div>' if ap == "negro" else ""
+    html = (f'{fondo}<div id="{pf}in" style="height:100%;position:relative;z-index:1;perspective:1100px"><div class="col" style="align-items:center;justify-content:center;text-align:center;gap:{c.px(30)}">'
             f'{kicker}{gr_html}<div id="{pf}tt" class="big" style="font-size:{c.fs(fs)};line-height:1.0;text-transform:uppercase;text-shadow:0 6px 40px rgba(0,0,0,.6)">{spans}</div>{sub}</div></div>')
     acc = c.p["acc"]
-    js = [fromTo("#flash", {"opacity": .6, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .1, "ease": "none"}, 0),           # doble destello: blanco…
-          fromTo("#flash", {"opacity": .42, "backgroundColor": acc}, {"opacity": 0, "duration": .3, "ease": "power2.out", "immediateRender": False}, .1),   # …y de color
-          fromTo(f"#{pf}in", {"scale": 1.14}, {"scale": 1, "duration": .4, "ease": "power4.out"}, 0),                                       # golpe de zoom
-          fromTo(f"#S{c.i}", {"x": -20}, {"x": 20, "duration": .04, "repeat": 9, "yoyo": True, "ease": "none"}, .02),                       # sacudida
-          to(f"#S{c.i}", {"x": 0, "duration": .05}, .42),
-          fromTo(f"#{pf}tt", {"textShadow": "12px 0 #FF7A7A, -12px 0 #67D4E8"}, {"textShadow": "0px 0 rgba(0,0,0,0), 0px 0 rgba(0,0,0,0)", "duration": .5, "ease": "power2.out"}, 0)] + gr_js   # glitch RGB
+    fl1 = fromTo("#flash", {"opacity": .6, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .1, "ease": "none"}, 0)             # doble destello: blanco…
+    fl2 = fromTo("#flash", {"opacity": .42, "backgroundColor": acc}, {"opacity": 0, "duration": .3, "ease": "power2.out", "immediateRender": False}, .1)   # …y de color
+    zoom = fromTo(f"#{pf}in", {"scale": 1.14}, {"scale": 1, "duration": .4, "ease": "power4.out"}, 0)                                    # golpe de zoom
+    shake = [fromTo(f"#S{c.i}", {"x": -20}, {"x": 20, "duration": .04, "repeat": 9, "yoyo": True, "ease": "none"}, .02), to(f"#S{c.i}", {"x": 0, "duration": .05}, .42)]
+    rgb = lambda px, dur: fromTo(f"#{pf}tt", {"textShadow": f"{px}px 0 #FF7A7A, -{px}px 0 #67D4E8"}, {"textShadow": "0px 0 rgba(0,0,0,0), 0px 0 rgba(0,0,0,0)", "duration": dur, "ease": "power2.out"}, 0)
+    if ap == "zoom3d":      # cámara 3D que se lanza hacia el texto
+        efectos = [fromTo("#flash", {"opacity": .35, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .2, "ease": "none"}, 0),
+                   fromTo(f"#{pf}tt", {"scale": 3.4, "rotationX": 58, "rotationY": -28, "z": -500, "transformPerspective": 900, "opacity": 1},
+                          {"scale": 1, "rotationX": 0, "rotationY": 0, "z": 0, "duration": .6, "ease": "expo.out"}, 0), rgb(16, .6)]
+    elif ap == "dividida":  # dos bandas que chocan
+        efectos = [fl1, fromTo(f"#{pf}d1", {"x": -340}, {"x": 0, "duration": .26, "ease": "power4.out"}, 0),
+                   fromTo(f"#{pf}d2", {"x": 340}, {"x": 0, "duration": .26, "ease": "power4.out"}, .08), rgb(8, .35)]
+    elif ap == "flash":     # estroboscopio de 0,3 s + glitch cromático fuerte
+        efectos = [fromTo("#flash", {"opacity": 1, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .07, "ease": "none"}, 0),
+                   fromTo("#flash", {"opacity": .8, "backgroundColor": acc}, {"opacity": 0, "duration": .07, "ease": "none", "immediateRender": False}, .08),
+                   fromTo("#flash", {"opacity": .7, "backgroundColor": "#FFFFFF"}, {"opacity": 0, "duration": .14, "ease": "none", "immediateRender": False}, .17),
+                   fromTo(f"#{pf}in", {"scale": 1.22}, {"scale": 1, "duration": .35, "ease": "power4.out"}, 0), rgb(26, .5),
+                   fromTo(f"#S{c.i}", {"x": -34}, {"x": 34, "duration": .03, "repeat": 9, "yoyo": True, "ease": "none"}, .02), to(f"#S{c.i}", {"x": 0, "duration": .05}, .33)]
+    elif ap == "negro":     # negro puro, solo texto, golpe seco
+        efectos = [fromTo(f"#{pf}in", {"scale": 1.07}, {"scale": 1, "duration": .7, "ease": "power3.out"}, 0)]
+    else:                   # «impacto»: la apertura original
+        efectos = [fl1, fl2, zoom] + shake + [rgb(12, .5)]
+    js = efectos + gr_js
     for j in range(len(ws)):                    # visibles desde el primer fotograma (miniatura): entran grandes y encajan
         js.append(fromTo(f"#{pf}w{j}", {"opacity": 1, "scale": 1.9, "y": -34, "rotation": 3 if j % 2 else -3}, {"scale": 1, "y": 0, "rotation": 0, "duration": .24, "ease": "back.out(2.2)"}, .02 + .08 * j))
         c.snd(.02 + .08 * j, "tick", .35)
@@ -661,11 +702,31 @@ def e_gancho(c, d):
     if d.get("subtexto"):
         js.append(fromTo(f"#{pf}sub", {"opacity": 0, "y": 26}, {"opacity": 1, "y": 0, "duration": .4, "ease": "power3.out"}, .55))
         c.snd(.55, "swipe", .3)
-    c.snd(0.0, "boom", .75)
-    c.snd(0.0, "impact", .45)
-    c.snd(0.0, "whoosh:2", .4)
-    c.snd(0.02, "glitch", .3)
-    c.snd(0.35, "pop:3", .4)
+    if ap == "negro":       # caída de sub-graves seca
+        c.snd(0.0, "boom", 1.0)
+        c.snd(0.02, "boom", .7)
+        c.snd(0.0, "impact", .5)
+    elif ap == "zoom3d":
+        c.snd(0.0, "whoosh:2", .6)
+        c.snd(0.0, "boom", .75)
+        c.snd(0.0, "impact", .5)
+    elif ap == "dividida":
+        c.snd(0.0, "impact", .6)
+        c.snd(0.08, "impact", .5)
+        c.snd(0.0, "boom", .6)
+        c.snd(0.0, "swipe", .4)
+    elif ap == "flash":
+        c.snd(0.0, "glitch", .6)
+        c.snd(0.0, "boom", .75)
+        c.snd(0.0, "impact", .5)
+        c.snd(0.1, "glitch", .4)
+    else:
+        c.snd(0.0, "boom", .75)
+        c.snd(0.0, "impact", .45)
+        c.snd(0.0, "whoosh:2", .4)
+        c.snd(0.02, "glitch", .3)
+    if ap in ("impacto", "flash", "zoom3d", "dividida"):
+        c.snd(0.35, "pop:3", .4)
     return html, js
 
 

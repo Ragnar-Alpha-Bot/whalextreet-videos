@@ -130,7 +130,8 @@ def voz_cta(e, cfg):
 
 MAX_PALABRAS_GANCHO = 15
 APERTURAS_PROHIBIDAS = ("hola", "sabias que", "en este video", "hoy vamos", "hoy hablamos", "hoy hablaremos", "hoy te cuento", "hoy te ensenare",
-                        "te ensenare", "te voy a ensenar", "te ensenio", "bienvenid", "buenas", "vamos a ver")
+                        "te ensenare", "te voy a ensenar", "te ensenio", "bienvenid", "buenas", "vamos a ver",
+                        "en este ejemplo", "en este caso", "en este articulo", "en este post", "supon que", "imagina que", "como sabras")
 
 
 def norm_espacios(t):
